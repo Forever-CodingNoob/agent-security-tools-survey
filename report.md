@@ -1,14 +1,15 @@
 # CodeSafe tool survey: rollup report
 
 > This report uses ASD-STE100 Simplified Technical English. It collects every evaluated tool.
-> Each tool also has a detailed report in `detailed/<tool>.md`.
+> Each tool also has a detailed report in `<tool>/report.md`.
 
 ## Comparison table
 
 | Tool | Deployability | Extensibility | Educational Viability | Maintenance & Support | Classroom Safety | Attack Vectors | Security Risks |
 |------|---------------|---------------|-----------------------|-----------------------|------------------|----------------|----------------|
-| [AgentHarm](detailed/agentharm.md) | High: does not require Docker, VM, or web server; synthetic tools; local ollama inference only | High: modular; add tools, grading, agents, or prompts one folder at a time; documented | Good: clear score breakdown and trajectory viewer; jailbreak template not shipped | Excellent: very active repo (HEAD commit 2026-08-10); one small dependency fix needed | Caution: real harmful prompts in 8 categories; synthetic tools, use-restricted license, and withheld private split lower the risk | V4 (Direct prompt injection) | R2 (Wrong instruction following), R5 (Private data leakage), R6 (Unauthorized actions) |
-| [ASB](detailed/asb.md) | Fair: ollama works but requires 2 code fixes (conda, judge) and 1 workaround (ChromaDB); incomplete requirements.txt; serial scheduler makes large runs slow | Fair: data-driven for new tools and agents; defense changes need deep code reading; no developer docs | Fair: clear ASR output; simulated tools reduce realism; no trajectory viewer; binary scoring only | Poor: 20 total commits; last commit 2026-04-17; 3 open issues with no maintainer response; incomplete dependencies | Caution: concrete harmful instructions (crypto mining, credential theft); fully simulated tools; MIT with no use restriction; non-aggressive subset available | V1 (Indirect prompt injection), V4 (Direct prompt injection), V6 (Memory poisoning) | R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained data flow), R5 (Private data leakage), R6 (Unauthorized actions) |
+| [AgentHarm](agentharm/report.md) | High: does not require Docker, VM, or web server; synthetic tools; local ollama inference only | High: modular; add tools, grading, agents, or prompts one folder at a time; documented | Good: clear score breakdown and trajectory viewer; jailbreak template not shipped | Excellent: very active repo (HEAD commit 2026-08-10); one small dependency fix needed | Caution: real harmful prompts in 8 categories; synthetic tools, use-restricted license, and withheld private split lower the risk | V4 (Direct prompt injection) | R2 (Wrong instruction following), R5 (Private data leakage), R6 (Unintended/unauthorized actions) |
+| [ASB](asb/report.md) | Fair: ollama works but requires 2 code fixes (conda, judge) and 1 workaround (ChromaDB); incomplete requirements.txt; serial scheduler makes large runs slow | Fair: data-driven for new tools and agents; defense changes need deep code reading; no developer docs | Fair: clear ASR output; simulated tools reduce realism; no trajectory viewer; binary scoring only | Poor: 20 total commits; last commit 2026-04-17; 3 open issues with no maintainer response; incomplete dependencies | Caution: concrete harmful instructions (crypto mining, credential theft); fully simulated tools; MIT with no use restriction; non-aggressive subset available | V1 (Indirect prompt injection), V4 (Direct prompt injection), V6 (Memory poisoning) | R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions) |
+| [AgentDojo](agentdojo/report.md) | High: simulated in-memory tools; 2 small code fixes needed (timeout, Pydantic); ollama via openai-compatible provider | High: extensible pipeline API for custom agents and defenses; register new attacks, suites, and injection tasks independently | Good: structured JSON results with full message traces; dual utility/security scoring; pipeline API supports defense experiments | Good: NeurIPS 2024; active SPYLab repo; published on PyPI (v0.1.35); 2 code fixes needed | Caution: operational injection techniques (financial fraud, data theft, unauthorized deletion); simulated state; formulaic injection templates reduce misuse risk | V1 (Indirect prompt injection) | R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions), R7 (Denial-of-service) |
 
 ## Score legend
 
@@ -29,7 +30,7 @@ The report uses four words to rate a cell:
   (`gpt-oss:120b` 0.93, `qwen3-coder:30b` 0.61, `qwen3:14b` 0.26). So the smallest model is
   the most harmful overall (harm score 0.49), and the largest model is the safest (harm score
   0.125). But the largest model over-refuses 45% of benign tasks, which hurts its usefulness.
-  The mid-size model is the most balanced. See `detailed/agentharm.md`.
+  The mid-size model is the most balanced. See `agentharm/report.md`.
 
 - **ASB**: ASB benchmarks attacks and defenses on 10 scenario-specific LLM agents. It is a
   custom Python framework (not Inspect). It supports ollama via the `ollama` Python client,
@@ -39,7 +40,19 @@ The report uses four words to rate a cell:
   Refusal 2.5%), and `gpt-oss:120b` was vulnerable but less so (ASR 87.0%, Refusal 14.0%).
   The framework is less mature than AgentHarm: 20 commits, incomplete dependencies, no
   trajectory viewer, and no developer documentation. The dataset is ungated with concrete
-  attack instructions. See `detailed/asb.md`.
+  attack instructions. See `asb/report.md`.
+
+- **AgentDojo**: AgentDojo evaluates prompt injection attacks on tool-calling LLM agents. It
+  injects attacker goals into the environment data (emails, bills, messages) that the agent
+  reads through tool calls. The benchmark scores utility (task completion) and security
+  (injection resistance) independently. Two code fixes were needed: an OpenAI client timeout
+  for reasoning models and a Pydantic forward reference for cached result loading. The reduced
+  benchmark (105 of 949 attack pairs, `important_instructions` attack) shows that all three
+  models are highly vulnerable to indirect prompt injection. Combined security ranges from
+  34.3% to 45.7%. The utility-security tradeoff is the core finding: without explicit defense
+  logic in the agent pipeline, prompt injection succeeds at high rates regardless of model
+  size. AgentDojo's extensible pipeline API makes it the strongest tool for teaching defense
+  construction. See `agentdojo/report.md`.
 
 ## Model benchmarks vs. agent security testing
 
@@ -81,16 +94,6 @@ cannot evaluate a student-built defense.
 
 ## Test harness
 
-All tools use the shared ollama server at `http://circinus-44.ics.uci.edu:48763`. The agent
-models under test are `gpt-oss:120b` (large), `qwen3-coder:30b` (mid), and `qwen3:14b`
-(small). The Inspect ollama recipe is in the `agentic-tool-eval` skill.
-
-## Status
-
-- AgentHarm: complete. The setup, the validation, and the full `test_public` run (both tasks,
-  all three models, 1056 samples, about 14.5 hours) are done. The detailed report holds the
-  full six-row results table and the cross-model analysis.
-- ASB: complete. Setup required 3 code fixes. Quick validation ran 3 models with 3 DPI attack
-  types (9 test runs). Full runs done: `qwen3:14b` (400 tasks, 8h 33m), `qwen3-coder:30b`
-  (100 tasks, 1h 15m), `gpt-oss:120b` (100 tasks, 58m). Reports are final.
-- Next tool in the survey (not started): AgentDojo.
+All tools use the shared ollama server at `http://circinus-44.ics.uci.edu:48763`.
+The agent models under test are `gpt-oss:120b` (large), `qwen3-coder:30b` (mid), and `qwen3:14b`
+(small).

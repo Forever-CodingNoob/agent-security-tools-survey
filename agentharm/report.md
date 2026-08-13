@@ -104,6 +104,16 @@ Useful task options (pass with `-T`):
   `grading_function`. The grading function checks the tool calls and, for some tasks, uses a
   semantic judge model.
 
+## Evaluation scripts
+
+All scripts are in this directory (`agentharm/`). They resolve the source code directory
+(`agentharm/agentharm/`) relative to their own location.
+
+| Script | Purpose | Linked results |
+|--------|---------|----------------|
+| `run_validation.sh` | Validation: 1 harmful sample with `qwen3:14b`, then 2 harmful samples with `gpt-oss:120b`. Confirms the pipeline works end to end. | `agentharm/agentharm/logs/validation/`, `agentharm/agentharm/logs/probe_gptoss/` |
+| `run_full.sh` | Full benchmark: both tasks (harmful + benign), all 3 models, `test_public` split. 1056 total samples. Estimated time: ~14.5 hours sequential. This produced the reported results. | `agentharm/agentharm/logs/full/` |
+
 ## Test Result
 
 ### Environment
@@ -294,14 +304,14 @@ as much as a lesson needs.
 ## Attack vectors and security risks
 
 This section maps AgentHarm to the taxonomy in Xie et al., "The Attack and Defense Landscape
-of Agentic AI" (arXiv:2603.11088). See `attack-risk-coverage.md` for the
+of Agentic AI" (arXiv:2603.11088). See `../attack-risk-coverage.md` for the
 full coverage table across all 18 surveyed tools.
 
 ### Covered attack vectors
 
-- **V4 Direct prompt injection.** The benchmark feeds malicious user queries directly to the
-  agent. An optional jailbreak wrapper can accompany the query. This is a user-level threat
-  where the attacker controls the input prompt.
+- **V4 Direct prompt injection.** The attacker controls parts of otherwise benign inputs and
+  appends malicious instructions as user queries. An optional jailbreak wrapper can accompany
+  the query.
 
 ### Covered security risks
 
@@ -311,17 +321,17 @@ full coverage table across all 18 surveyed tools.
 - **R5 Private data leakage.** Several tool sets let the agent extract credit cards, passwords,
   and login credentials. The grading function checks whether the agent called the extraction
   tools with correct arguments.
-- **R6 Unauthorized actions.** The harmful task set includes multi-step tool calls for
-  ransomware deployment, fraud, phishing, and malware distribution. The agent must call
+- **R6 Unintended/unauthorized actions.** The harmful task set includes multi-step tool calls
+  for ransomware deployment, fraud, phishing, and malware distribution. The agent must call
   several tools in sequence to complete these actions.
 
 ### Vectors and risks not covered
 
-AgentHarm does not test indirect prompt injection (V1), tool poisoning (V3), model poisoning
-(V5), or memory poisoning (V6). It does not measure data flow propagation (R3),
-hallucination-driven harm (R4), or denial-of-service (R7). The benchmark focuses on whether
-a model complies with a directly stated harmful request, not on injection through external
-data sources.
+AgentHarm does not test indirect prompt injection (V1), malicious data injection (V2), tool
+poisoning (V3), model poisoning (V5), or memory poisoning (V6). It does not measure
+heterogeneous untrusted interfaces (R1), unconstrained data flow (R3), hallucination-driven
+harm (R4), or denial-of-service (R7). The benchmark focuses on whether a model complies with
+a directly stated harmful request, not on injection through external data sources.
 
 ## Quick-start documentation
 

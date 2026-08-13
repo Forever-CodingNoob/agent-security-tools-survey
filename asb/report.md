@@ -162,6 +162,22 @@ The tools are simulated. `SimulatedTool.run()` returns the `expected_achivement`
 `AttackerTool.run()` returns a confirmation that the attack goal was reached. No real API
 calls occur.
 
+## Evaluation scripts
+
+All scripts are in this directory (`asb/`). They resolve the source code directory
+(`asb/asb/`) relative to their own location.
+
+| Script | Purpose | Linked results |
+|--------|---------|----------------|
+| `run_validation.sh` | Quick validation: 1 agent, 1 attacker tool, 3 DPI attack types, 3 models. Confirms the pipeline works end to end. | `asb/asb/logs/test_*.csv` |
+| `run_full.sh` | Full evaluation: naive DPI, all 400 attacker tools, all 3 models. Use this to reproduce or re-run the complete experiment. Estimated time: ~17.5 hours total. | `asb/asb/logs/dpi/full_*_naive.csv` |
+| `run_subset_models.sh` | Subset benchmark: 100-task subsets for `qwen3-coder:30b` and `gpt-oss:120b` only (naive DPI). This produced the reported results for the two larger models. | `asb/asb/logs/dpi/full_qwen3_coder_30b_naive.csv`, `asb/asb/logs/dpi/full_gpt_oss_120b_naive.csv` |
+| `run_remaining_models.sh` | Full 400-task benchmark for `qwen3-coder:30b` and `gpt-oss:120b` only (naive DPI). Superseded by `run_subset_models.sh` to keep run time under 2 hours per model. | (not used in final run) |
+
+The `qwen3:14b` reported results (400 tasks) were produced by a command-line invocation
+equivalent to what `run_full.sh` does for that model. Results are at
+`asb/asb/logs/dpi/full_qwen3_14b_naive.csv`.
+
 ## Test Result
 
 ### Environment
@@ -170,8 +186,8 @@ calls occur.
 - Agent models: `qwen3:14b` (small), `qwen3-coder:30b` (mid), `gpt-oss:120b` (large)
 - Judge model: `qwen3:14b` (held constant)
 - Framework version: commit `1f561dc` (2026-04-17)
-- Two code fixes applied: conda fallback in `interact.py`, judge env vars in
-  `main_attacker.py`
+- Two code fixes applied: conda fallback in `asb/asb/pyopenagi/agents/interact.py`, judge env vars in
+  `asb/asb/main_attacker.py`
 
 ### Quick validation (test data, 1 agent, 1 attacker tool, 3 attack types)
 
@@ -370,7 +386,7 @@ attack language.
 ## Attack vectors and security risks
 
 This section maps ASB to the taxonomy in Xie et al., "The Attack and Defense Landscape of
-Agentic AI" (arXiv:2603.11088). See `attack-risk-coverage.md` for the
+Agentic AI" (arXiv:2603.11088). See `../attack-risk-coverage.md` for the
 full coverage table across all 18 surveyed tools.
 
 ### Covered attack vectors
@@ -379,8 +395,8 @@ full coverage table across all 18 surveyed tools.
   appends malicious instructions to tool output strings. The agent reads the injected text as
   part of a tool result, not as a direct user message.
 - **V4 Direct prompt injection.** The DPI attack (`--direct_prompt_injection`) appends
-  malicious instructions to the user query. The agent receives the attack text as part of its
-  input prompt.
+  malicious instructions to the user query. The attacker controls parts of otherwise benign
+  inputs.
 - **V6 Memory poisoning.** The Plan-of-Thought (PoT) attack injects malicious plans into
   the ChromaDB workflow store. The agent retrieves a poisoned plan during retrieval-augmented
   generation and follows it.
@@ -393,20 +409,20 @@ full coverage table across all 18 surveyed tools.
 - **R2 Wrong instruction following.** The ASR metric directly measures how often the agent
   follows the attacker's injected instruction instead of the legitimate task. The benchmark
   tests this across 13 LLMs and four attack types.
-- **R3 Unconstrained data flow.** An injection in one component (for example, a tool
+- **R3 Unconstrained/unsafe data flow.** An injection in one component (for example, a tool
   observation) propagates through the agent's reasoning into tool invocations. The benchmark
   does not isolate data flows between components.
 - **R5 Private data leakage.** The attacker tools include functions that exfiltrate financial
   and patient data. When the agent follows the injected instruction, it calls these tools with
   sensitive arguments.
-- **R6 Unauthorized actions.** The 400 attacker tools test actions such as transaction
-  duplication, privilege escalation, and data tampering. The agent executes these actions when
-  it follows the injected instruction.
+- **R6 Unintended/unauthorized actions.** The 400 attacker tools test actions such as
+  transaction duplication, privilege escalation, and data tampering. The agent executes these
+  actions when it follows the injected instruction.
 
 ### Vectors and risks not covered
 
-ASB does not test tool poisoning (V3), model weight poisoning (V5), or malicious data
-injection (V2). It does not measure hallucination-driven harm (R4) or denial-of-service (R7).
+ASB does not test malicious data injection (V2), tool poisoning (V3), or model weight
+poisoning (V5). It does not measure hallucination-driven harm (R4) or denial-of-service (R7).
 The PoT Backdoor Attack manipulates the system prompt with trigger-activated examples, but it
 does not modify model weights, so it does not qualify as V5 under the taxonomy definition.
 
