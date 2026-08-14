@@ -1,7 +1,7 @@
 # Setup and Installation
 
 
-## Setting up Olama
+## Setting up Ollama
 ### 0. Prerequisite
 A server with enough GPU computation power.
 
@@ -53,7 +53,7 @@ Let's say you are to run conduct the evaluations on 3 models: `qwen3:14b`, `qwen
    ```
 
    
-## Setting up Olama (for OpenGPU Cluster Only)
+## Setting up Ollama (for OpenGPU Cluster Only)
 
 ### Installation
 Ollama (currently v0.23.1) is already installed on the OpenGPU cluster, yay!
