@@ -24,7 +24,7 @@ A server with enough GPU computation power.
    ```
 
 ### Start the Server 
-To start Ollama, execute [`scripts/ollama.sbatch`](/scripts/ollama.sbatch) on the machine intended to run Ollama. You should adjuct the environment variables set in the script (e.g., `OLLAMA_HOST`, `OLLAMA_MODELS`, and `OLLAMA_CONTEXT_LENGTH`) based on your needs.
+To start Ollama, execute [`scripts/ollama.sbatch`](../scripts/ollama.sbatch) on the machine intended to run Ollama. You should adjuct the environment variables set in the script (e.g., `OLLAMA_HOST`, `OLLAMA_MODELS`, and `OLLAMA_CONTEXT_LENGTH`) based on your needs.
 
 
 ### <a id="my-custom-anchor"></a>Pull Models
