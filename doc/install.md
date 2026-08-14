@@ -29,7 +29,7 @@ To start Ollama, execute [`scripts/ollama.sbatch`](scripts/ollama.sbatch) on the
 
 ### <a id="my-custom-anchor"></a>Pull Models
 
-Let's say you are to run conduct the evaluations on 3 models: `qwen3:14b`, `qwen3-coder:30b`, and `gpt-oss:120b`, exactly the same as what we used in our experiments.
+Let's say you are to conduct the evaluations on 3 models: `qwen3:14b`, `qwen3-coder:30b`, and `gpt-oss:120b`, exactly the same as what we used in our experiments.
 1. Have Ollama pull them one by one via Ollama's API from ANY machine:
    ```sh
    for model in 'qwen3:14b' 'qwen3-coder:30b' 'gpt-oss:120b'; do
