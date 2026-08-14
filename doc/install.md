@@ -53,7 +53,7 @@ Let's say you are to run conduct the evaluations on 3 models: `qwen3:14b`, `qwen
    ```
 
    
-## Setting up Olama (For OpenGPU Cluster Only)
+## Setting up Olama (for OpenGPU Cluster Only)
 
 ### Installation
 Ollama (currently v0.23.1) is already installed on the OpenGPU cluster, yay!
