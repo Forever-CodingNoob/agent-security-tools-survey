@@ -2,7 +2,7 @@
 
 
 ## Setting up Ollama
-### 0. Prerequisite
+### Prerequisite
 A server with enough GPU computation power.
 
 ### Installation
