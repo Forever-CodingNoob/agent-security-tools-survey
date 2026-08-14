@@ -65,7 +65,7 @@ To start Ollama, execute [`scripts/ollama.sbatch`](scripts/ollama.sbatch) on the
 
 ### Pull Models
 
-See [Puul Models](#my-custom-anchor).
+See [Pull Models](#my-custom-anchor).
 
 
 
