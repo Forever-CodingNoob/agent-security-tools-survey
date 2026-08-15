@@ -24,7 +24,7 @@ A server with enough GPU computation power.
    ```
 
 ### Start the Server 
-To start Ollama, execute [`scripts/ollama.sbatch`](../scripts/ollama.sbatch) on the machine intended to run Ollama. You should adjuct the environment variables set in the script (e.g., `OLLAMA_HOST`, `OLLAMA_MODELS`, and `OLLAMA_CONTEXT_LENGTH`) based on your needs.
+To start Ollama, execute [`scripts/ollama.sbatch`](../scripts/ollama.sbatch) on the machine intended to run Ollama. You should adjust the environment variables set in the script (e.g., `OLLAMA_HOST`, `OLLAMA_MODELS`, and `OLLAMA_CONTEXT_LENGTH`) based on your needs.
 
 
 ### <a id="my-custom-anchor"></a>Pull Models
@@ -58,14 +58,29 @@ Let's say you are to conduct the evaluations on 3 models: `qwen3:14b`, `qwen3-co
 ### Installation
 Ollama (currently v0.23.1) is already installed on the OpenGPU cluster, yay!
 
-### Start the Server 
-To start Ollama, execute [`scripts/ollama.sbatch`](scripts/ollama.sbatch) on the [OpenLab cluster](https://wiki.ics.uci.edu/doku.php/instructional_support:openlab). You should adjuct the environment variables (e.g., `OLLAMA_HOST`, `OLLAMA_MODELS`, and `OLLAMA_CONTEXT_LENGTH`) and `SBATCH` flags (e.g., `--time`, `--mem`, and `-w`) set in the script based on your needs.
+### Start the Server as a Slurm Job
 
-**You may want to set the IP address of `OLLAMA_HOST` to `0.0.0.0` if you want the Ollama server to be accessible to all devides that can access korn/poison.** Alternatively, for those concerning security, you may as well have Ollama server listen only on the lookback interface by setting the IP address of `OLLAMA_HOST` to `127.0.0.1`, and set up SSH tunneling afterwards.
+1. To submit to Slurm a job that runs Ollama, execute
+   ```sh
+   sbatch scripts/ollama.sbatch
+   ```
+   on (any node of) the [OpenLab cluster](https://wiki.ics.uci.edu/doku.php/instructional_support:openlab). You should adjust the environment variables (e.g., `OLLAMA_HOST`, `OLLAMA_MODELS`, and `OLLAMA_CONTEXT_LENGTH`) and `SBATCH` flags (e.g., `--time`, `--mem`, and `-w`) set in the script based on your needs.  
+(**You may want to set the IP address of `OLLAMA_HOST` to `0.0.0.0` if you want the Ollama server to be accessible to all devides that can access korn/poison.** Alternatively, for those concerning security, you may as well have Ollama server listen only on the lookback interface by setting the IP address of `OLLAMA_HOST` to `127.0.0.1`, and set up SSH tunneling afterwards.)
+2. To find the job state and the node on which it is running, run
+   ```sh
+   squeue -u $USER
+   # JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+   # <job_id> opengpu.p   <job_name> <user>  R <elapsed_time>      1 korn
+   ```
 
 ### Pull Models
 
 See [Pull Models](#my-custom-anchor).
 
 
-
+### Shut down the Server
+To stop the server early, run either of the following:
+```sh
+scancel <job_id>
+scancel -u $USER -n <job_name>
+```
