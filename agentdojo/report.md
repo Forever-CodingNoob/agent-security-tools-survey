@@ -33,11 +33,12 @@ The tool uses pip inside a virtual environment. Do these steps:
    pip install -e .
    ```
 
-3. Create a `.env` file. Point it at the ollama server.
+3. Set the environment variables that point at your ollama server. The evaluation scripts
+   fall back to `http://korn.ics.uci.edu:48763/v1` if these variables are unset.
 
    ```bash
-   OPENAI_COMPATIBLE_BASE_URL=http://circinus-44.ics.uci.edu:48763/v1
-   OPENAI_COMPATIBLE_API_KEY=ollama
+   export OPENAI_COMPATIBLE_BASE_URL=http://korn.ics.uci.edu:48763/v1
+   export OPENAI_COMPATIBLE_API_KEY=ollama
    ```
 
 4. **Fix 1: OpenAI client timeout.** The default timeout (10 minutes) is too short for
@@ -156,8 +157,8 @@ All scripts are in this directory (`agentdojo/`). They resolve the source code d
 
 | Script | Purpose | Linked results |
 |--------|---------|----------------|
-| `run_full_benchmark.sh` | Full evaluation: Phase 1 baseline (97 tasks) + Phase 2 attack (all 949 pairs), all 3 models. Use this to reproduce the complete experiment. Estimated time: ~60 h for `qwen3:14b`, ~7 h for `qwen3-coder:30b`, ~10 h for `gpt-oss:120b`. | (not used in the reported run) |
-| `run_reduced_benchmark.sh` | Reduced benchmark: Phase 1 baseline (97 tasks) + Phase 2 attack (105 pairs, 3 user tasks per suite), all 3 models. Handles the `gpt-oss:120b` workspace task substitution (user_task_20 instead of user_task_26). This produced the reported results. | `agentdojo/agentdojo/runs_qwen3_14b/`, `agentdojo/agentdojo/runs_qwen3-coder_30b/`, `agentdojo/agentdojo/runs_gpt-oss_120b/` |
+| `run_full_benchmark.sh` | Full evaluation: Phase 1 baseline (97 tasks) + Phase 2 attack (all 949 pairs), all 3 models. Prints a per-task timing summary at the end and writes `agentdojo/timing_summary.csv`. Use this to reproduce the complete experiment. Estimated time: ~60 h for `qwen3:14b`, ~7 h for `qwen3-coder:30b`, ~10 h for `gpt-oss:120b`. | (not used in the reported run) |
+| `run_reduced_benchmark.sh` | Reduced benchmark: Phase 1 baseline (97 tasks) + Phase 2 attack (105 pairs, 3 user tasks per suite), all 3 models. Handles the `gpt-oss:120b` workspace task substitution (user_task_20 instead of user_task_26). Prints a per-task timing summary at the end and writes `agentdojo/timing_summary.csv`. This produced the reported results. | `agentdojo/agentdojo/runs_qwen3_14b/`, `agentdojo/agentdojo/runs_qwen3-coder_30b/`, `agentdojo/agentdojo/runs_gpt-oss_120b/` |
 | `restart_gptoss.sh` | Restart attack phase for `gpt-oss:120b` with user_task_26 for workspace. Failed due to JSON malformation. Kept as a record. | (superseded) |
 | `restart_gptoss2.sh` | Restart attack phase for `gpt-oss:120b` with user_task_30 for workspace. Also failed. Final working configuration used user_task_20 (handled by `run_reduced_benchmark.sh`). | (superseded) |
 | `extract_results.py` | Parse JSON result files and print per-suite averages. Usage: `python extract_results.py <logdir> [model_dir]`. | (post-processing) |
@@ -166,7 +167,7 @@ All scripts are in this directory (`agentdojo/`). They resolve the source code d
 
 ### Environment
 
-- Ollama server: `http://circinus-44.ics.uci.edu:48763`, 4 GPUs (sharded, sequential)
+- Ollama server: `http://korn.ics.uci.edu:48763`, 4 GPUs (sharded, sequential)
 - Agent models: `qwen3:14b` (small), `qwen3-coder:30b` (mid), `gpt-oss:120b` (large)
 - Framework version: v0.1.35
 - Two code fixes applied: timeout in `agentdojo/agentdojo/src/agentdojo/agent_pipeline/agent_pipeline.py`, Pydantic in `agentdojo/agentdojo/src/agentdojo/benchmark.py`

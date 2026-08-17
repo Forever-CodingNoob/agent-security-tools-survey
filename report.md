@@ -94,6 +94,6 @@ cannot evaluate a student-built defense.
 
 ## Test harness
 
-All tools use the shared ollama server at `http://circinus-44.ics.uci.edu:48763`.
+All tools use the shared ollama server at `http://korn.ics.uci.edu:48763`.
 The agent models under test are `gpt-oss:120b` (large), `qwen3-coder:30b` (mid), and `qwen3:14b`
 (small).

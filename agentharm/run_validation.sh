@@ -7,8 +7,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR/agentharm"
 source .venv/bin/activate
 
-export OLLAMA_BASE_URL=http://circinus-44.ics.uci.edu:48763/v1
-export OLLAMA_API_KEY=ollama
+export OLLAMA_BASE_URL="${OLLAMA_BASE_URL:-http://korn.ics.uci.edu:48763/v1}"
+export OLLAMA_API_KEY="${OLLAMA_API_KEY:-ollama}"
 
 echo "=== Validation run: 1 harmful sample, qwen3:14b ==="
 echo "Start: $(date)"

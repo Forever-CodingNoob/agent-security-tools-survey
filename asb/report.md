@@ -86,17 +86,57 @@ The tool uses pip with a requirements.txt file. Do these steps:
    # ... later: model=judge_model
    ```
 
-   Then set the environment variables:
+   Then set the environment variables. The evaluation scripts fall back to
+   `http://korn.ics.uci.edu:48763` if the server variables are unset.
 
    ```bash
-   export JUDGE_BASE_URL=http://circinus-44.ics.uci.edu:48763/v1
+   export OLLAMA_HOST=http://korn.ics.uci.edu:48763
+   export JUDGE_BASE_URL=http://korn.ics.uci.edu:48763/v1
    export JUDGE_API_KEY=ollama
    export JUDGE_MODEL=qwen3:14b
+   export OPENAI_API_KEY=ollama
    ```
 
 6. The memory attack path uses `OpenAIEmbeddings` from LangChain for ChromaDB. Even when you
    do not run memory attacks, the code opens the `memory_db/chroma_db` directory if it exists.
    Pass `--database /tmp/nonexistent_db` to skip ChromaDB initialization on non-memory runs.
+
+7. The original code does not record per-task wall-clock duration. Apply this patch in
+   `asb/main_attacker.py` to add a `Duration` column (seconds) to the CSV output.
+
+   a. Add `time` to the import line:
+
+      ```python
+      # BEFORE:
+      import torch, csv
+
+      # AFTER:
+      import time, torch, csv
+      ```
+
+   b. Before the agent submit loop (near `for _, agent_info in tasks_path.iterrows():`), add a
+      dict to store start times:
+
+      ```python
+      agent_start_times = {}
+      ```
+
+   c. After each `agent_thread_pool.submit(...)` call, record the start time:
+
+      ```python
+      agent_start_times[agent_attack] = time.time()
+      ```
+
+   d. In the `as_completed` loop, compute the duration before processing the result:
+
+      ```python
+      for r in as_completed(agent_tasks):
+          duration = time.time() - agent_start_times[r]
+          res = r.result()
+      ```
+
+   e. Add `"Duration"` to the CSV header (after `"Aggressive"`, before `"messages"`) and add
+      `f"{duration:.2f}"` in the same position in the data row.
 
 ## Usage
 
@@ -123,7 +163,7 @@ python main_attacker.py \
 Set `OLLAMA_HOST` to point at a remote ollama server:
 
 ```bash
-export OLLAMA_HOST=http://circinus-44.ics.uci.edu:48763
+export OLLAMA_HOST=http://korn.ics.uci.edu:48763
 ```
 
 The YAML config file controls the model list, attack type list, and injection method. The
@@ -170,7 +210,7 @@ All scripts are in this directory (`asb/`). They resolve the source code directo
 | Script | Purpose | Linked results |
 |--------|---------|----------------|
 | `run_validation.sh` | Quick validation: 1 agent, 1 attacker tool, 3 DPI attack types, 3 models. Confirms the pipeline works end to end. | `asb/asb/logs/test_*.csv` |
-| `run_full.sh` | Full evaluation: naive DPI, all 400 attacker tools, all 3 models. Use this to reproduce or re-run the complete experiment. Estimated time: ~17.5 hours total. | `asb/asb/logs/dpi/full_*_naive.csv` |
+| `run_full.sh` | Full evaluation: naive DPI, all 400 attacker tools, all 3 models. Prints a per-task timing summary at the end and writes `asb/timing_summary.csv`. Use this to reproduce or re-run the complete experiment. Estimated time: ~17.5 hours total. | `asb/asb/logs/dpi/full_*_naive.csv` |
 | `run_subset_models.sh` | Subset benchmark: 100-task subsets for `qwen3-coder:30b` and `gpt-oss:120b` only (naive DPI). This produced the reported results for the two larger models. | `asb/asb/logs/dpi/full_qwen3_coder_30b_naive.csv`, `asb/asb/logs/dpi/full_gpt_oss_120b_naive.csv` |
 | `run_remaining_models.sh` | Full 400-task benchmark for `qwen3-coder:30b` and `gpt-oss:120b` only (naive DPI). Superseded by `run_subset_models.sh` to keep run time under 2 hours per model. | (not used in final run) |
 
@@ -182,7 +222,7 @@ equivalent to what `run_full.sh` does for that model. Results are at
 
 ### Environment
 
-- Ollama server: `http://circinus-44.ics.uci.edu:48763`, 4 GPUs (sharded, sequential)
+- Ollama server: `http://korn.ics.uci.edu:48763`, 4 GPUs (sharded, sequential)
 - Agent models: `qwen3:14b` (small), `qwen3-coder:30b` (mid), `gpt-oss:120b` (large)
 - Judge model: `qwen3:14b` (held constant)
 - Framework version: commit `1f561dc` (2026-04-17)
@@ -433,8 +473,8 @@ Run one DPI attack on one task with the ollama server:
 ```bash
 cd ASB
 source .venv/bin/activate
-export OLLAMA_HOST=http://circinus-44.ics.uci.edu:48763
-export JUDGE_BASE_URL=http://circinus-44.ics.uci.edu:48763/v1
+export OLLAMA_HOST=http://korn.ics.uci.edu:48763
+export JUDGE_BASE_URL=http://korn.ics.uci.edu:48763/v1
 export JUDGE_API_KEY=ollama
 export JUDGE_MODEL=qwen3:14b
 

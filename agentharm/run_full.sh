@@ -11,8 +11,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR/agentharm"
 source .venv/bin/activate
 
-export OLLAMA_BASE_URL=http://circinus-44.ics.uci.edu:48763/v1
-export OLLAMA_API_KEY=ollama
+export OLLAMA_BASE_URL="${OLLAMA_BASE_URL:-http://korn.ics.uci.edu:48763/v1}"
+export OLLAMA_API_KEY="${OLLAMA_API_KEY:-ollama}"
 
 JUDGE_MODEL="ollama/qwen3:14b"
 
@@ -59,3 +59,41 @@ done
 echo ""
 echo "=== All done: $(date) ==="
 echo "View results: cd $SCRIPT_DIR/agentharm && uv run inspect view"
+
+echo ""
+echo "=== Per-task timing summary ==="
+"$SCRIPT_DIR/agentharm/.venv/bin/python3" -c "
+import csv, glob, os
+
+from inspect_ai.log import read_eval_log
+
+rows = []
+for f in sorted(glob.glob('logs/full/*/*.eval')):
+    subdir = os.path.basename(os.path.dirname(f))
+    log = read_eval_log(f)
+    model = str(log.eval.model) if log.eval else ''
+    task = str(log.eval.task) if log.eval else ''
+    for s in (log.samples or []):
+        rows.append({
+            'subdir': subdir,
+            'model': model,
+            'task': task,
+            'sample_id': str(s.id),
+            'total_time_s': getattr(s, 'total_time', 0) or 0,
+            'working_time_s': getattr(s, 'working_time', 0) or 0,
+        })
+
+rows.sort(key=lambda r: r['total_time_s'], reverse=True)
+
+out = '../timing_summary.csv'
+with open(out, 'w', newline='') as f:
+    w = csv.DictWriter(f, fieldnames=['subdir','model','task','sample_id','total_time_s','working_time_s'])
+    w.writeheader()
+    w.writerows(rows)
+
+print(f'Wrote {len(rows)} rows to {out}')
+print(f'Top 10 by total_time:')
+print(f'{\"subdir\":>20} {\"sample_id\":>12} {\"total_time_s\":>12} {\"working_time_s\":>14}')
+for r in rows[:10]:
+    print(f'{r[\"subdir\"]:>20} {r[\"sample_id\"]:>12} {r[\"total_time_s\"]:>12.1f} {r[\"working_time_s\"]:>14.1f}')
+"

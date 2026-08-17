@@ -1,0 +1,9 @@
+[submodule "agentdojo/agentdojo"]
+	path = agentdojo/agentdojo
+	url = git@github.com:ethz-spylab/agentdojo.git
+[submodule "agentharm/agentharm"]
+	path = agentharm/agentharm
+	url = https://github.com/UKGovernmentBEIS/inspect_evals.git
+[submodule "asb/asb"]
+	path = asb/asb
+	url = https://github.com/agiresearch/ASB.git

@@ -5,8 +5,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR/agentdojo"
 source .venv/bin/activate
 
-export OPENAI_COMPATIBLE_BASE_URL=http://circinus-44.ics.uci.edu:48763/v1
-export OPENAI_COMPATIBLE_API_KEY=ollama
+export OPENAI_COMPATIBLE_BASE_URL="${OPENAI_COMPATIBLE_BASE_URL:-http://korn.ics.uci.edu:48763/v1}"
+export OPENAI_COMPATIBLE_API_KEY="${OPENAI_COMPATIBLE_API_KEY:-ollama}"
 
 MODEL="gpt-oss:120b"
 ATTACK="important_instructions"

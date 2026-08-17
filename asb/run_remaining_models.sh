@@ -3,11 +3,11 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR/asb"
 source .venv/bin/activate
-export OLLAMA_HOST=http://circinus-44.ics.uci.edu:48763
-export JUDGE_BASE_URL=http://circinus-44.ics.uci.edu:48763/v1
-export JUDGE_API_KEY=ollama
-export JUDGE_MODEL=qwen3:14b
-export OPENAI_API_KEY=ollama
+export OLLAMA_HOST="${OLLAMA_HOST:-http://korn.ics.uci.edu:48763}"
+export JUDGE_BASE_URL="${JUDGE_BASE_URL:-http://korn.ics.uci.edu:48763/v1}"
+export JUDGE_API_KEY="${JUDGE_API_KEY:-ollama}"
+export JUDGE_MODEL="${JUDGE_MODEL:-qwen3:14b}"
+export OPENAI_API_KEY="${OPENAI_API_KEY:-ollama}"
 
 # This script runs only qwen3-coder:30b and gpt-oss:120b (all 400 tasks each).
 # It assumes qwen3:14b has already finished. For a single script that runs all

@@ -34,11 +34,12 @@ The tool is the `agentharm` eval inside the `inspect_evals` package. Do these st
    uv pip install openai
    ```
 
-4. Create a `.env` file. Point it at the ollama server.
+4. Set the environment variables that point at your ollama server. The evaluation scripts
+   fall back to `http://korn.ics.uci.edu:48763/v1` if these variables are unset.
 
    ```bash
-   OLLAMA_BASE_URL=http://circinus-44.ics.uci.edu:48763/v1
-   OLLAMA_API_KEY=ollama
+   export OLLAMA_BASE_URL=http://korn.ics.uci.edu:48763/v1
+   export OLLAMA_API_KEY=ollama
    ```
 
 The install does not require Docker, a virtual machine, or a web server. The agent tools are
@@ -112,7 +113,7 @@ All scripts are in this directory (`agentharm/`). They resolve the source code d
 | Script | Purpose | Linked results |
 |--------|---------|----------------|
 | `run_validation.sh` | Validation: 1 harmful sample with `qwen3:14b`, then 2 harmful samples with `gpt-oss:120b`. Confirms the pipeline works end to end. | `agentharm/agentharm/logs/validation/`, `agentharm/agentharm/logs/probe_gptoss/` |
-| `run_full.sh` | Full benchmark: both tasks (harmful + benign), all 3 models, `test_public` split. 1056 total samples. Estimated time: ~14.5 hours sequential. This produced the reported results. | `agentharm/agentharm/logs/full/` |
+| `run_full.sh` | Full benchmark: both tasks (harmful + benign), all 3 models, `test_public` split. 1056 total samples. Prints a per-task timing summary at the end and writes `agentharm/timing_summary.csv`. Estimated time: ~14.5 hours sequential. This produced the reported results. | `agentharm/agentharm/logs/full/` |
 
 ## Test Result
 
