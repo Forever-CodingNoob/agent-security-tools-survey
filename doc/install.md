@@ -59,14 +59,17 @@ Let's say you are to conduct the evaluations on 3 models: `qwen3:14b`, `qwen3-co
 Ollama (currently v0.23.1) is already installed on the OpenGPU cluster, yay!
 
 ### Start the Server as a Slurm Job
-
-1. To submit to Slurm a job that runs Ollama, execute
+1. Ensure you have slurm in your ICS Shell environment:
+   ```sh
+   module load slurm
+   ```
+2. To submit to Slurm a job that runs Ollama, execute
    ```sh
    sbatch scripts/ollama.sbatch
    ```
    on (any node of) the [OpenLab cluster](https://wiki.ics.uci.edu/doku.php/instructional_support:openlab). You should adjust the environment variables (e.g., `OLLAMA_HOST`, `OLLAMA_MODELS`, and `OLLAMA_CONTEXT_LENGTH`) and `SBATCH` flags (e.g., `--time`, `--mem`, and `-w`) set in the script based on your needs.  
 (**You may want to set the IP address of `OLLAMA_HOST` to `0.0.0.0` if you want the Ollama server to be accessible to all devides that can access korn/poison.** Alternatively, for those concerning security, you may as well have Ollama server listen only on the lookback interface by setting the IP address of `OLLAMA_HOST` to `127.0.0.1`, and set up SSH tunneling afterwards.)
-2. To find the job state and the node on which it is running, run
+3. To find the job state and the node on which it is running, run
    ```sh
    squeue -u $USER
    # JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
