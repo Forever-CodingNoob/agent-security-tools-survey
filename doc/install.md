@@ -33,7 +33,7 @@ Let's say you are to conduct the evaluations on 3 models: `qwen3:14b`, `qwen3-co
 1. Have Ollama pull them one by one via Ollama's API from ANY machine:
    ```sh
    for model in 'qwen3:14b' 'qwen3-coder:30b' 'gpt-oss:120b'; do
-      curl -s http://<ollama_host>:<ollama:port>/api/pull -d "{\"name\": \"$model\"}";
+      curl -s http://<ollama_host>:<ollama:port>/api/pull -d "{\"model\": \"${model}\"}";
    done
    ```
    where `<ollama_host>:<ollama:port>` is the IP address and port that your Ollama server is hosted and listening to. For example, we used `korn.ics.uci.edu:48763` because our Ollama runs on korn (korn.ics.uci.edu) and listens on port 48763, as configured by the `OLLAMA_HOST` variable in the previous step.
@@ -44,7 +44,7 @@ Let's say you are to conduct the evaluations on 3 models: `qwen3:14b`, `qwen3-co
 3. Force Ollama to load all models in advance with
    ```sh
    for model in 'qwen3:14b' 'qwen3-coder:30b' 'gpt-oss:120b'; do
-      curl -s http://<ollama_host>:<ollama:port>/api/generate -d "{\"name\": \"$model\"}";
+      curl -s http://<ollama_host>:<ollama:port>/api/generate -d "{\"model\": \"${model}\"}";
    done
    ```
 4. Verify that all models are loaded with
