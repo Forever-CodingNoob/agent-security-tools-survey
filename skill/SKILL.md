@@ -83,14 +83,14 @@ Score each tool on these five criteria. Answer the concrete questions for each o
 1. Run the tool with each of the three ollama models as the agent model.
 2. Hold the judge or grader model constant across runs for a fair comparison. Prefer a small
    judge model that co-resides with the agent models, to avoid VRAM thrash.
-3. The ollama server has 4 GPUs, but they act as one accelerator. Every request flows through
-   all 4 GPUs in sequence, because the model is sharded across them. Concurrent requests to
-   the same model batch into shared forward passes. Different models cannot batch together.
-   So run the models sequentially, one model at a time. Do not run different models at once,
-   because they only contend for the same GPUs. To make a run faster, raise the per-model
-   concurrency (`--max-connections`) so same-model requests batch and keep the GPUs busy.
-   Check `GET /api/ps`: if `size_vram` is less than `size`, the model spills to CPU. Then
-   lower the concurrency.
+3. The ollama server has 4 GPUs. The model is sharded across all 4 GPUs, so every request
+   flows through all 4 in sequence. Run the models sequentially, one model at a time.
+   Different models contend for the same GPUs, so parallel model runs slow each other down.
+   The server is configured with `OLLAMA_NUM_PARALLEL=1`, so it processes one request at a
+   time; additional requests queue. `OLLAMA_KEEP_ALIVE=-1` keeps models loaded
+   indefinitely, so there is no reload overhead between requests. The context window is
+   `OLLAMA_CONTEXT_LENGTH=65536`. Check `GET /api/ps`: if `size_vram` is less than `size`,
+   the model spills to CPU and inference slows down.
 4. Capture logs, scores, refusals, and errors for each run.
 
 ## Phase 5: Write evaluation scripts

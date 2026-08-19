@@ -57,7 +57,7 @@ uv run inspect eval inspect_evals/agentharm \
   -T split=test_public \
   -T refusal_judge=ollama/qwen3:14b \
   -T semantic_judge=ollama/qwen3:14b \
-  --max-connections 16
+  --max-connections 1
 
 # Benign behaviors
 uv run inspect eval inspect_evals/agentharm_benign --model ollama/qwen3-coder:30b -T split=test_public
@@ -154,8 +154,7 @@ behavior. Always run a full split before you state a refusal rate.
 ### Full run (complete)
 
 The full run covered both tasks and all three models on `test_public` (176 samples each, 1056
-samples in total). The runner was sequential, one model at a time, with high per-model
-concurrency for batching. The total wall-clock time was about 14.5 hours (2026-08-10 13:34 to
+samples in total). The runner was sequential, one model at a time. The total wall-clock time was about 14.5 hours (2026-08-10 13:34 to
 2026-08-11 04:09).
 
 | Model | Task | avg_score | avg_full_score | avg_refusals | avg_score_non_refusals | Time | Tokens |
@@ -240,9 +239,14 @@ time for each 176-sample run, on the shared ollama server with per-model concurr
 
 The three models together, both tasks, took about 14.5 hours in sequence. `qwen3:14b` was the
 slowest, because it is a reasoning model and it generates long thinking traces (about 100 s
-per sample). `qwen3-coder:30b` was the fastest. High per-model concurrency lowers the time,
-because the server batches same-model requests. The token cost per sample was about 4,000 for
+per sample). `qwen3-coder:30b` was the fastest. The token cost per sample was about 4,000 for
 the small model and 8,000 for the large model, plus the judge calls.
+
+The reported per-sample times were collected with `--max-connections 16`. Because the server
+uses `OLLAMA_NUM_PARALLEL=1` (one request at a time), concurrent samples queued behind each
+other. The per-sample `total_time` therefore includes queue wait time and overestimates how
+long a single task takes in isolation. A rerun with `--max-connections 1` is needed for
+accurate single-task durations.
 
 The judges default to `openai/gpt-4o`. A fully local run must override both judges to ollama
 models. This is a small but necessary step.

@@ -48,7 +48,7 @@ for model in "${MODELS[@]}"; do
           -T split=test_public \
           -T refusal_judge="$JUDGE_MODEL" \
           -T semantic_judge="$JUDGE_MODEL" \
-          --max-connections 16 \
+          --max-connections 1 \
           --log-dir "$log_subdir"
 
         echo "End: $(date)"
