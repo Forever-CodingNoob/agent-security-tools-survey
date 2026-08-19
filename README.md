@@ -21,6 +21,7 @@ Detailed specs:
 + Ollama: version 0.23.1
 + [korn](https://wiki.ics.uci.edu/doku.php/hardware:cluster:opengpu): AMD EPYC 9124 CPU @3Ghz (with 32 logical cores) + 4 x NVIDIA RTX 4000 Ada Generation 20GB GDDR6 GPU + 752 GB RAM
 
+The Ollama server runs as a Slurm job on the `opengpu.p` partition with 4 GPUs and a 7-day time limit. Key settings: `OLLAMA_NUM_PARALLEL=1` (one request at a time; additional requests queue), `OLLAMA_KEEP_ALIVE=-1` (models stay loaded indefinitely), `OLLAMA_CONTEXT_LENGTH=65536`.
 
 ## Evaluation Workflow
 

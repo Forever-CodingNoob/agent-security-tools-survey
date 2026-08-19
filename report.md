@@ -96,6 +96,4 @@ cannot evaluate a student-built defense.
 
 All tools use the shared ollama server at `http://korn.ics.uci.edu:48763`.
 The agent models under test are `gpt-oss:120b` (large), `qwen3-coder:30b` (mid), and `qwen3:14b`
-(small). The server runs as a Slurm job on the `opengpu.p` partition with 4 GPUs. Key settings:
-`OLLAMA_NUM_PARALLEL=1` (one request at a time), `OLLAMA_KEEP_ALIVE=-1` (models stay loaded
-indefinitely), `OLLAMA_CONTEXT_LENGTH=65536`.
+(small).
