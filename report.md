@@ -13,14 +13,107 @@
 
 ## Score legend
 
-The report uses four rating levels:
+Each criterion is scored on a 1 to 3 scale per factor. The criterion average is the mean of its factor scores. For all criteria except Content sensitivity, 3 is the best outcome. For Content sensitivity, 3 means the most harmful content is present.
 
-- **High / Excellent / Good**: the tool scores well on this criterion.
-- **Moderate / Fair**: the tool scores adequately, with some gaps or effort required.
-- **Low**: the tool scores below expectations on this criterion.
-- **Poor**: the tool does not meet the criterion.
+The verdict words map to score ranges:
 
-For Content sensitivity, a higher rating means more harmful content is present. For all other criteria, a higher rating is better.
+| Verdict | Score range |
+|---------|------------|
+| High / Excellent | 2.5 to 3.0 |
+| Good / Active | 2.0 to 2.4 |
+| Moderate / Fair | 1.5 to 1.9 |
+| Low / Poor | 1.0 to 1.4 |
+
+### Factor rubrics
+
+#### Deployability
+
+| Factor | 1 | 2 | 3 |
+|--------|---|---|---|
+| Hardware requirements | Needs specialized hardware beyond a GPU server | Needs GPU server with extra configuration | Runs on standard hardware |
+| Software dependencies | Multiple fixes or workarounds; incomplete dependency list | Mostly complete; a few fixes needed | Installs cleanly with one command or one small fix |
+| API credits | Requires paid API credits | Partial local alternative | Fully local; zero API cost |
+| Gated dataset access | Gated (application, token, approval wait) | Public with restrictions | Open access |
+| Time to complete full eval | Over 24h per model | 2 to 24h per model | Under 2h per model |
+
+#### Extensibility
+
+| Factor | 1 | 2 | 3 |
+|--------|---|---|---|
+| Core modification required | Must modify core code to extend | Some extensions data-driven, others need core changes | All extensions through subclassing, decorators, or config |
+| Extension points documented | No developer documentation | Partial documentation | Documented in code, paper, or README with examples |
+| Changes scoped to one module | Changes spread across multiple files | Partially scoped | Each extension is one file or directory |
+
+#### Maintenance & Support
+
+| Factor | 1 | 2 | 3 |
+|--------|---|---|---|
+| Commit frequency | Under 50 commits; months between clusters | Moderate activity; periodic gaps | Active repository with regular commits |
+| Issue responsiveness | Open issues with no response | Some responses, but delays | Active community with timely responses |
+| Dependencies install cleanly | Multiple fixes or workarounds needed | One fix needed | Installs cleanly |
+
+#### Execution isolation
+
+| Factor | 1 | 2 | 3 |
+|--------|---|---|---|
+| Tool isolation level | Tools interact with real systems | Sandboxed but with some real-system access | Fully simulated, in-memory, or mock tools |
+
+#### Content sensitivity
+
+Higher score = more harmful content present.
+
+| Factor | 1 | 2 | 3 |
+|--------|---|---|---|
+| Harmful content presence | Formulaic or benign | Concrete harmful instructions, not graphic | Real harmful text across multiple categories |
+
+#### Observability
+
+| Factor | 1 | 2 | 3 |
+|--------|---|---|---|
+| Full message sequence | Partial trace | Full trace but unstructured | Full structured trace (prompt, messages, tool calls, results) |
+| Scoring breakdown | Aggregate score only | Per-task score with partial explanation | Per-task breakdown with rationale |
+| Trajectory viewer | No viewer; raw output only | Basic viewer | Structured trajectory browser with message-level detail |
+| Score granularity | Binary (0 or 1) | Few discrete levels | Continuous (0.0 to 1.0) |
+
+#### Experimentability
+
+| Factor | 1 | 2 | 3 |
+|--------|---|---|---|
+| API for custom pipelines | No API for custom pipelines | Limited API | Full pipeline API (subclass, plug in, run) |
+| Run against own agent | Cannot plug in external agent | Possible with adaptation | Designed for user-built agents |
+| Beyond model swap | Model swap only | Some extension beyond model swap | Full extension (attacks, defenses, tasks, scoring) |
+
+## Factor scores
+
+| Criterion | Factor | AgentDojo | ASB | AgentHarm |
+|-----------|--------|-----------|-----|-----------|
+| Deployability | Hardware requirements | 2 | 2 | 2 |
+| Deployability | Software dependencies | 2 | 1 | 3 |
+| Deployability | API credits | 3 | 3 | 3 |
+| Deployability | Gated dataset access | 3 | 3 | 3 |
+| Deployability | Time to complete full eval | 1 | 2 | 2 |
+| **Deployability** | **Average** | **2.2** | **2.2** | **2.6** |
+| Extensibility | Core modification required | 3 | 2 | 3 |
+| Extensibility | Extension points documented | 3 | 1 | 3 |
+| Extensibility | Changes scoped to one module | 3 | 2 | 3 |
+| **Extensibility** | **Average** | **3.0** | **1.7** | **3.0** |
+| Maintenance | Commit frequency | 3 | 1 | 3 |
+| Maintenance | Issue responsiveness | 2 | 1 | 3 |
+| Maintenance | Dependencies install cleanly | 1 | 1 | 2 |
+| **Maintenance** | **Average** | **2.0** | **1.0** | **2.7** |
+| Execution isolation | Tool isolation level | 3 | 3 | 3 |
+| **Execution isolation** | **Average** | **3.0** | **3.0** | **3.0** |
+| Content sensitivity | Harmful content presence | 1 | 2 | 3 |
+| **Content sensitivity** | **Average** | **1.0** | **2.0** | **3.0** |
+| Observability | Full message sequence | 3 | 2 | 3 |
+| Observability | Scoring breakdown | 2 | 2 | 3 |
+| Observability | Trajectory viewer | 1 | 1 | 3 |
+| Observability | Score granularity | 1 | 1 | 3 |
+| **Observability** | **Average** | **1.75** | **1.5** | **3.0** |
+| Experimentability | API for custom pipelines | 3 | 1 | 3 |
+| Experimentability | Run against own agent | 3 | 1 | 3 |
+| Experimentability | Beyond model swap | 3 | 1 | 3 |
+| **Experimentability** | **Average** | **3.0** | **1.0** | **3.0** |
 
 ## Per-tool notes
 

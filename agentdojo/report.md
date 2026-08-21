@@ -334,7 +334,15 @@ The scoring is binary ==per pair==. The overall utility and security percentages
 
 ### Deployability
 
-Verdict: high.
+Verdict: high (2.2/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Hardware requirements | 2/3 | In-memory simulation, but needs GPU server for ollama (gpt-oss:120b needs 4 GPUs) |
+| Software dependencies | 2/3 | pip/uv installable, but three code fixes needed before first run |
+| API credits | 3/3 | Zero cost with local ollama inference |
+| Gated dataset access | 3/3 | MIT license, published on PyPI, dataset bundled in package |
+| Time to complete full eval | 1/3 | 949 pairs per model; 7h (fastest) to 53h (qwen3:14b reasoning) |
 
 Reasons:
 + The benchmark does not require Docker, a virtual machine, or a web environment. The tools operate on in-memory simulated state (email inboxes, calendar entries, bank accounts, chat channels). The only cost is model inference. With the ollama server, the inference cost is local compute, not API credits.
@@ -346,7 +354,13 @@ Reasons:
 
 ### Extensibility
 
-Verdict: strong.
+Verdict: strong (3.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Core modification required | 3/3 | Subclass BasePipelineElement; register attacks with @attack_suite_register decorator |
+| Extension points documented | 3/3 | API documented in codebase and NeurIPS 2024 paper; examples in default suites |
+| Changes scoped to one module | 3/3 | Each extension type (pipeline, attack, suite, injection task) is one file or class |
 
 Reasons:
 + AgentDojo's design separates four extensible and customizable modules:
@@ -361,7 +375,13 @@ Reasons:
 
 ### Maintenance & Support
 
-Verdict: active
+Verdict: active (2.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Commit frequency | 3/3 | Regular commits 2024 to 2025; PyPI v0.1.35; most recent commit Jun 2, 2026 |
+| Issue responsiveness | 2/3 | Active SPYLab repository, but some issues remain open |
+| Dependencies install cleanly | 1/3 | Three code fixes needed; Pydantic forward-reference bug breaks cached result loading |
 
 Reasons:
 + The repository has regular commits, with activity through 2024 and 2025. The package is published on PyPI (`agentdojo==0.1.35`).
@@ -372,7 +392,11 @@ Reasons:
 
 ### Execution isolation
 
-Verdict: high. 
+Verdict: high (3.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Tool isolation level | 3/3 | All tools operate on in-memory Pydantic objects loaded from YAML; environment resets per task |
 
 Reasons:
 + All tools operate on in-memory simulated state. The agent does not send real emails, make real transfers, or delete real files. The environment is a set of Pydantic objects (email inboxes, calendar entries, bank accounts, chat channels) loaded from YAML files at the start of each task. 
@@ -383,14 +407,25 @@ Reasons:
 
 ### Content sensitivity
 
-Verdict: low. 
+Verdict: low (1.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Harmful content presence | 1/3 | Injection templates are formulaic instructions; content is not violent, sexual, or offensive |
 
 Reason: 
 + The dataset does not contain hate speech, sexual content, harassment, or graphic violence.
 
 ### Observability
 
-Veridct: good. 
+Veridct: good (1.75/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Full message sequence | 3/3 | JSON files record system prompt, all messages, tool calls, tool results, and injection text |
+| Scoring breakdown | 2/3 | Binary utility/security per pair; dual score is informative but no per-step explanation |
+| Trajectory viewer | 1/3 | No built-in viewer; student must read raw JSON or write a parser |
+| Score granularity | 1/3 | Binary per pair (0 or 1); overall percentages are averages of binary scores |
 
 Reasons:
 + The result files are structured JSON. 
@@ -404,7 +439,13 @@ Reasons:
 
 ### Experimentability
 
-Verdict: high. 
+Verdict: high (3.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| API for custom pipelines | 3/3 | BasePipelineElement class supports custom input filters, output validators, defense logic |
+| Run against own agent | 3/3 | Student implements pipeline, plugs it in, runs the full benchmark |
+| Beyond model swap | 3/3 | Student can add attacks, suites, and injection tasks without touching core code |
 
 Reasons:
 + The extensible pipeline API lets students implement and compare defense strategies (for example, input sanitization, output filtering, instruction hardening).

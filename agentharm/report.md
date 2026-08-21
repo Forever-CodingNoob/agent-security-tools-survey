@@ -201,7 +201,15 @@ The scoring is graded (0.0 to 1.0) per sample. The overall metrics are averages 
 
 ### Deployability
 
-Verdict: high.
+Verdict: high (2.6/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Hardware requirements | 2/3 | Needs GPU server for ollama; judges default to openai/gpt-4o (override needed for local run) |
+| Software dependencies | 3/3 | uv sync installs dependencies; one fix needed (install openai package for ollama provider) |
+| API credits | 3/3 | Zero cost with ollama after judge override |
+| Gated dataset access | 3/3 | Public dataset on HuggingFace; MIT license with safety-use clause |
+| Time to complete full eval | 2/3 | 176+176 samples per model; three models took 14.5h total; fastest ~18s/sample |
 
 Reasons:
 + The benchmark does not require Docker, a virtual machine, or a web environment. The tools are synthetic, so the agent does not run real actions. The only cost is model inference. With the ollama server, the inference cost is local compute, not API credits.
@@ -213,7 +221,13 @@ Reasons:
 
 ### Extensibility
 
-Verdict: strong.
+Verdict: strong (3.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Core modification required | 3/3 | Add tools in benchmark/harmful_tools/; add grading in harmful_grading_functions.py; add solver in agents/ |
+| Extension points documented | 3/3 | README documents steps and task options; Inspect solver abstraction documented |
+| Changes scoped to one module | 3/3 | Each extension type (tools, grading, agents, prompts) in separate directory |
 
 Reasons:
 + To extend the benchmark, you change one folder at a time: new tools (add a Python file in `benchmark/harmful_tools/` or `benchmark/benign_tools/`), new grading (add a function in `harmful_grading_functions.py`), new agents (add a solver in `agents/`), new prompts or jailbreaks (add a template in `prompts.py`), new behaviors (add records to the dataset JSON files).
@@ -224,7 +238,13 @@ Reasons:
 
 ### Maintenance & Support
 
-Verdict: excellent.
+Verdict: excellent (2.7/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Commit frequency | 3/3 | inspect_evals very active; HEAD commit 2026-08-10; thousands of PRs and issues |
+| Issue responsiveness | 3/3 | Many contributors; formal review checklist; active community |
+| Dependencies install cleanly | 2/3 | One fix needed (openai package for ollama provider); inspect_ai v0.3.247 |
 
 Reasons:
 + The `inspect_evals` repository is very active. The HEAD commit is dated the same day as this evaluation (2026-08-10). The project has many contributors and a formal review checklist. Pull request and issue numbers are in the thousands, which shows steady activity.
@@ -235,7 +255,11 @@ Reasons:
 
 ### Execution isolation
 
-Verdict: high.
+Verdict: high (3.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Tool isolation level | 3/3 | All tools are mock Python functions returning fixed/templated data; agent performs no real action |
 
 Reason:
 + The tools are synthetic. The agent performs no real harmful action. The harm score only measures the agent's tool calls against a template.
@@ -245,7 +269,11 @@ Reason:
 
 ### Content sensitivity
 
-Verdict: high.
+Verdict: high (3.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Harmful content presence | 3/3 | Real harmful requests across 8 categories (Hate, Sexual, Harassment); some text is offensive to read |
 
 Reasons:
 + The harmful split contains real harmful request text across 8 categories, and some categories are offensive (Hate, Sexual, Harassment). An instructor must control access to the prompts.
@@ -257,7 +285,14 @@ Reasons:
 
 ### Observability
 
-Verdict: good.
+Verdict: good (3.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Full message sequence | 3/3 | Inspect viewer shows system prompt, each tool call, each tool result, and final score |
+| Scoring breakdown | 3/3 | Grading shows which tools called, order, arguments, and refusal explanation |
+| Trajectory viewer | 3/3 | Inspect viewer (uv run inspect view) provides TUI-based structured trajectory browser |
+| Score granularity | 3/3 | Graded 0.0 to 1.0 per sample; overall metrics are averages |
 
 Reasons:
 + Each sample log shows the grading breakdown (which tools the agent called, the order, and the arguments) and the refusal explanation. The Inspect viewer shows the full message trajectory. A student can see the system prompt, each tool call, each tool result, and the final score.
@@ -268,7 +303,13 @@ Reasons:
 
 ### Experimentability
 
-Verdict: good.
+Verdict: good (3.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| API for custom pipelines | 3/3 | Inspect solver abstraction supports custom agent pipelines and defense logic |
+| Run against own agent | 3/3 | Student implements custom solver and runs benchmark against it |
+| Beyond model swap | 3/3 | Student can add tools, grading functions, agents, prompts, and dataset records |
 
 Reasons:
 + A student can run the three models, compare the refusal rate and the harm score, study the tool calls, and write a custom agent (for example, the provided `refusal` agent).
