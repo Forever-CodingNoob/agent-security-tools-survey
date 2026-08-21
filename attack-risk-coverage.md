@@ -1,10 +1,6 @@
 # SoK Taxonomy Coverage: 18 Agentic-LLM Security Tools
 
-Source taxonomy: Xie et al., "The Attack and Defense Landscape of Agentic AI: A Comprehensive
-Survey" (arXiv:2603.11088), Section 4. Each mapping was extracted by querying the tool's full
-paper and GitHub repository, then verified by a second adversarial fact-check pass that audited
-every claim and hunted for omissions. The Fact-check Change Log section records what the
-verification pass corrected.
+Source taxonomy: Xie et al., "The Attack and Defense Landscape of Agentic AI: A Comprehensive Survey" (arXiv:2603.11088), Section 4. Each mapping was extracted by querying the tool's full paper and GitHub repository, then verified by a second adversarial fact-check pass that audited every claim and hunted for omissions. The Fact-check Change Log section records what the verification pass corrected.
 
 ## Taxonomy key
 
@@ -54,37 +50,18 @@ verification pass corrected.
 
 ### Attack vectors with weak or zero coverage
 
-**V2 Malicious data injection: 2 tools.** ToolSword injects harmful and error-riddled payloads
-into tool feedback. RiOSWorld delivers attacker-supplied harmful files through phishing links
-and attachments. Poisoned software packages that trigger supply-chain compromise receive no
-coverage from any tool.
+**V2 Malicious data injection: 2 tools.** ToolSword injects harmful and error-riddled payloads into tool feedback. RiOSWorld delivers attacker-supplied harmful files through phishing links and attachments. Poisoned software packages that trigger supply-chain compromise receive no coverage from any tool.
 
-**V3 Tool poisoning and manipulation: 1 tool.** Only ToolSword covers this, through tool name
-interchange and risky functional descriptions. Attacks that inject malicious payloads into
-actual tool implementations are not tested by any tool.
+**V3 Tool poisoning and manipulation: 1 tool.** Only ToolSword covers this, through tool name interchange and risky functional descriptions. Attacks that inject malicious payloads into actual tool implementations are not tested by any tool.
 
-**V5 Model poisoning: 0 tools.** No tool tests genuine model weight backdoors. ASB's
-Plan-of-Thought Backdoor Attack manipulates the system prompt with trigger-activated examples,
-but it does not modify the model itself. This leaves V5 entirely uncovered.
+**V5 Model poisoning: 0 tools.** No tool tests genuine model weight backdoors. ASB's Plan-of-Thought Backdoor Attack manipulates the system prompt with trigger-activated examples, but it does not modify the model itself. This leaves V5 entirely uncovered.
 
-**V6 Memory poisoning: 2 tools.** AgentPoison and ASB cover this through RAG knowledge base
-poisoning and ChromaDB workflow injection. Coverage is limited to retrieval-augmented generation
-stores. Attacks that leak sensitive data from agent memory (the second half of the V6
-definition) are not directly tested.
+**V6 Memory poisoning: 2 tools.** AgentPoison and ASB cover this through RAG knowledge base poisoning and ChromaDB workflow injection. Coverage is limited to retrieval-augmented generation stores. Attacks that leak sensitive data from agent memory (the second half of the V6 definition) are not directly tested.
 
 ### Security risks with weak coverage
 
-**R1 Heterogeneous untrusted interfaces: 5 tools.** AgentDojo, ASB, ToolSword, OS-Harm, and
-RiOSWorld exercise multiple distinct untrusted interfaces. The fact-check pass removed R1 from
-five other tools whose attack entry is a single interface class (see the change log).
+**R1 Heterogeneous untrusted interfaces: 5 tools.** AgentDojo, ASB, ToolSword, OS-Harm, and RiOSWorld exercise multiple distinct untrusted interfaces. The fact-check pass removed R1 from five other tools whose attack entry is a single interface class (see the change log).
 
-**R4 Hallucinations and model mistakes: 5 tools.** ToolEmu, ToolSword, OS-Harm, HAICOSYSTEM,
-and RiOSWorld test this through fabricated tool inputs, erroneous tool selection, over-helpful
-behavior, vague-instruction failures, and imprecise agent actions. Package hallucination
-attacks, where attackers register packages with names that LLMs frequently hallucinate, receive
-no coverage from any tool.
+**R4 Hallucinations and model mistakes: 5 tools.** ToolEmu, ToolSword, OS-Harm, HAICOSYSTEM, and RiOSWorld test this through fabricated tool inputs, erroneous tool selection, over-helpful behavior, vague-instruction failures, and imprecise agent actions. Package hallucination attacks, where attackers register packages with names that LLMs frequently hallucinate, receive no coverage from any tool.
 
-**R7 Resource drain and denial-of-service: 3 tools.** AgentDojo tests refusal-triggering DoS
-injections. RedCode tests a memory-leak execution scenario. OS-Harm tests a Stop Task injection
-goal that aborts the task with a false completion report. Agent-level resource exhaustion
-through costly API call loops or infinite execution chains remains largely untested.
+**R7 Resource drain and denial-of-service: 3 tools.** AgentDojo tests refusal-triggering DoS injections. RedCode tests a memory-leak execution scenario. OS-Harm tests a Stop Task injection goal that aborts the task with a false completion report. Agent-level resource exhaustion through costly API call loops or infinite execution chains remains largely untested.
