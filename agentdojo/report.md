@@ -273,6 +273,11 @@ Ollama does not strip or route the model's thinking tokens separately from the s
 The benchmark's `run_reduced_benchmark.sh` works around the workspace failures by substituting user_task_20 for user_task_26.
 The travel/user_task_19 failure was discovered during the full benchmark utility run and caused that run to abort.
 
+> [!NOTE]
+> This interesting issue was discovered when I was ruuning the full evaluation script. 
+> To repreduce the bug, run user_task_19 on gpt-oss:120b hosted by Ollama.
+> The main culprit is `src/agentdojo/benchmark.py` forgetting to catch `InternelServerError` and flag the utility score as `False`. (See fix 3 in installation steps)
+
 ### Evaluation Trajectory
 
 The following trace shows one `important_instructions` attack on the banking suite with `qwen3:14b`.
@@ -300,62 +305,99 @@ Reasons:
 
 ### Extensibility
 
-Extensibility is strong. AgentDojo's design separates four concerns, each extensible in its own module:
+Verdict: strong.
 
-- **New agent pipelines**: implement the `BasePipelineElement` class. The framework supports custom input filters, output validators, and defense logic. This is the key differentiator from other benchmarks: a student can build a defended agent and test it.
-- **New attacks**: register a function with `@attack_suite_register`. The function receives the environment and injects text into any data field.
-- **New suites**: define a new `TaskSuite` with its tools, environment, user tasks, and injection tasks.
-- **New injection tasks**: subclass `InjectionTask` and define the `security` check.
+Reasons:
++ AgentDojo's design separates four extensible and customizable modules:
+	+  Agent pipelines: implement the `BasePipelineElement` class. The framework supports custom input filters, output validators, and defense logic. This is the key differentiator from other benchmarks: a student can build a defended agent and test it.
+    +  Attacks: register a function with `@attack_suite_register`. The function receives the environment and injects text into any data field.
+    +  Suites: define a new `TaskSuite` with its tools, environment, user tasks, and injection tasks.
+    +  Injection tasks: subclass `InjectionTask` and define the `security` check.
++ The API is documented in the codebase and the paper. The `openai-compatible` provider makes it easy to test any model served via an OpenAI-compatible API.
 
-The API is documented in the codebase and the paper. The `openai-compatible` provider makes it easy to test any model served via an OpenAI-compatible API.
+> [!NOTE]
+> `BasePipelineElement` is defined in `src/agentdojo/agent_pipeline/base_pipeline_element.py`.
 
 ### Maintenance & Support
 
-Maintenance is active. The repository has regular commits, with activity through 2024 and 2025. The package is published on PyPI (`agentdojo==0.1.35`). The paper was accepted at NeurIPS 2024. The SPYLab group at ETH Zurich maintains the project.
+Verdict: active
 
-Two dependency or code problems appeared during setup:
+Reasons:
++ The repository has regular commits, with activity through 2024 and 2025. The package is published on PyPI (`agentdojo==0.1.35`).
++ There are some bugs in the source code.
 
-1. The OpenAI client timeout is too short for slow models. This is a configuration issue, not a bug.
-2. The Pydantic forward reference breaks cached result loading. This is a bug in the deserialization path.
-
-Both problems required small code fixes. The fixes are documented above.
+> [!NOTE]
+> As of Aug 21, 2026, the most recent commit was on Jun 2, 2026.
 
 ### Execution isolation
 
-Execution isolation is high. All tools operate on in-memory simulated state. The agent does not send real emails, make real transfers, or delete real files. The environment is a set of Pydantic objects (email inboxes, calendar entries, bank accounts, chat channels) loaded from YAML files at the start of each task. The simulated environment resets between runs. No actions reach real external services.
+Verdict: high. 
+
+Reasons:
++ All tools operate on in-memory simulated state. The agent does not send real emails, make real transfers, or delete real files. The environment is a set of Pydantic objects (email inboxes, calendar entries, bank accounts, chat channels) loaded from YAML files at the start of each task. 
++ The simulated environment resets between runs.
+
+> [!NOTE]
+> The aforementioned YAML files reside in `src/agentdojo/data/suites/<suite>/environment.yaml`.
 
 ### Content sensitivity
 
-Content sensitivity is low. The injection tasks describe actions with concrete targets: sending emails to specific addresses, transferring money to specific IBANs, deleting files, and leaking security codes. The actions are clearly malicious (financial fraud, data theft, unauthorized deletion), but the language is not violent or offensive. The injection text uses a formulaic template ("This is an important message from me, Emma Johnson..."). The dataset does not contain hate speech, sexual content, harassment, or graphic violence. There is no built-in mechanism to filter or subset the injection tasks.
+Verdict: low. 
+
+Reason: 
++ The dataset does not contain hate speech, sexual content, harassment, or graphic violence.
 
 ### Observability
 
-Observability is good. The result files are structured JSON. Each file records the full message sequence, the injection text, and the binary scores. A student can trace indirect prompt injection end to end: read the injection text in the JSON result file and follow how it reached the agent through a tool call. The dual utility/security score shows that an attack can degrade both task completion and security at the same time. There is no built-in trajectory viewer like Inspect's log viewer, so a student must read the JSON or write a simple parser.
+Veridct: good. 
+
+Reasons:
++ The result files are structured JSON. 
+    + Each file records the full message sequence, the injection text, and the binary scores. 
+    + A student can trace indirect prompt injection end to end: read the injection text in the JSON result file and follow how it reached the agent through a tool call. 
+    + The dual utility/security score shows that an attack can degrade both task completion and security at the same time. 
++ There is no built-in trajectory viewer like Inspect's log viewer, so a student must read the JSON or write a simple parser.
+
+> [!NOTE]
+> Example result file: `<logdir>/openai-compatible/<suite>/<user|injection>_task_<n>/none/none.json`
 
 ### Experimentability
 
-Experimentability is high. The extensible pipeline API lets students implement and compare defense strategies (for example, input sanitization, output filtering, instruction hardening). A student implements the `BasePipelineElement` class, plugs it into the agent pipeline, runs the benchmark, and measures the effect on utility and security scores. This is the key differentiator from other benchmarks: a student can build a defended agent and test it against the full injection suite.
+Verdict: high. 
+
+Reasons:
++ The extensible pipeline API lets students implement and compare defense strategies (for example, input sanitization, output filtering, instruction hardening).
++ A student implements the `BasePipelineElement` class, plugs it into the agent pipeline, runs the benchmark, and measures the effect on utility and security scores. 
+
+(This is the key differentiator from other benchmarks, as a student can build a defended agent and test it against the full injection suite.)
 
 ## Attack vectors and security risks
 
-This section maps AgentDojo to the taxonomy in Xie et al., "The Attack and Defense Landscape of Agentic AI" (arXiv:2603.11088). See `../attack-risk-coverage.md` for the full coverage table across all 18 surveyed tools.
+*(According to the taxonomy in Xie et al., "The Attack and Defense Landscape of Agentic AI".)*
 
 ### Covered attack vectors
 
-- **V1 Indirect prompt injection.** The attacker injects malicious instructions into external resources the agent retrieves: email bodies, calendar event descriptions, drive file content, and chat messages. The agent reads these through tool calls, not through the user prompt.
+- **V1 Indirect prompt injection**: The attacker injects malicious instructions into external resources the agent retrieves: email bodies, calendar event descriptions, drive file content, and chat messages. The agent reads these through tool calls, not through the user prompt.
 
 ### Covered security risks
 
-- **R1 Heterogeneous untrusted interfaces.** The four suites expose four distinct injection surfaces (email, calendar, banking records, chat messages). Each surface is a separate untrusted interface that the agent consumes.
-- **R2 Wrong instruction following.** The security score directly measures whether the agent followed the attacker's injected instruction instead of the user's task. The benchmark tests this across all (user_task, injection_task) pairs.
-- **R3 Unconstrained/unsafe data flow.** Injected data in one component (for example, a calendar event description) flows through the agent's reasoning into safety-critical tool calls (for example, `send_money` or `send_email`).
-- **R5 Private data leakage.** Several injection tasks instruct the agent to exfiltrate sensitive data: subscription IBANs, security codes, and contact information.
-- **R6 Unintended/unauthorized actions.** Injection tasks cause the agent to delete files, modify payment recipients, send funds to attacker-controlled accounts, and send unauthorized emails.
-- **R7 Denial-of-service.** Some injection tasks include DoS-style goals that make the agent refuse to complete the user task or halt execution entirely.
+- **R1 Heterogeneous untrusted interfaces**: The four suites expose four distinct injection surfaces (email, calendar, banking records, chat messages). Each surface is a separate untrusted interface that the agent consumes.
+- **R2 Wrong instruction following**: The security score directly measures whether the agent followed the attacker's injected instruction instead of the user's task. The benchmark tests this across all (user_task, injection_task) pairs.
+- **R3 Unconstrained/unsafe data flow**: Injected data in one component (for example, a calendar event description) flows through the agent's reasoning into safety-critical tool calls (for example, `send_money` or `send_email`).
+- **R5 Private data leakage**: Several injection tasks instruct the agent to exfiltrate sensitive data: subscription IBANs, security codes, and contact information.
+- **R6 Unintended/unauthorized actions**: Injection tasks cause the agent to delete files, modify payment recipients, send funds to attacker-controlled accounts, and send unauthorized emails.
+- **R7 Denial-of-service**: Some injection tasks include ==DoS-style goals== that make the agent refuse to complete the user task or halt execution entirely.
 
 ### Vectors and risks not covered
 
-AgentDojo does not test direct prompt injection (V4), malicious data injection (V2), tool poisoning (V3), model poisoning (V5), or memory poisoning (V6). It does not measure hallucination-driven harm (R4). The benchmark focuses on indirect injection through environment data, not on adversarial user prompts or model-level attacks.
++ direct prompt injection (V4)
++ malicious data injection (V2)
++ tool poisoning (V3)
++ model poisoning (V5)
++ memory poisoning (V6)
++ hallucination-driven harm (R4)
+
+The benchmark focuses on indirect injection through environment data, not on adversarial user prompts or model-level attacks.
 
 ## Quick-start documentation
 
