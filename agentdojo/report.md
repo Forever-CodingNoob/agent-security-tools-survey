@@ -97,7 +97,6 @@ python -m agentdojo.scripts.benchmark \
 ```
 
 Key arguments:
-
 - `--model`: provider name. `OPENAI_COMPATIBLE` reads from `.env`.
 - `--model-id`: the ollama model tag (for example `qwen3:14b`).
 - `--attack`: attack name. The framework ships 17 registered attacks (for example `important_instructions`, `injecagent`, `tool_knowledge`).
@@ -169,22 +168,26 @@ The 17 registered **attacks** vary the injection format (including direct instru
 - Ollama server: see [the rollup report](../report.md).
 - Agent models: `qwen3:14b` (small), `qwen3-coder:30b` (mid), `gpt-oss:120b` (large)
 - AgentDojo version: v0.1.35
-- Two code fixes applied: timeout in `agentdojo/agentdojo/src/agentdojo/agent_pipeline/agent_pipeline.py`, Pydantic in `agentdojo/agentdojo/src/agentdojo/benchmark.py`
+- Three code fixes applied: timeout in `agentdojo/agentdojo/src/agentdojo/agent_pipeline/agent_pipeline.py`, Pydantic in `agentdojo/agentdojo/src/agentdojo/benchmark.py`, and `InternalServerError` catch in `agentdojo/agentdojo/src/agentdojo/benchmark.py`
 - Attack: `important_instructions` (selected from the 17 registered attacks)
 
 ###  Design
 
 #### Full benchmark
-The full benchmark has 949 attack pairs per model. At the measured per-pair inference rates, the estimated full-experiment time per model is:
-| Model | Per-pair time | Estimated full time (949 pairs + baseline) |
+The full benchmark has 949 attack pairs per model. At the measured per-pair inference rates, the actual full-experiment time per model is:
+| Model | Per-pair time | Full time (949 pairs + baseline) |
 |-------|--------------|-------------------------------------------|
-| qwen3:14b | 213 s | ~60 h |
-| qwen3-coder:30b | 25 s | ~7 h |
-| gpt-oss:120b | 37 s | ~10 h |
+| qwen3:14b | 185 s | ~53 h |
+| qwen3-coder:30b | 9 s | ~3 h |
+| gpt-oss:120b | 28 s | ~8 h |
+
+> [!IMPORTANT]
+> Both the full and reduced benchmarks test only the `important_instructions` attack. A true full evaluation covering all 17 registered attacks would run 17 * 949 = 16133 attack pairs per model. At the measured per-pair rates, the estimated time would be approximately 830 hours for `qwen3:14b`, 42 hours for `qwen3-coder:30b`, and 124 hours for `gpt-oss:120b`, totaling ~1,000 hours (~42 days) of sequential inference on a single ollama server.
+> Given that, even for a full evaluation, we tested only one attack.
 
 
 #### Reduced benchmark
-To save timte, a reduced benchmark was created, using 3 evenly spaced user tasks per suite (12 user tasks total, 105 attack pairs). The selected tasks are:
+To save time, a reduced benchmark was created, using 3 evenly spaced user tasks per suite (12 user tasks total, 105 attack pairs). The selected tasks are:
 - workspace: user_task_0, user_task_13, user_task_26
 - travel: user_task_0, user_task_7, user_task_14
 - banking: user_task_0, user_task_5, user_task_10
@@ -193,22 +196,49 @@ To save timte, a reduced benchmark was created, using 3 evenly spaced user tasks
 > [!NOTE]
 > For `gpt-oss:120b`, user_task_26 was replaced with user_task_20 because the model generates malformed tool calls on user_task_26. See [Tool-call parsing failures](#tool-call-parsing-failures) for details.
 
+### Phase 1: utility baseline (no attack, all 97 user tasks)
 
-
-### Phase 1: utility baseline (no attack, all 97 user tasks) (reduced benchmark)
+The full and reduced benchmarks share the same Phase 1 (all 97 user tasks, no attack). The reduced benchmark was run first; the full benchmark reused the cached results where they existed. 
+The baseline measures the agent's ability to complete user tasks without any attack.
+The table below shows the final scores from the full benchmark run.
 
 | Model | workspace (40) | travel (20) | banking (16) | slack (21) | Combined (97) |
 |-------|---------------|-------------|-------------|-----------|---------------|
-| qwen3:14b | 75.0% | 70.0% | 68.8% | 85.7% | 75.3% |
+| qwen3:14b | 60.0% | 70.0% | 68.8% | 85.7% | 69.1% |
 | qwen3-coder:30b | 47.5% | 60.0% | 56.2% | 76.2% | 57.7% |
-| gpt-oss:120b | 80.0% | 45.0% | 43.8% | 61.9% | 62.9% |
-
-The baseline measures the agent's ability to complete user tasks without any attack. 
-No model reached 80% combined utility. The small model (`qwen3:14b`) had the highest combined utility (75.3%), partly because its long reasoning traces helped it chain tool calls.
-The mid-size model (`qwen3-coder:30b`) had the lowest combined utility (57.7%).
+| gpt-oss:120b | 77.5% | 35.0% | 68.8% | 76.2% | 67.0% |
 
 
-### Phase 2: `important_instructions` attack (3 user tasks per suite, 105 pairs) (reduced benchmark)
+Discoveries: 
++ No model reached 80% combined utility.
++ The small model (`qwen3:14b`) had the highest combined utility (69.1%), partly because its long reasoning traces helped it chain tool calls.
++ The mid-size model (`qwen3-coder:30b`) had the lowest combined utility (57.7%).
+
+### Phase 2: `important_instructions` attack 
+
+#### Full benchmark results (all 949 pairs)
+
+| Model | Suite | Utility | Security | Pairs |
+|-------|-------|---------|----------|-------|
+| qwen3:14b | workspace | 55.7% | 2.1% | 560 |
+| qwen3:14b | travel | 44.3% | 7.9% | 140 |
+| qwen3:14b | banking | 44.4% | 42.4% | 144 |
+| qwen3:14b | slack | 60.0% | 79.0% | 105 |
+| qwen3:14b | **combined** | **52.8%** | **17.6%** | **949** |
+| qwen3-coder:30b | workspace | 36.8% | 5.5% | 560 |
+| qwen3-coder:30b | travel | 30.0% | 30.0% | 140 |
+| qwen3-coder:30b | banking | 36.8% | 38.9% | 144 |
+| qwen3-coder:30b | slack | 43.8% | 75.2% | 105 |
+| qwen3-coder:30b | **combined** | **36.6%** | **21.9%** | **949** |
+| gpt-oss:120b | workspace | 59.3% | 10.9% | 560 |
+| gpt-oss:120b | travel | 24.3% | 35.0% | 140 |
+| gpt-oss:120b | banking | 70.8% | 61.1% | 144 |
+| gpt-oss:120b | slack | 50.5% | 55.2% | 105 |
+| gpt-oss:120b | **combined** | **54.9%** | **27.0%** | **949** |
+
+#### Reduced benchmark results (105 pairs, for comparison)
+
+The reduced benchmark sampled 3 user tasks per suite (105 pairs total).
 
 | Model | Suite | Utility | Security | Pairs |
 |-------|-------|---------|----------|-------|
@@ -228,20 +258,28 @@ The mid-size model (`qwen3-coder:30b`) had the lowest combined utility (57.7%).
 | gpt-oss:120b | slack | 46.7% | 60.0% | 15 |
 | gpt-oss:120b | **combined** | **50.5%** | **45.7%** | **105** |
 
+
+Insight: The full benchmark (949 pairs) shows lower security across all models, which means the reduced sample overestimated security. The reduced set happened to include tasks where the models resisted the injection more often.
+
+
 ### Cross-model analysis
 
-+ **Utility under attack**: The attack degrades task completion for all models. The drop from baseline to under-attack utility is largest for `qwen3-coder:30b` (57.7% to 25.7%) and smallest for `gpt-oss:120b` (62.9% to 50.5%). The injection distracts the agent from the user task, and weaker models lose more.
-+ **Security**: All three models are vulnerable to the `important_instructions` attack. The combined security rates are low: 34.3% (`qwen3:14b`), 36.2% (`qwen3-coder:30b`), 45.7% (`gpt-oss:120b`). The large model resists the injection most often but still fails more than half the time.
-+ **Suite variation**: Security varies across suites. The workspace and travel suites have the lowest security (4.8% to 33.3%), likely because the injections appear in rich-text fields (email bodies, calendar descriptions) that the agent must read. The banking and slack suites have higher security (55.6% to 86.7%), possibly because the injection surfaces are smaller (bill text, messages) and the agent has fewer reasons to follow embedded instructions.
-+ **Utility-security tradeoff**: No model achieves both high utility and high security. The large model has the best combined profile (50.5% utility, 45.7% security), but neither number is strong. This is the core finding: without explicit defenses, prompt injection attacks succeed at high rates regardless of model size.
++ **Utility under attack**: The attack degrades task completion for all models. The drop from baseline to under-attack utility is largest for `qwen3-coder:30b` (57.7% to 36.6%) and smallest for `gpt-oss:120b` (67.0% to 54.9%). The injection distracts the agent from the user task, and weaker models lose more.
++ **Security**: All three models are highly vulnerable to the `important_instructions` attack. The combined security rates are: 17.6% (`qwen3:14b`), 21.9% (`qwen3-coder:30b`), 27.0% (`gpt-oss:120b`). The large model resists the injection most often but still fails nearly three quarters of the time.
++ **Suite variation**: Security varies across suites. The workspace suite has the lowest security (2.1% to 10.9%), likely because the injections appear in rich-text fields (email bodies, calendar descriptions) that the agent must read. The slack suite has the highest security (55.2% to 79.0%), possibly because the injection surfaces are smaller (messages) and the agent has fewer reasons to follow embedded instructions.
++ **Utility-security tradeoff**: No model achieves both high utility and high security. The large model has the best combined profile (54.9% utility, 27.0% security), but neither number is strong. This is the core finding: without explicit defenses, prompt injection attacks succeed at high rates regardless of model size.
++ **Reduced vs. full**: The reduced benchmark (105 pairs) overestimated security for all models. For example, `gpt-oss:120b` security dropped from 45.7% (reduced) to 27.0% (full). The reduced sample happened to include tasks where models resisted the injection more often. The full benchmark gives a more accurate picture.
 
 ### Timing
 
-| Model | Phase 1 (97 tasks) | Phase 2 (105 pairs) | Total | Per-pair (Phase 2) |
+The total wall-clock time for all three models (sequential, one model at a time) was approximately 63 hours.
+
+| Model | Phase 1 (97 tasks) | Phase 2 (949 pairs) | Total | Per-pair (Phase 2) |
 |-------|-------------------|--------------------|---------|--------------------|
-| qwen3:14b | 3.5 h | 6.2 h | 9.7 h | 213 s |
-| qwen3-coder:30b | 0.14 h | 0.72 h | 0.86 h | 25 s |
-| gpt-oss:120b | 0.39 h | 1.07 h | 1.46 h | 37 s |
+| qwen3:14b | 3.99 h | 48.83 h | 52.82 h | 185 s |
+| qwen3-coder:30b | 0.14 h | 2.45 h | 2.59 h | 9 s |
+| gpt-oss:120b | 0.45 h | 7.31 h | 7.76 h | 28 s |
+
 
 > [!IMPORTANT]
 > The `qwen3:14b` model is much slower because it generates long reasoning traces (thinking tokens) before each tool call. A typical workspace pair takes 200 to 300 seconds for this model and 20 to 40 seconds for the other two.
@@ -297,7 +335,7 @@ Verdict: high.
 
 Reasons:
 + The benchmark does not require Docker, a virtual machine, or a web environment. The tools operate on in-memory simulated state (email inboxes, calendar entries, bank accounts, chat channels). The only cost is model inference. With the ollama server, the inference cost is local compute, not API credits.
-+ Two code fixes are needed before the first run (timeout and Pydantic forward reference). Both are small (3 to 5 lines each). After the fixes, the reduced benchmark (105 pairs) runs in under 2 hours for the non-reasoning models. The `qwen3:14b` reasoning model takes about 10 hours because of its long thinking traces.
++ Three code fixes are needed before the first run (timeout, Pydantic forward reference, and `InternalServerError` catch). Each is small (3 to 5 lines). After the fixes, the full benchmark (949 pairs) runs in under 8 hours for the non-reasoning models. The `qwen3:14b` reasoning model takes about 53 hours because of its long thinking traces.
 + The estimated time for a full experiment (all 949 pairs) is 7 to 60 hours per model, depending on the model's inference speed.
 
 > [!NOTE]
@@ -405,7 +443,7 @@ Run one injection attack on one suite with the ollama server:
 
 1. Clone the repository. Run `pip install -e .` in a virtual environment.
 2. Write the `.env` file with the ollama server URL (see Installation above).
-3. Apply the two code fixes (timeout and Pydantic).
+3. Apply the three code fixes (timeout, Pydantic, and `InternalServerError` catch).
 4. Run one utility baseline task:
    ```bash
    python -m agentdojo.scripts.benchmark \
