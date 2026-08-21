@@ -34,7 +34,8 @@ The tool uses pip inside a virtual environment. Do these steps:
    export OPENAI_COMPATIBLE_API_KEY=ollama
    ```
 
-4. **Fix 1: OpenAI client timeout.** The default timeout (10 minutes) is too short for reasoning models such as `qwen3:14b`, which generate long thinking traces. The retry loop triggers every 10 minutes and blocks the run. Add `timeout=1800.0` to the OpenAI client constructor in `src/agentdojo/agent_pipeline/agent_pipeline.py`, around line 132:
+4. **Fix 1: OpenAI client timeout.** 
+    The default timeout (10 minutes) is too short for reasoning models such as `qwen3:14b`, which generate long thinking traces. The retry loop triggers every 10 minutes and blocks the run. Add `timeout=1800.0` to the OpenAI client constructor in `src/agentdojo/agent_pipeline/agent_pipeline.py`, around line 132:
    ```python
    # BEFORE:
    client = openai.OpenAI(
@@ -50,7 +51,8 @@ The tool uses pip inside a virtual environment. Do these steps:
    )
    ```
 
-5. **Fix 2: Pydantic forward reference.** When the benchmark reads cached results (runs without `--force-rerun`), it deserializes `TaskResults` objects. `ChatMessage` in `types.py` has a forward reference to `FunctionCall` from `functions_runtime.py`, but `benchmark.py` does not import it. The deserialization fails with `PydanticUserError: TaskResults is not fully defined; you should define FunctionCall`. Apply this fix in `src/agentdojo/benchmark.py`:
+5. **Fix 2: Pydantic forward reference.** 
+    When the benchmark reads cached results (runs without `--force-rerun`), it deserializes `TaskResults` objects. `ChatMessage` in `types.py` has a forward reference to `FunctionCall` from `functions_runtime.py`, but `benchmark.py` does not import it. The deserialization fails with `PydanticUserError: TaskResults is not fully defined; you should define FunctionCall`. Apply this fix in `src/agentdojo/benchmark.py`:
    ```python
    # Add FunctionCall to the import:
    from agentdojo.functions_runtime import Env, FunctionCall
@@ -60,7 +62,8 @@ The tool uses pip inside a virtual environment. Do these steps:
    return TaskResults(**res_dict)
    ```
 
-6. **Fix 3: Catch `openai.InternalServerError` per task.** The benchmark already catches `cohere.ApiError` and `google.genai.ServerError` per task, but not `openai.InternalServerError`. When a reasoning model emits chain-of-thought text inside tool-call arguments, ollama returns a 500 that the tenacity retry cannot recover from (the error is deterministic). Without this fix, one failing task crashes the entire benchmark run. Add `InternalServerError` to the import and add except blocks in both `run_task_without_injection_tasks` and `run_task_with_injection_tasks` in `src/agentdojo/benchmark.py`:
+6. **Fix 3: Catch `openai.InternalServerError` per task.** 
+    The benchmark already catches `cohere.ApiError` and `google.genai.ServerError` per task, but not `openai.InternalServerError`. When a reasoning model emits chain-of-thought text inside tool-call arguments, ollama returns a 500 that the tenacity retry cannot recover from (the error is deterministic). Without this fix, one failing task crashes the entire benchmark run. Add `InternalServerError` to the import and add except blocks in both `run_task_without_injection_tasks` and `run_task_with_injection_tasks` in `src/agentdojo/benchmark.py`:
    ```python
    # Add to the openai import (line 9):
    from openai import BadRequestError, InternalServerError, UnprocessableEntityError
@@ -165,7 +168,7 @@ The 17 registered **attacks** vary the injection format (including direct instru
 
 ### Environment
 
-- Ollama server: see [the rollup report](../report.md).
+- Ollama server: see [the rollup report](../report.md). 4 GPUs, `OLLAMA_NUM_PARALLEL=1`.
 - Agent models: `qwen3:14b` (small), `qwen3-coder:30b` (mid), `gpt-oss:120b` (large)
 - AgentDojo version: v0.1.35
 - Three code fixes applied: timeout in `agentdojo/agentdojo/src/agentdojo/agent_pipeline/agent_pipeline.py`, Pydantic in `agentdojo/agentdojo/src/agentdojo/benchmark.py`, and `InternalServerError` catch in `agentdojo/agentdojo/src/agentdojo/benchmark.py`
