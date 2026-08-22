@@ -20,7 +20,7 @@ TRAVEL_UTS=("user_task_0" "user_task_7" "user_task_14")
 BANKING_UTS=("user_task_0" "user_task_5" "user_task_10")
 SLACK_UTS=("user_task_0" "user_task_7" "user_task_14")
 
-echo "=== AgentDojo reduced benchmark ==="
+echo "=== AgentDojo partial benchmark ==="
 echo "Start: $(date)"
 
 for model in "${MODELS[@]}"; do

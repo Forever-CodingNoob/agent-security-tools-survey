@@ -115,7 +115,7 @@ All scripts are in this directory (`agentharm/`). They resolve the source code d
 
 ### Environment
 
-- Ollama server: see [the rollup report](../report.md). 2 GPUs, `OLLAMA_NUM_PARALLEL=1`.
+- Ollama server: see [the rollup report](../report.md). 4 GPUs, `OLLAMA_NUM_PARALLEL=1`.
 - Agent models under test: `ollama/gpt-oss:120b`, `ollama/qwen3-coder:30b`, `ollama/qwen3:14b`
 - Judge model (held constant): `ollama/qwen3:14b` for both the refusal judge and the semantic judge. A fixed judge keeps the 3-way comparison fair.
 - Framework version: `inspect_ai` 0.3.247
@@ -127,7 +127,7 @@ All scripts are in this directory (`agentharm/`). They resolve the source code d
 The evaluation runs both tasks (harmful and benign) on all three models using the `test_public` split (176 samples per task, 1056 total samples). The runner was sequential, one model at a time. The refusal and semantic judges are both `ollama/qwen3:14b`, held constant to keep the 3-way comparison fair.
 
 > [!IMPORTANT]
-> The reported per-sample times were collected with `--max-connections 16`. Because the server uses `OLLAMA_NUM_PARALLEL=1` (one request at a time), concurrent samples queued behind each other. The per-sample `total_time` therefore includes queue wait time and overestimates how long a single task takes in isolation.
+> This run used `--max-connections 1`. Because the server uses `OLLAMA_NUM_PARALLEL=1`, each sample ran in isolation. The per-sample times are accurate wall-clock times with no queue wait.
 
 ### Validation run (one harmful sample, `qwen3:14b`)
 
@@ -155,16 +155,16 @@ Result: `avg_score 0.667`, `avg_refusals 0.000`, 32.5 s per sample. Each sample 
 
 ### Full run (both tasks, all 3 models, `test_public`)
 
-The total wall-clock time was about 14.5 hours (2026-08-10 13:34 to 2026-08-11 04:09).
+The total wall-clock time was about 16 hours (2026-08-21 21:23 to 2026-08-22 13:23).
 
 | Model | Task | avg_score | avg_full_score | avg_refusals | avg_score_non_refusals | Time | Tokens |
 |-------|------|-----------|----------------|--------------|------------------------|------|--------|
-| gpt-oss:120b | harmful | 0.125 | 0.108 | 0.932 | 0.873 | 64 min (21.7 s/sample) | 257K agent / 131K judge |
-| gpt-oss:120b | benign | 0.629 | 0.426 | 0.449 | 0.719 | 135 min (45.9 s/sample) | 1.36M agent / 206K judge |
-| qwen3-coder:30b | harmful | 0.410 | 0.233 | 0.614 | 0.767 | 53 min (18 s/sample) | 620K agent / 189K judge |
-| qwen3-coder:30b | benign | 0.765 | 0.517 | 0.222 | 0.789 | 72 min (24.5 s/sample) | 943K agent / 270K judge |
-| qwen3:14b | harmful | 0.494 | 0.227 | 0.256 | 0.603 | 256 min (87.5 s/sample) | 1.43M agent+judge (same model) |
-| qwen3:14b | benign | 0.653 | 0.324 | 0.046 | 0.646 | 296 min (100.8 s/sample) | 1.62M agent+judge (same model) |
+| gpt-oss:120b | harmful | 0.131 | 0.108 | 0.915 | 0.769 | 108 min (36.7 s/sample) | 269K agent / 129K judge |
+| gpt-oss:120b | benign | 0.640 | 0.432 | 0.528 | 0.717 | 165 min (56.4 s/sample) | 1.38M agent / 188K judge |
+| qwen3-coder:30b | harmful | 0.394 | 0.205 | 0.619 | 0.727 | 62 min (21.3 s/sample) | 589K agent / 179K judge |
+| qwen3-coder:30b | benign | 0.791 | 0.540 | 0.199 | 0.808 | 89 min (30.4 s/sample) | 954K agent / 255K judge |
+| qwen3:14b | harmful | 0.495 | 0.199 | 0.290 | 0.586 | 247 min (84.2 s/sample) | 1.32M agent+judge (same model) |
+| qwen3:14b | benign | 0.607 | 0.284 | 0.063 | 0.608 | 289 min (98.4 s/sample) | 1.60M agent+judge (same model) |
 
 ### Cross-model analysis
 
@@ -172,24 +172,24 @@ The total wall-clock time was about 14.5 hours (2026-08-10 13:34 to 2026-08-11 0
 
 | Model | Harm score | Refusal | Capability when not refusing |
 |-------|-----------|---------|------------------------------|
-| gpt-oss:120b | 0.125 | 0.932 | 0.873 |
-| qwen3-coder:30b | 0.410 | 0.614 | 0.767 |
-| qwen3:14b | 0.494 | 0.256 | 0.603 |
+| gpt-oss:120b | 0.131 | 0.915 | 0.769 |
+| qwen3-coder:30b | 0.394 | 0.619 | 0.727 |
+| qwen3:14b | 0.495 | 0.290 | 0.586 |
 
-+ The refusal rate falls fast as the model shrinks (0.93, then 0.61, then 0.26). The capability also falls (0.87, then 0.77, then 0.60). The refusal effect is stronger. So the overall harm score rises as the model shrinks.
++ The refusal rate falls fast as the model shrinks (0.92, then 0.62, then 0.29). The capability also falls (0.77, then 0.73, then 0.59). The refusal effect is stronger. So the overall harm score rises as the model shrinks.
 + The smallest model is the most harmful in total, because it rarely refuses. The largest model is the safest, because it refuses most. Bigger did not mean more dangerous here. It meant better safety training.
 
 **Benign split (over-refusal).** A safe model must still do safe work.
 
 | Model | Benign success | Benign refusal |
 |-------|----------------|----------------|
-| gpt-oss:120b | 0.629 | 0.449 |
-| qwen3-coder:30b | 0.765 | 0.222 |
-| qwen3:14b | 0.653 | 0.046 |
+| gpt-oss:120b | 0.640 | 0.528 |
+| qwen3-coder:30b | 0.791 | 0.199 |
+| qwen3:14b | 0.607 | 0.063 |
 
-+ The large model refuses 45% of clearly safe tasks. This is over-refusal, and it lowers the usefulness of the model. The small model almost never over-refuses (4.6%). The mid-size model is the most balanced.
++ The large model refuses 53% of clearly safe tasks. This is over-refusal, and it lowers the usefulness of the model. The small model almost never over-refuses (6.3%). The mid-size model is the most balanced.
 
-**Refusal by category (harmful split).** All models refuse most on Sexual, Hate, Harassment, and Cybercrime content. They refuse least on Copyright and Fraud. For example, `gpt-oss:120b` refused 100% of Harassment, Cybercrime, and Sexual tasks, but only 88% of Copyright tasks. `qwen3:14b` refused only 13% of Copyright tasks. This shows where each model is weakest.
+**Refusal by category (harmful split).** All models refuse most on Harassment, Hate, Cybercrime, and Sexual content. They refuse least on Disinformation and Copyright. For example, `gpt-oss:120b` refused 100% of Harassment, Hate, Cybercrime, and Sexual tasks, but only 75% of Disinformation and 83% of Copyright tasks. `qwen3:14b` refused only 13% of Copyright tasks and 15% of Disinformation tasks. This shows where each model is weakest.
 
 ### Evaluation Trajectory
 
