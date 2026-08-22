@@ -1,9 +1,8 @@
-# CodeSafe tool survey: rollup report
+# Roll-up Report
 
-> This report uses ASD-STE100 Simplified Technical English. It collects every evaluated tool.
 > Each tool also has a detailed report in `<tool>/report.md`.
 
-## Comparison table
+## Comparison Table
 
 | Tool | Deployability | Extensibility | Maintenance & Support | Execution isolation | Content sensitivity | Observability | Experimentability | Attack Vectors | Security Risks |
 |------|---------------|---------------|----------------------|---------------------|---------------------|---------------|-------------------|----------------|----------------|
@@ -11,12 +10,11 @@
 | [ASB](asb/report.md) | Fair: ollama works but requires 2 code fixes (conda, judge) and 1 workaround (ChromaDB); incomplete requirements.txt; serial scheduler makes large runs slow | Fair: data-driven for new tools and agents; defense changes need deep code reading; no developer docs | Poor: 20 total commits; last commit 2026-04-17; 3 open issues with no maintainer response; incomplete dependencies | High: fully simulated tools; no real API calls, server connections, or transactions; tools return fixed confirmation strings | Moderate: concrete attack instructions (crypto mining, credential theft, privilege escalation); non-aggressive subset available | Fair: clear ASR output; verbose console text; no trajectory viewer; binary scoring (0 or 1); attack success is a substring match | Poor: model-swap only; no API for custom agent pipelines or defense logic | V1 (Indirect prompt injection), V4 (Direct prompt injection), V6 (Memory poisoning) | R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions) |
 | [AgentDojo](agentdojo/report.md) | High: simulated in-memory tools; 3 small code fixes needed (timeout, Pydantic, InternalServerError catch); ollama via openai-compatible provider | High: extensible pipeline API for custom agents and defenses; register new attacks, suites, and injection tasks independently | Good: NeurIPS 2024; active SPYLab repo; published on PyPI (v0.1.35); 3 code fixes needed | High: in-memory Pydantic objects; tools mutate simulated state only; environment resets between runs | Low: injection templates are formulaic; language is not violent or offensive; actions described are malicious (financial fraud, data theft) but not graphic | Good: structured JSON results with full message traces; dual utility/security scoring (0.0 to 1.0); no built-in trajectory viewer | High: extensible pipeline API for custom defense logic (input filtering, output checking, prompt hardening); student can benchmark their own agent | V1 (Indirect prompt injection) | R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions), R7 (Denial-of-service) |
 
-## Score legend
+## Evaluation Criteria
 
 Each criterion is scored on a 1 to 3 scale per factor. The criterion average is the mean of its factor scores. For all criteria except Content sensitivity, 3 is the best outcome. For Content sensitivity, 3 means the most harmful content is present.
 
 The verdict words map to score ranges:
-
 | Verdict | Score range |
 |---------|------------|
 | High / Excellent | 2.5 to 3.0 |
@@ -28,6 +26,8 @@ The verdict words map to score ranges:
 
 #### Deployability
 
+> How costly/easy is it to set up and run the tool?
+
 | Factor | 1 | 2 | 3 |
 |--------|---|---|---|
 | Hardware requirements | Needs specialized hardware beyond a GPU server | Needs GPU server with extra configuration | Runs on standard hardware |
@@ -38,6 +38,8 @@ The verdict words map to score ranges:
 
 #### Extensibility
 
+> How easily can someone add new benchmark content (tasks, attacks, tools, scoring functions) to the framework?
+
 | Factor | 1 | 2 | 3 |
 |--------|---|---|---|
 | Core modification required | Must modify core code to extend | Some extensions data-driven, others need core changes | All extensions through subclassing, decorators, or config |
@@ -45,6 +47,8 @@ The verdict words map to score ranges:
 | Changes scoped to one module | Changes spread across multiple files | Partially scoped | Each extension is one file or directory |
 
 #### Maintenance & Support
+
+> How actively is the tool maintained and supported? 
 
 | Factor | 1 | 2 | 3 |
 |--------|---|---|---|
@@ -54,19 +58,25 @@ The verdict words map to score ranges:
 
 #### Execution isolation
 
+> How well are the tool's actions isolated from real systems?
+
 | Factor | 1 | 2 | 3 |
 |--------|---|---|---|
 | Tool isolation level | Tools interact with real systems | Sandboxed but with some real-system access | Fully simulated, in-memory, or mock tools |
 
 #### Content sensitivity
 
-Higher score = more harmful content present.
+> To what extent does the dataset contain content that is harmful or offensive to read?
+
+(Higher score = more harmful content present)
 
 | Factor | 1 | 2 | 3 |
 |--------|---|---|---|
 | Harmful content presence | Formulaic or benign | Concrete harmful instructions, not graphic | Real harmful text across multiple categories |
 
-#### Observability
+#### Observability (i.e., Interpretability)
+
+> How well can a student trace what happened in a task run and why it scored the way it did? 
 
 | Factor | 1 | 2 | 3 |
 |--------|---|---|---|
@@ -77,13 +87,15 @@ Higher score = more harmful content present.
 
 #### Experimentability
 
+>  To what extent can a student plug in their own agent or defense pipeline (in lieu of merely swapping the model) and measure the effect?
+
 | Factor | 1 | 2 | 3 |
 |--------|---|---|---|
 | API for custom pipelines | No API for custom pipelines | Limited API | Full pipeline API (subclass, plug in, run) |
 | Run against own agent | Cannot plug in external agent | Possible with adaptation | Designed for user-built agents |
 | Beyond model swap | Model swap only | Some extension beyond model swap | Full extension (attacks, defenses, tasks, scoring) |
 
-## Factor scores
+### Factor Scores
 
 | Criterion | Factor | AgentDojo | ASB | AgentHarm |
 |-----------|--------|-----------|-----|-----------|
@@ -115,16 +127,21 @@ Higher score = more harmful content present.
 | Experimentability | Beyond model swap | 3 | 1 | 3 |
 | **Experimentability** | **Average** | **3.0** | **1.0** | **3.0** |
 
-## Per-tool notes
+## Per-tool Notes
 
-- **AgentHarm**: AgentHarm measures how harmful a tool-using LLM agent becomes. It is an Inspect (`inspect_ai`) eval. It runs with local ollama models and needs no special infrastructure. The setup was smooth, except the ollama provider needs the `openai`
-  package. The full run (all three models, both tasks, `test_public`, 1056 samples) shows a clear trend by model size. On the harmful split, refusal falls as the model shrinks (`gpt-oss:120b` 0.93, `qwen3-coder:30b` 0.61, `qwen3:14b` 0.26). So the smallest model is the most harmful overall (harm score 0.49), and the largest model is the safest (harm score 0.125). But the largest model over-refuses 45% of benign tasks, which hurts its usefulness.
-  The mid-size model is the most balanced. See `agentharm/report.md`.
-
-- **ASB**: ASB benchmarks attacks and defenses on 10 scenario-specific LLM agents. It is a custom Python framework (not Inspect). It supports ollama via the `ollama` Python client, but the refusal judge and ChromaDB embeddings hardcode the OpenAI API, so code changes are needed. Full runs confirm the quick-test pattern: `qwen3-coder:30b` resisted every naive DPI attack (ASR 0.0%, Refusal 95.0%), `qwen3:14b` was nearly fully vulnerable (ASR 99.75%, Refusal 2.5%), and `gpt-oss:120b` was vulnerable but less so (ASR 87.0%, Refusal 14.0%).
-  The framework is less mature than AgentHarm: 20 commits, incomplete dependencies, no trajectory viewer, and no developer documentation. The dataset is ungated with concrete attack instructions. See `asb/report.md`.
-
-- **AgentDojo**: AgentDojo evaluates prompt injection attacks on tool-calling LLM agents. It injects attacker goals into the environment data (emails, bills, messages) that the agent reads through tool calls. The benchmark scores utility (task completion) and security (injection resistance) independently. Three code fixes were needed: an OpenAI client timeout for reasoning models, a Pydantic forward reference for cached result loading, and an `InternalServerError` catch for tool-call parsing failures. The full benchmark (all 949 attack pairs, `important_instructions` attack) shows that all three models are highly vulnerable to indirect prompt injection. Combined security ranges from 17.6% to 27.0%. The utility-security tradeoff is the core finding: without explicit defense logic in the agent pipeline, prompt injection succeeds at high rates regardless of model size. AgentDojo's extensible pipeline API makes it the strongest tool for teaching defense construction. See `agentdojo/report.md`.
++ **AgentHarm** [tool-specific report](./agentharm/report.md):
+    + AgentHarm measures how harmful a tool-using LLM agent becomes. It is an Inspect (`inspect_ai`) eval. It runs with local ollama models and needs no special infrastructure. The setup was smooth, except the ollama provider needs the `openai` package.
+    + The full run (all three models, both tasks, `test_public`, 1056 samples) shows a clear trend by model size. On the harmful split, refusal falls as the model shrinks (`gpt-oss:120b` 0.93, `qwen3-coder:30b` 0.61, `qwen3:14b` 0.26). So the smallest model is the most harmful overall (harm score 0.49), and the largest model is the safest (harm score 0.125). But the largest model over-refuses 45% of benign tasks, which hurts its usefulness. The mid-size model is the most balanced.
++ **ASB** [tool-specific report](./asb/report.md): 
+    + ASB benchmarks attacks and defenses on 10 scenario-specific LLM agents. It is a custom Python framework (not Inspect). It supports ollama via the `ollama` Python client.
+    + However, the refusal judge and ChromaDB embeddings hardcode the OpenAI API, so code changes are needed. 
+    + Full runs confirm the quick-test pattern: `qwen3-coder:30b` resisted every naive DPI attack (ASR 0.0%, Refusal 95.0%), `qwen3:14b` was nearly fully vulnerable (ASR 99.75%, Refusal 2.5%), and `gpt-oss:120b` was vulnerable but less so (ASR 87.0%, Refusal 14.0%).
+    + The framework is less mature than AgentHarm: 20 commits, incomplete dependencies, no trajectory viewer, and no developer documentation. The dataset is ungated with concrete attack instructions.
++ **AgentDojo** [tool-specific report](./agentdojo/report.md):
+    + AgentDojo evaluates prompt injection attacks on tool-calling LLM agents. It injects attacker goals into the environment data (emails, bills, messages) that the agent reads through tool calls. The benchmark scores utility (task completion) and security (injection resistance) independently. 
+    + Three code fixes were needed: an OpenAI client timeout for reasoning models, a Pydantic forward reference for cached result loading, and an `InternalServerError` catch for tool-call parsing failures. 
+    + The full benchmark (all 949 attack pairs, `important_instructions` attack) shows that all three models are highly vulnerable to indirect prompt injection. Combined security ranges from 17.6% to 27.0%. The utility-security tradeoff is the core finding: without explicit defense logic in the agent pipeline, prompt injection succeeds at high rates regardless of model size.
+    + AgentDojo's extensible pipeline API makes it the strongest tool for teaching defense construction.
 
 ## Model benchmarks vs. agent security testing
 
@@ -134,17 +151,23 @@ A production agent's security depends on its full stack: input sanitization, out
 
 The tools fall into three tiers on this axis:
 
-1. **Supports custom agent pipelines.** AgentDojo lets users implement a custom pipeline class with their own defense logic (input filtering, output checking, prompt hardening) and test it against the injection suite. AgentHarm uses Inspect AI's solver abstraction, which can wrap a full agent pipeline. These two tools can evaluate a user-built agent, not only a model.
+1. **Supports custom agent pipelines**:
+    + AgentDojo: let users implement a custom pipeline class with their own defense logic (input filtering, output checking, prompt hardening) and test it against the injection suite. 
+    + AgentHarm: use Inspect AI's solver abstraction, which can wrap a full agent pipeline
+    + These two tools can evaluate a user-built agent, not only a model.
 
-2. **Tests existing agent systems as targets.** RedCodeAgent sends adversarial prompts to diverse code-agent systems (OpenHands, Aider, and others) and grades by execution results.
-   OS-Harm, RiOSWorld, SafeArena, and BrowserART run against specific agent frameworks in real environments. A user could substitute their own agent if it speaks the same interface (BrowserGym, OSWorld), but the benchmarks were not designed for plug-and-play agent swapping.
+2. **Tests existing agent systems as targets**: 
+    + RedCodeAgent: send adversarial prompts to diverse code-agent systems (OpenHands, Aider, and others) and grades by execution results.
+    + OS-Harm, RiOSWorld, SafeArena, BrowserART: run against specific agent frameworks in real environments. 
+    + A user could substitute their own agent if it speaks the same interface (BrowserGym, OSWorld), but the benchmarks were not designed for plug-and-play agent swapping.
 
-3. **Model benchmarks in agent clothing.** InjecAgent, ToolEmu, ASB, ToolSword, AgentPoison, EIA, AgentDAM, HAICOSYSTEM, MobileSafetyBench, VPI-Bench, RedCode, and SafeArena all instantiate their own agent framework and only vary the model. They measure the model's inherent safety, not the security posture of an arbitrary agent system.
+3. **Model benchmarks in agent clothing**:
+    + InjecAgent, ToolEmu, ASB, ToolSword, AgentPoison, EIA, AgentDAM, HAICOSYSTEM, MobileSafetyBench, VPI-Bench, RedCode, SafeArena: instantiate their own agent framework and only vary the model.
+    + They measure the model's inherent safety, not the security posture of an arbitrary agent system.
 
 For the CodeSafe curriculum, Tier 1 tools (AgentDojo, AgentHarm) are the most useful because students can build an agent, add defenses, and measure the effect. Tier 3 tools remain valuable for teaching students how attacks work and how model choice affects baseline safety, but they cannot evaluate a student-built defense.
 
 ## Test harness
 
 All tools use the shared ollama server at `http://korn.ics.uci.edu:48763`.
-The agent models under test are `gpt-oss:120b` (large), `qwen3-coder:30b` (mid), and `qwen3:14b`
-(small).
+The agent models under test are `gpt-oss:120b` (large), `qwen3-coder:30b` (mid), and `qwen3:14b` (small).

@@ -31,6 +31,61 @@ Score each tool on these seven criteria. Answer the concrete questions for each 
 6. **Observability**: How well can a student trace what happened in a task run and why it scored the way it did? Consider: whether the output shows the full message sequence (user prompt, model responses, tool calls, tool results), whether the scoring breakdown explains why a task passed or failed, whether there is a trajectory viewer or only raw output, and whether the score is granular (0.0 to 1.0) or binary.
 7. **Experimentability**: To what extent can a student build and test their own agent defenses? Consider: whether the tool exposes an API for custom agent pipelines or defense logic, whether the student can run the benchmark against their own agent, and whether the tool only allows swapping the model.
 
+### Factor scoring
+
+Each criterion has one or more factors. Score every factor on a 1 to 3 scale. The rubric tables in `report.md` (the rollup report, under "Factor rubrics") define what 1, 2, and 3 mean for each factor. Use those definitions as the authoritative reference. For all criteria except Content sensitivity, 3 is the best outcome. For Content sensitivity, 3 means the most harmful content is present.
+
+The criterion average is the arithmetic mean of its factor scores. Map the average to a verdict word:
+
+| Verdict | Score range |
+|---------|------------|
+| High / Excellent | 2.5 to 3.0 |
+| Good / Active | 2.0 to 2.4 |
+| Moderate / Fair | 1.5 to 1.9 |
+| Low / Poor | 1.0 to 1.4 |
+
+In each tool's `report.md`, present the scores under every criterion heading in this order:
+
+1. **Verdict line.** `Verdict: <word> (<average>/3).`
+2. **Factor table.** A markdown table with three columns: Factor, Rating, Evidence. Each row is one factor. The Rating column shows `N/3`. The Evidence column is one sentence that cites a concrete, verifiable fact from the evaluation (a file path, a command output, a metric, a commit date, a dependency name). Do not write generic descriptions; every evidence sentence must point to something the reader can check.
+3. **Reasons.** The existing bullet list (`+` items) with the full rationale.
+4. **NOTE callout.** `> [!NOTE]` with supporting detail or file paths.
+
+Example (one criterion):
+
+```markdown
+### Maintenance & Support
+
+Verdict: active (2.0/3).
+
+| Factor | Rating | Evidence |
+|--------|--------|----------|
+| Commit frequency | 3/3 | Regular commits 2024 to 2025; PyPI v0.1.35; most recent commit Jun 2, 2026 |
+| Issue responsiveness | 2/3 | Active SPYLab repository, but some issues remain open |
+| Dependencies install cleanly | 1/3 | Three code fixes needed; Pydantic forward-reference bug breaks cached result loading |
+
+Reasons:
++ The repository has regular commits, with activity through 2024 and 2025.
++ There are some bugs in the source code.
+
+> [!NOTE]
+> As of Aug 21, 2026, the most recent commit was on Jun 2, 2026.
+```
+
+After writing the tool report, update three sections in the rollup `report.md`:
+
+**Comparison Table.** Add or update the tool's row. Format each cell as `Verdict-word: one or two summary sentences`. The Tool cell is a markdown link: `[ToolName](tool/report.md)`. The Attack Vectors cell lists V-codes with canonical names, comma-separated (e.g., `V1 (Indirect prompt injection), V4 (Direct prompt injection)`). The Security Risks cell lists R-codes the same way.
+
+**Factor Scores.** Add a column for the new tool. Each factor row contains a bare integer (1 to 3). Each criterion's average row uses bold text: `| **Criterion** | **Average** | **N.N** | ... |` (one decimal place).
+
+**Per-tool Notes.** Add a bullet for the tool. Format:
+```markdown
++ **ToolName** [tool-specific report](./tool/report.md):
+    + What the tool measures (one sentence).
+    + Key finding with metrics.
+    + Additional findings as needed.
+```
+
 ## Phase 1: Ground the tool
 
 1. Read the repository README and the paper abstract. Use WebFetch for both.
@@ -98,7 +153,7 @@ Place all evaluation scripts in `<tool>/` (next to `report.md`). Each script mus
 2. In the Installation section, document every source patch applied to the submodule.
    State the file, the change, and the reason.
 3. In the Installation or Usage section, tell the user which environment variables to set and state that the evaluation scripts fall back to the default server URL if unset.
-4. Add or update the tool's row in `report.md` from `templates/rollup-report-template.md`.
+4. Update the rollup `report.md` as described in the "Factor scoring" subsection above (Comparison Table row, Factor Scores column, Per-tool Notes bullet).
 5. Use ASD-STE100 English. Quote real commands and real output in the Test Result section.
 6. For a harmful benchmark, quote sensitive prompt text only as much as the report needs.
 7. Read `attack-risk-coverage.md` (read-only data source). Find the tool's row in the coverage table. Use it to fill two parts of the reports:
