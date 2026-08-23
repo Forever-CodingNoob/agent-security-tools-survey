@@ -115,7 +115,7 @@ The tool uses pip inside a virtual environment. Do these steps:
    export OPENAI_COMPATIBLE_API_KEY=ollama
    ```
 4. Apply the following patches: 
-    1. **Fix: OpenAI client timeout**
+    a. **Fix: OpenAI client timeout**
         The default timeout (10 minutes) is too short for reasoning models such as `qwen3:14b`, which generate long thinking traces. The retry loop triggers every 10 minutes and blocks the run. Add `timeout=1800.0` to the OpenAI client constructor in `src/agentdojo/agent_pipeline/agent_pipeline.py`, around line 132:
        ```python
        # BEFORE:
@@ -131,7 +131,7 @@ The tool uses pip inside a virtual environment. Do these steps:
            timeout=1800.0,
        )
        ```
-    2. **Fix: Pydantic forward reference**
+    b. **Fix: Pydantic forward reference**
         When the benchmark reads cached results (runs without `--force-rerun`), it deserializes `TaskResults` objects. `ChatMessage` in `types.py` has a forward reference to `FunctionCall` from `functions_runtime.py`, but `benchmark.py` does not import it. The deserialization fails with `PydanticUserError: TaskResults is not fully defined; you should define FunctionCall`. Apply this fix in `src/agentdojo/benchmark.py`:
        ```python
        # Add FunctionCall to the import:
@@ -141,7 +141,7 @@ The tool uses pip inside a virtual environment. Do these steps:
        TaskResults.model_rebuild()
        return TaskResults(**res_dict)
        ```
-    3. **Fix: Catch `openai.InternalServerError` per task**
+    c. **Fix: Catch `openai.InternalServerError` per task**
         The benchmark already catches `cohere.ApiError` and `google.genai.ServerError` per task, but not `openai.InternalServerError`. When a reasoning model emits chain-of-thought text inside tool-call arguments, ollama returns a 500 that the tenacity retry cannot recover from (the error is deterministic). Without this fix, one failing task crashes the entire benchmark run. Add `InternalServerError` to the import and add except blocks in both `run_task_without_injection_tasks` and `run_task_with_injection_tasks` in `src/agentdojo/benchmark.py`:
        ```python
        # Add to the openai import (line 9):

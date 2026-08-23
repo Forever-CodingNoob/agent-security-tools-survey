@@ -112,56 +112,50 @@ The tool uses pip with a requirements.txt file. Do these steps:
    pip install langchain-chroma langchain-openai langchain-ollama langchain-core python-dotenv jsonlines
    ```
 
-4. **Fix 1: Conda fallback**: The README says to use conda. The code calls `conda list` to check installed packages. If you do not have conda, the code crashes with `FileNotFoundError: 'conda'`. Apply this fix in `pyopenagi/agents/interact.py`, function `check_reqs_installed`. Replace the bare `subprocess.run` call:
-
-   ```python
-   # BEFORE (crashes without conda):
-   result = subprocess.run(['conda', 'list'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-   # AFTER (falls back to pip):
-   try:
+4. Apply the following patches: 
+    a. **Fix: Conda fallback** 
+        The README says to use conda. The code calls `conda list` to check installed packages. If you do not have conda, the code crashes with `FileNotFoundError: 'conda'`. Apply this fix in `pyopenagi/agents/interact.py`, function `check_reqs_installed`. Replace the bare `subprocess.run` call:
+       ```python
+       # BEFORE (crashes without conda):
        result = subprocess.run(['conda', 'list'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-   except FileNotFoundError:
-       result = subprocess.run(['pip', 'list', '--format=columns'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-   ```
 
-   In the same function, make the package name comparison case-insensitive. Change the `installed_packages` list comprehension and the `if req` check:
+       # AFTER (falls back to pip):
+       try:
+           result = subprocess.run(['conda', 'list'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+       except FileNotFoundError:
+           result = subprocess.run(['pip', 'list', '--format=columns'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+       ```
+       In the same function, make the package name comparison case-insensitive. Change the `installed_packages` list comprehension and the `if req` check:
+       ```python
+       installed_packages = [line.split()[0].lower() for line in output.splitlines() if line]
+       # ...
+       if req.lower() not in installed_packages:
+       ```
+    b. **Fix: Judge model**
+        The refusal judge function `judge_response` in `main_attacker.py` hardcodes `OpenAI()` with model `gpt-4o-mini`. Replace the first lines of the function body:
+       ```python
+       # BEFORE:
+       client = OpenAI()
+       # ... later: model="gpt-4o-mini"
 
-   ```python
-   installed_packages = [line.split()[0].lower() for line in output.splitlines() if line]
-   # ...
-   if req.lower() not in installed_packages:
-   ```
-
-5. **Fix 2: Judge model**: The refusal judge function `judge_response` in `main_attacker.py` hardcodes `OpenAI()` with model `gpt-4o-mini`. Replace the first lines of the function body:
-
-   ```python
-   # BEFORE:
-   client = OpenAI()
-   # ... later: model="gpt-4o-mini"
-
-   # AFTER:
-   judge_base_url = os.getenv('JUDGE_BASE_URL', os.getenv('OPENAI_BASE_URL', 'https://api.openai.com/v1'))
-   judge_api_key = os.getenv('JUDGE_API_KEY', os.getenv('OPENAI_API_KEY', 'ollama'))
-   judge_model = os.getenv('JUDGE_MODEL', 'gpt-4o-mini')
-   client = OpenAI(base_url=judge_base_url, api_key=judge_api_key)
-   # ... later: model=judge_model
-   ```
-
-   Then set the environment variables. The evaluation scripts fall back to `http://korn.ics.uci.edu:48763` if the server variables are unset.
-
-   ```bash
-   export OLLAMA_HOST=http://korn.ics.uci.edu:48763
-   export JUDGE_BASE_URL=http://korn.ics.uci.edu:48763/v1
-   export JUDGE_API_KEY=ollama
-   export JUDGE_MODEL=qwen3:14b
-   export OPENAI_API_KEY=ollama
-   ```
-
-6. The memory attack path uses `OpenAIEmbeddings` from LangChain for ChromaDB. Even when you do not run memory attacks, the code opens the `memory_db/chroma_db` directory if it exists.
+       # AFTER:
+       judge_base_url = os.getenv('JUDGE_BASE_URL', os.getenv('OPENAI_BASE_URL', 'https://api.openai.com/v1'))
+       judge_api_key = os.getenv('JUDGE_API_KEY', os.getenv('OPENAI_API_KEY', 'ollama'))
+       judge_model = os.getenv('JUDGE_MODEL', 'gpt-4o-mini')
+       client = OpenAI(base_url=judge_base_url, api_key=judge_api_key)
+       # ... later: model=judge_model
+       ```
+       Then set the environment variables. The evaluation scripts fall back to `http://korn.ics.uci.edu:48763` if the server variables are unset.
+       ```bash
+       export OLLAMA_HOST=http://korn.ics.uci.edu:48763
+       export JUDGE_BASE_URL=http://korn.ics.uci.edu:48763/v1
+       export JUDGE_API_KEY=ollama
+       export JUDGE_MODEL=qwen3:14b
+       export OPENAI_API_KEY=ollama
+       ```
+5. The memory attack path uses `OpenAIEmbeddings` from LangChain for ChromaDB. Even when you do not run memory attacks, the code opens the `memory_db/chroma_db` directory if it exists.
    Pass `--database /tmp/nonexistent_db` to skip ChromaDB initialization on non-memory runs.
-
-7. The original code does not record per-task wall-clock duration. Apply this patch in `asb/main_attacker.py` to add a `Duration` column (seconds) to the CSV output.
+6. The original code does not record per-task wall-clock duration. Apply this patch in `asb/main_attacker.py` to add a `Duration` column (seconds) to the CSV output.
 
    a. Add `time` to the import line:
 
