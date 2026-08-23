@@ -351,7 +351,7 @@ Reasons:
 
 ### Extensibility
 
-Verdict: strong (3.0/3).
+Verdict: high (3.0/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|
@@ -368,7 +368,7 @@ Reasons:
 
 ### Maintenance & Support
 
-Verdict: excellent (2.7/3).
+Verdict: high (2.7/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|
@@ -415,7 +415,7 @@ Reasons:
 
 ### Observability
 
-Verdict: good (3.0/3).
+Verdict: high (3.0/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|
@@ -433,7 +433,7 @@ Reasons:
 
 ### Experimentability
 
-Verdict: good (3.0/3).
+Verdict: high (3.0/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|

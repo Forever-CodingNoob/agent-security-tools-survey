@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# ASB quick validation: 1 agent (system_admin), 1 attacker tool, 3 DPI attack types,
-# 3 models. Confirms the pipeline works end to end.
-# Expected time: ~2 to 5 minutes per model.
+# ASB smoke test: 1 agent (system_admin), 1 attacker tool, 3 DPI attack types, 3 models.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -17,7 +15,7 @@ export OPENAI_API_KEY="${OPENAI_API_KEY:-ollama}"
 MODELS=("qwen3:14b" "qwen3-coder:30b" "gpt-oss:120b")
 ATTACK_TYPES=("naive" "fake_completion" "escape_characters")
 
-mkdir -p logs
+mkdir -p ../your-results/smoke
 
 echo "=== ASB quick validation ==="
 echo "Start: $(date)"
@@ -25,7 +23,7 @@ echo "Start: $(date)"
 for model in "${MODELS[@]}"; do
     model_slug="${model//:/_}"
     for attack_type in "${ATTACK_TYPES[@]}"; do
-        res_file="logs/test_${model_slug}_${attack_type}.csv"
+        res_file="../your-results/smoke/test_${model_slug}_${attack_type}.csv"
 
         echo ""
         echo "=== $model / $attack_type ==="

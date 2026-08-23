@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # ASB full evaluation: naive DPI attack, all 400 attacker tools, all 3 models.
 # Each model runs sequentially (the FIFOScheduler serializes LLM requests).
-# Estimated time: qwen3:14b ~8.5 h, qwen3-coder:30b ~5 h, gpt-oss:120b ~4 h.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -16,7 +15,7 @@ export OPENAI_API_KEY="${OPENAI_API_KEY:-ollama}"
 
 MODELS=("qwen3:14b" "qwen3-coder:30b" "gpt-oss:120b")
 
-mkdir -p logs/dpi
+mkdir -p ../your-results
 
 echo "=== ASB full benchmark (naive DPI, 400 tasks per model) ==="
 echo "Start: $(date)"
@@ -24,7 +23,7 @@ echo "Start: $(date)"
 for model in "${MODELS[@]}"; do
     model_slug="${model//:/_}"
     model_slug="${model_slug//-/_}"
-    res_file="logs/dpi/full_${model_slug}_naive.csv"
+    res_file="../your-results/full_${model_slug}_naive.csv"
 
     echo ""
     echo "=== Starting full run: $model ==="
@@ -50,7 +49,7 @@ for model in "${MODELS[@]}"; do
 done
 
 echo "=== All full runs complete at $(date) ==="
-for f in logs/dpi/full_*.csv; do
+for f in ../your-results/dpi/full_*.csv; do
     echo "$f: $(wc -l < "$f") rows"
 done
 
@@ -60,7 +59,7 @@ python3 -c "
 import csv, glob, os
 
 rows = []
-for f in sorted(glob.glob('logs/dpi/full_*.csv')):
+for f in sorted(glob.glob('../your-results/dpi/full_*.csv')):
     model_tag = os.path.basename(f).replace('full_', '').replace('_naive.csv', '')
     with open(f, newline='') as fh:
         reader = csv.DictReader(fh)
@@ -79,7 +78,7 @@ for f in sorted(glob.glob('logs/dpi/full_*.csv')):
 if rows:
     rows.sort(key=lambda r: r['duration_s'], reverse=True)
 
-    out = '../timing_summary.csv'
+    out = '../your-results/timing_summary.csv'
     with open(out, 'w', newline='') as f:
         w = csv.DictWriter(f, fieldnames=['model','agent','attack_tool','attack_ok','duration_s'])
         w.writeheader()

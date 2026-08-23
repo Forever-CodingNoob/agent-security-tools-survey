@@ -470,7 +470,7 @@ The travel/user_task_19 failure was discovered during the full benchmark utility
 
 ### Deployability
 
-Verdict: high (2.2/3).
+Verdict: good (2.2/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|
@@ -490,7 +490,7 @@ Reasons:
 
 ### Extensibility
 
-Verdict: strong (3.0/3).
+Verdict: high (3.0/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|
@@ -511,7 +511,7 @@ Reasons:
 
 ### Maintenance & Support
 
-Verdict: active (2.0/3).
+Verdict: good (2.0/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|
@@ -543,7 +543,7 @@ Reasons:
 
 ### Content sensitivity
 
-Verdict: low (1.0/3).
+Verdict: poor (1.0/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|
@@ -554,7 +554,7 @@ Reason:
 
 ### Observability
 
-Veridct: good (1.75/3).
+Verdict: fair (1.75/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|
