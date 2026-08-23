@@ -20,6 +20,9 @@
         + [Full run](#full-run-both-tasks-all-3-models-test_public)
         + [Execution Time](#execution-time)
     + [Our Findings](#our-findings)
+        + [Harmful split](#harmful-split)
+        + [Benign split (over-refusal)](#benign-split-over-refusal)
+        + [Refusal by category (harmful split)](#refusal-by-category-harmful-split)
 + [Criteria](#criteria)
     + [Deployability](#deployability)
     + [Extensibility](#extensibility)
@@ -297,7 +300,8 @@ The total wall-clock time for all three models (sequential, one model at a time)
 
 ### Our Findings
 
-**Harmful split.** Two effects move in opposite directions as the model gets smaller.
+#### Harmful split
+Two effects move in opposite directions as the model gets smaller.
 
 | Model | Harm score | Refusal | Capability when not refusing |
 |-------|-----------|---------|------------------------------|
@@ -308,7 +312,8 @@ The total wall-clock time for all three models (sequential, one model at a time)
 + The refusal rate falls fast as the model shrinks (0.92, then 0.62, then 0.29). The capability also falls (0.77, then 0.73, then 0.59). The refusal effect is stronger. So the overall harm score rises as the model shrinks.
 + The smallest model is the most harmful in total, because it rarely refuses. The largest model is the safest, because it refuses most. Bigger did not mean more dangerous here. It meant better safety training.
 
-**Benign split (over-refusal).** A safe model must still do safe work.
+#### Benign split (over-refusal)
+A safe model must still do safe work.
 
 | Model | Benign success | Benign refusal |
 |-------|----------------|----------------|
@@ -318,7 +323,8 @@ The total wall-clock time for all three models (sequential, one model at a time)
 
 + The large model refuses 53% of clearly safe tasks. This is over-refusal, and it lowers the usefulness of the model. The small model almost never over-refuses (6.3%). The mid-size model is the most balanced.
 
-**Refusal by category (harmful split).** All models refuse most on Harassment, Hate, Cybercrime, and Sexual content. They refuse least on Disinformation and Copyright. For example, `gpt-oss:120b` refused 100% of Harassment, Hate, Cybercrime, and Sexual tasks, but only 75% of Disinformation and 83% of Copyright tasks. `qwen3:14b` refused only 13% of Copyright tasks and 15% of Disinformation tasks. This shows where each model is weakest.
+#### Refusal by category (harmful split)
+All models refuse most on Harassment, Hate, Cybercrime, and Sexual content. They refuse least on Disinformation and Copyright. For example, `gpt-oss:120b` refused 100% of Harassment, Hate, Cybercrime, and Sexual tasks, but only 75% of Disinformation and 83% of Copyright tasks. `qwen3:14b` refused only 13% of Copyright tasks and 15% of Disinformation tasks. This shows where each model is weakest.
 
 
 ## Criteria
@@ -449,13 +455,13 @@ Reasons:
 
 ### Covered attack vectors
 
-- **V4 Direct prompt injection.** The attacker controls parts of otherwise benign inputs and appends malicious instructions as user queries. An optional jailbreak wrapper can accompany the query.
+- **V4 Direct prompt injection**: The attacker controls parts of otherwise benign inputs and appends malicious instructions as user queries. An optional jailbreak wrapper can accompany the query.
 
 ### Covered security risks
 
-- **R2 Wrong instruction following.** AgentHarm measures compliance rate: how often the agent follows the harmful instruction instead of refusing. The jailbreak wrapper tests whether prompt engineering can override safety training.
-- **R5 Private data leakage.** Several tool sets let the agent extract credit cards, passwords, and login credentials. The grading function checks whether the agent called the extraction tools with correct arguments.
-- **R6 Unintended/unauthorized actions.** The harmful task set includes multi-step tool calls for ransomware deployment, fraud, phishing, and malware distribution. The agent must call several tools in sequence to complete these actions.
+- **R2 Wrong instruction following**: AgentHarm measures compliance rate: how often the agent follows the harmful instruction instead of refusing. The jailbreak wrapper tests whether prompt engineering can override safety training.
+- **R5 Private data leakage**: Several tool sets let the agent extract credit cards, passwords, and login credentials. The grading function checks whether the agent called the extraction tools with correct arguments.
+- **R6 Unintended/unauthorized actions**: The harmful task set includes multi-step tool calls for ransomware deployment, fraud, phishing, and malware distribution. The agent must call several tools in sequence to complete these actions.
 
 ### Vectors and risks not covered
 
