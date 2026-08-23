@@ -1,7 +1,38 @@
 # AgentDojo ([repo](https://github.com/ethz-spylab/agentdojo)) ([paper](https://arxiv.org/abs/2406.13352))
 
 ## Table of Contents
-<toc>
++ [Summary](#summary)
++ [File Hierarchy](#file-hierarchy)
++ [Getting Started](#getting-started)
++ [Installation](#installation)
++ [Usage](#usage)
++ [Dataset](#dataset)
+    + [Suites, user tasks, injection tasks, and attack pairs](#suites-user-tasks-injection-tasks-and-attack-pairs)
+    + [Attacks](#attacks)
+    + [Scoring](#scoring)
+    + [Evaluation Trajectory](#evaluation-trajectory)
++ [Conducting Evaluation](#conducting-evaluation)
+    + [Evaluation scripts](#evaluation-scripts)
+    + [Experimental Settings](#experimental-settings)
+    + [Performing a Full Evaluation](#performing-a-full-evaluation)
+    + [Performing a Partial Evaluation](#performing-a-partial-evaluation)
++ [Experimental Results](#experimental-results)
+    + [Our Results](#our-results)
+        + [Phase 1: utility baseline](#phase-1-utility-baseline-no-attack-all-97-user-tasks)
+        + [Phase 2: `important_instructions` attack](#phase-2-important_instructions-attack)
+        + [Execution Time](#execution-time)
+    + [An Incident: Tool-call parsing failures](#an-incident-tool-call-parsing-failures)
+    + [Our Findings](#our-findings)
++ [Criteria](#criteria)
+    + [Deployability](#deployability)
+    + [Extensibility](#extensibility)
+    + [Maintenance & Support](#maintenance--support)
+    + [Execution isolation](#execution-isolation)
+    + [Content sensitivity](#content-sensitivity)
+    + [Observability](#observability)
+    + [Experimentability](#experimentability)
++ [Attack vectors and security risks](#attack-vectors-and-security-risks)
++ [References](#references)
 
 
 ## Summary
@@ -19,8 +50,14 @@ License: MIT. Version tested: v0.1.35. Package: `agentdojo`.
 ## File Hierarchy
 
 This subartifact contains the following:
-+ `README.md`: this documentation
-+ <other files>
++ [`README.md`](README.md): this documentation
++ [`agentdojo/`](agentdojo/): the AgentDojo source code ([ethz-spylab/agentdojo](https://github.com/ethz-spylab/agentdojo), added as a git submodule)
++ [`run_full_benchmark.sh`](run_full_benchmark.sh): full evaluation script (Phase 1 baseline + Phase 2 attack on all 949 pairs, all 3 models)
++ [`run_partial_benchmark.sh`](run_partial_benchmark.sh): partial evaluation script (Phase 1 baseline + Phase 2 attack on 105 pairs, all 3 models)
++ [`extract_results.py`](extract_results.py): post-processing script that parses JSON result files and prints per-suite utility/security averages
++ [`timing_summary.csv`](timing_summary.csv): per-task timing data produced by the evaluation scripts
++ [`restart_gptoss.sh`](restart_gptoss.sh): restart script for `gpt-oss:120b` workspace attack (failed; kept as a record)
++ [`restart_gptoss2.sh`](restart_gptoss2.sh): restart script for `gpt-oss:120b` workspace attack (failed; superseded by `run_partial_benchmark.sh`)
 
 ## Getting Started
 Run one injection attack on one suite with the ollama server:
@@ -253,11 +290,45 @@ To save time, a partial benchmark was created, using 3 evenly spaced user tasks 
 
 
 ### Performing a Full Evaluation
-<steps to perform a full eval, including how to config setting and view and parse results>
+
+1. To perform a full evaluation using the default configuration, run the script from the `agentdojo/` directory:
+    ```bash
+    ./run_full_benchmark.sh
+    ```
+    The script runs Phase 1 (utility baseline, 97 tasks) and Phase 2 (`important_instructions` attack, all 949 pairs) for all three models sequentially. It also writes `timing_summary.csv` and prints the top 10 slowest tasks at the end.
+    You can override the ollama server URL and API key by setting environment variables before running:
+    ```bash
+    export OPENAI_COMPATIBLE_BASE_URL="http://your-server:port/v1"
+    export OPENAI_COMPATIBLE_API_KEY="your-key"
+    ./run_full_benchmark.sh
+    ```
+2. After the evaluation finishes, parse the results with `extract_results.py`:
+    ```bash
+    python extract_results.py agentdojo/runs_qwen3_14b
+    python extract_results.py agentdojo/runs_qwen3-coder_30b
+    python extract_results.py agentdojo/runs_gpt-oss_120b
+    ```
+3. To inspect an individual result, read the JSON file for a specific (suite, user_task, attack, injection_task) combination:
+    ```bash
+    cat agentdojo/runs_qwen3_14b/openai-compatible/banking/user_task_0/important_instructions/injection_task_0.json | python -m json.tool
+    ```
+    Each JSON file contains the full message trace (`messages`), the injected text, and the boolean `utility` and `security` scores.
 
 ### Performing a Partial Evaluation
 
-<steps to perform a partial eval, including how to config setting and view and parse results>
+1. To perform a partial evaluation (105 attack pairs instead of 949), run:
+    ```bash
+    ./run_partial_benchmark.sh
+    ```
+    The script runs Phase 1 (all 97 tasks, same as the full evaluation) and Phase 2 with 3 evenly spaced user tasks per suite (12 user tasks total, 105 attack pairs). For `gpt-oss:120b`, the workspace suite uses `user_task_20` instead of `user_task_26` to avoid the tool-call parsing failure.
+    The same environment variable overrides apply as in the full evaluation.
+2. Parse the results with `extract_results.py`:
+    ```bash
+    python extract_results.py agentdojo/runs_qwen3_14b
+    python extract_results.py agentdojo/runs_qwen3-coder_30b
+    python extract_results.py agentdojo/runs_gpt-oss_120b
+    ```
+3. Result JSON files are at the same path pattern as the full evaluation. The partial run produces fewer files (105 per model instead of 949).
 
 
 ## Experimental Results
