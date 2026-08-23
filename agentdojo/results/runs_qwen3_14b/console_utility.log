@@ -1,0 +1,217 @@
+Benchmarking suites workspace, travel, banking, slack
+Running benchmark for suite: 'workspace'
+Using model: 'openai-compatible'
+03:41:14 INFO     Skipping task 'user_task_0' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_1' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_3' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_2' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_5' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_6' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_7' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_8' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_9' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_10' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_11' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_12' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_21' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_14' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_16' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_17' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_22' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_24' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_26' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_27' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_28' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_35' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_29' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_30' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_31' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_32' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_15' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_18' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_34' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_20' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_33' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_25' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_13' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_23' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_4' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_19' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_36' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_37' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_38' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_39' with no injections     
+                  because it was already run.                         
+Finished benchmark for suite: 'workspace'
+Running benchmark for suite: 'travel'
+Using model: 'openai-compatible'
+         INFO     Skipping task 'user_task_0' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_1' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_2' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_3' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_4' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_5' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_6' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_7' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_8' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_9' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_10' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_11' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_12' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_13' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_14' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_15' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_16' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_17' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_18' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_19' with no injections     
+                  because it was already run.                         
+Finished benchmark for suite: 'travel'
+Running benchmark for suite: 'banking'
+Using model: 'openai-compatible'
+         INFO     Skipping task 'user_task_0' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_1' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_2' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_3' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_4' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_5' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_6' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_7' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_8' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_9' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_10' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_11' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_12' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_13' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_14' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_15' with no injections     
+                  because it was already run.                         
+Finished benchmark for suite: 'banking'
+Running benchmark for suite: 'slack'
+Using model: 'openai-compatible'
+         INFO     Skipping task 'user_task_0' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_1' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_2' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_3' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_4' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_5' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_6' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_7' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_8' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_9' with no injections      
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_10' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_11' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_12' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_13' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_14' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_15' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_16' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_17' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_18' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_19' with no injections     
+                  because it was already run.                         
+         INFO     Skipping task 'user_task_20' with no injections     
+                  because it was already run.                         
+Finished benchmark for suite: 'slack'
+Results for suite workspace
+Average utility: 60.00%
+Results for suite travel
+Average utility: 70.00%
+Results for suite banking
+Average utility: 68.75%
+Results for suite slack
+Average utility: 85.71%
+Results for suite combined
+Average utility: 69.07%

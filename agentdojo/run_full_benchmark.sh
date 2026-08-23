@@ -16,7 +16,7 @@ echo "Start: $(date)"
 
 for model in "${MODELS[@]}"; do
     model_slug="${model//:/_}"
-    logdir="./runs_${model_slug}"
+    logdir="../your-results/runs_${model_slug}"
     mkdir -p "$logdir"
 
     echo ""
@@ -53,7 +53,7 @@ python3 -c "
 import json, glob, csv, os
 
 rows = []
-for f in sorted(glob.glob('./runs_*/openai-compatible/**/*.json', recursive=True)):
+for f in sorted(glob.glob('../your-results/runs_*/openai-compatible/**/*.json', recursive=True)):
     d = json.load(open(f))
     rows.append({
         'model': [p for p in f.split('/') if p.startswith('runs_')][0].replace('runs_', ''),
@@ -68,7 +68,7 @@ for f in sorted(glob.glob('./runs_*/openai-compatible/**/*.json', recursive=True
 
 rows.sort(key=lambda r: r['duration_s'], reverse=True)
 
-out = '../timing_summary.csv'
+out = '../your-results/timing_summary.csv'
 with open(out, 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=['model','suite','user_task','injection_task','attack','duration_s','utility','security'])
     w.writeheader()

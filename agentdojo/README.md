@@ -14,15 +14,22 @@
 + [Conducting Evaluation](#conducting-evaluation)
     + [Evaluation scripts](#evaluation-scripts)
     + [Experimental Settings](#experimental-settings)
+        + [Full Benchmark](#full-benchmark)
+        + [Partial Benchmark](#partial-benchmark)
     + [Performing a Full Evaluation](#performing-a-full-evaluation)
     + [Performing a Partial Evaluation](#performing-a-partial-evaluation)
 + [Experimental Results](#experimental-results)
     + [Our Results](#our-results)
         + [Phase 1: utility baseline](#phase-1-utility-baseline-no-attack-all-97-user-tasks)
         + [Phase 2: `important_instructions` attack](#phase-2-important_instructions-attack)
+            + [Full benchmark results](#full-benchmark-results-all-949-pairs)
+            + [Partial benchmark results](#partial-benchmark-results-105-pairs-for-comparison)
         + [Execution Time](#execution-time)
     + [An Incident: Tool-call parsing failures](#an-incident-tool-call-parsing-failures)
+        + [Affected tasks](#affected-tasks)
     + [Our Findings](#our-findings)
+        + [Phase 1](#phase-1)
+        + [Phase 2](#phase-2)
 + [Criteria](#criteria)
     + [Deployability](#deployability)
     + [Extensibility](#extensibility)
@@ -32,6 +39,9 @@
     + [Observability](#observability)
     + [Experimentability](#experimentability)
 + [Attack vectors and security risks](#attack-vectors-and-security-risks)
+    + [Covered attack vectors](#covered-attack-vectors)
+    + [Covered security risks](#covered-security-risks)
+    + [Vectors and risks not covered](#vectors-and-risks-not-covered)
 + [References](#references)
 
 
@@ -55,9 +65,12 @@ This subartifact contains the following:
 + [`run_full_benchmark.sh`](run_full_benchmark.sh): full evaluation script (Phase 1 baseline + Phase 2 attack on all 949 pairs, all 3 models)
 + [`run_partial_benchmark.sh`](run_partial_benchmark.sh): partial evaluation script (Phase 1 baseline + Phase 2 attack on 105 pairs, all 3 models)
 + [`extract_results.py`](extract_results.py): post-processing script that parses JSON result files and prints per-suite utility/security averages
-+ [`timing_summary.csv`](timing_summary.csv): per-task timing data produced by the evaluation scripts
-+ [`restart_gptoss.sh`](restart_gptoss.sh): restart script for `gpt-oss:120b` workspace attack (failed; kept as a record)
-+ [`restart_gptoss2.sh`](restart_gptoss2.sh): restart script for `gpt-oss:120b` workspace attack (failed; superseded by `run_partial_benchmark.sh`)
++ [`results/`](results/): evaluation results
+    + [`runs_qwen3_14b/`](results/runs_qwen3_14b/): per-pair JSON result files for `qwen3:14b`
+    + [`runs_qwen3-coder_30b/`](results/runs_qwen3-coder_30b/): per-pair JSON result files for `qwen3-coder:30b`
+    + [`runs_gpt-oss_120b/`](results/runs_gpt-oss_120b/): per-pair JSON result files for `gpt-oss:120b`
+    + [`timing_summary.csv`](results/timing_summary.csv): per-task timing data produced by the evaluation scripts
++ [`your-results/`](your-results/): output directory for new evaluation runs (created by the scripts; initially empty)
 
 ## Getting Started
 Run one injection attack on one suite with the ollama server:
@@ -153,7 +166,7 @@ Run the benchmark with the `agentdojo.scripts.benchmark` module. Select the mode
 python -m agentdojo.scripts.benchmark \
     --model OPENAI_COMPATIBLE \
     --model-id qwen3:14b \
-    --logdir ./runs_qwen3_14b
+    --logdir ./your-results/runs_qwen3_14b
 
 # Single attack, one suite, selected user tasks
 python -m agentdojo.scripts.benchmark \
@@ -162,7 +175,7 @@ python -m agentdojo.scripts.benchmark \
     --attack important_instructions \
     -s workspace \
     -ut user_task_0 -ut user_task_13 -ut user_task_26 \
-    --logdir ./runs_qwen3_14b
+    --logdir ./your-results/runs_qwen3_14b
 ```
 
 Key arguments:
@@ -238,10 +251,8 @@ The following trace shows one `important_instructions` attack on the banking sui
 ### Evaluation scripts
 | Script | Purpose | Linked results |
 |--------|---------|----------------|
-| `run_full_benchmark.sh` | Full evaluation: Phase 1 baseline (97 tasks) + Phase 2 attack (all 949 pairs), all 3 models. Prints a per-task timing summary at the end and writes `agentdojo/timing_summary.csv`. Use this to reproduce the complete experiment. Estimated time: ~60 h for `qwen3:14b`, ~7 h for `qwen3-coder:30b`, ~10 h for `gpt-oss:120b`. | `agentdojo/agentdojo/runs_qwen3_14b/`, `agentdojo/agentdojo/runs_qwen3-coder_30b/`, `agentdojo/agentdojo/runs_gpt-oss_120b/` |
-| `run_partial_benchmark.sh` | Partial benchmark: Phase 1 baseline (97 tasks) + Phase 2 attack (105 pairs, 3 user tasks per suite), all 3 models. Handles the `gpt-oss:120b` evaluation differently (e.g., test on user_task_20 instead of user_task_26). Prints a per-task timing summary at the end and writes `agentdojo/timing_summary.csv`. This produced the reported results. |  (not used in the reported run) |
-| `restart_gptoss.sh` | Restart attack phase for `gpt-oss:120b` with user_task_26 for workspace. Failed due to JSON malformation. Kept as a record. | (superseded) |
-| `restart_gptoss2.sh` | Restart attack phase for `gpt-oss:120b` with user_task_30 for workspace. Also failed. Final working configuration used user_task_20 (handled by `run_partial_benchmark.sh`). | (superseded) |
+| `run_full_benchmark.sh` | Full evaluation: Phase 1 baseline (97 tasks) + Phase 2 attack (all 949 pairs), all 3 models. Prints a per-task timing summary at the end and writes `your-results/timing_summary.csv`. Use this to reproduce the complete experiment. Estimated time: ~60 h for `qwen3:14b`, ~7 h for `qwen3-coder:30b`, ~10 h for `gpt-oss:120b`. | `results/` |
+| `run_partial_benchmark.sh` | Partial benchmark: Phase 1 baseline (97 tasks) + Phase 2 attack (105 pairs, 3 user tasks per suite), all 3 models. Handles the `gpt-oss:120b` evaluation differently (e.g., test on user_task_20 instead of user_task_26). Prints a per-task timing summary at the end and writes `your-results/timing_summary.csv`. This produced the reported results. | (not used in the reported run) |
 | `extract_results.py` | Parse JSON result files and print per-suite averages. Usage: `python extract_results.py <logdir> [model_dir]`. | (post-processing) |
 
 
@@ -295,7 +306,7 @@ To save time, a partial benchmark was created, using 3 evenly spaced user tasks 
     ```bash
     ./run_full_benchmark.sh
     ```
-    The script runs Phase 1 (utility baseline, 97 tasks) and Phase 2 (`important_instructions` attack, all 949 pairs) for all three models sequentially. It also writes `timing_summary.csv` and prints the top 10 slowest tasks at the end.
+    The script runs Phase 1 (utility baseline, 97 tasks) and Phase 2 (`important_instructions` attack, all 949 pairs) for all three models sequentially. It writes results to `your-results/` and prints the top 10 slowest tasks at the end.
     You can override the ollama server URL and API key by setting environment variables before running:
     ```bash
     export OPENAI_COMPATIBLE_BASE_URL="http://your-server:port/v1"
@@ -304,13 +315,13 @@ To save time, a partial benchmark was created, using 3 evenly spaced user tasks 
     ```
 2. After the evaluation finishes, parse the results with `extract_results.py`:
     ```bash
-    python extract_results.py agentdojo/runs_qwen3_14b
-    python extract_results.py agentdojo/runs_qwen3-coder_30b
-    python extract_results.py agentdojo/runs_gpt-oss_120b
+    python extract_results.py your-results/runs_qwen3_14b
+    python extract_results.py your-results/runs_qwen3-coder_30b
+    python extract_results.py your-results/runs_gpt-oss_120b
     ```
 3. To inspect an individual result, read the JSON file for a specific (suite, user_task, attack, injection_task) combination:
     ```bash
-    cat agentdojo/runs_qwen3_14b/openai-compatible/banking/user_task_0/important_instructions/injection_task_0.json | python -m json.tool
+    cat your-results/runs_qwen3_14b/openai-compatible/banking/user_task_0/important_instructions/injection_task_0.json | python -m json.tool
     ```
     Each JSON file contains the full message trace (`messages`), the injected text, and the boolean `utility` and `security` scores.
 
@@ -324,9 +335,9 @@ To save time, a partial benchmark was created, using 3 evenly spaced user tasks 
     The same environment variable overrides apply as in the full evaluation.
 2. Parse the results with `extract_results.py`:
     ```bash
-    python extract_results.py agentdojo/runs_qwen3_14b
-    python extract_results.py agentdojo/runs_qwen3-coder_30b
-    python extract_results.py agentdojo/runs_gpt-oss_120b
+    python extract_results.py your-results/runs_qwen3_14b
+    python extract_results.py your-results/runs_qwen3-coder_30b
+    python extract_results.py your-results/runs_gpt-oss_120b
     ```
 3. Result JSON files are at the same path pattern as the full evaluation. The partial run produces fewer files (105 per model instead of 949).
 
