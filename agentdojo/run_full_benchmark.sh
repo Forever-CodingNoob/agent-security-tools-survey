@@ -28,6 +28,7 @@ for model in "${MODELS[@]}"; do
         --model OPENAI_COMPATIBLE \
         --model-id "$model" \
         --logdir "$logdir" \
+        --force-rerun \
         2>&1 | tee "${logdir}/console_utility.log"
     echo "End utility: $(date)"
 
@@ -38,6 +39,7 @@ for model in "${MODELS[@]}"; do
         --model-id "$model" \
         --attack "$ATTACK" \
         --logdir "$logdir" \
+        --force-rerun \
         2>&1 | tee "${logdir}/console_attack.log"
     echo "End attack: $(date)"
 

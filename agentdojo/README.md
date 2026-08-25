@@ -111,7 +111,7 @@ The tool uses pip inside a virtual environment. Do these steps:
    ```
 3. Set the environment variables that point at your ollama server.
    ```bash
-   export OPENAI_COMPATIBLE_BASE_URL=http://korn.ics.uci.edu:48763/v1
+   export OPENAI_COMPATIBLE_BASE_URL=<url_to_your_ollama_server>
    export OPENAI_COMPATIBLE_API_KEY=ollama
    ```
 4. Apply the following patches: 
@@ -579,7 +579,7 @@ Verdict: high (3.0/3).
 
 | Factor | Rating | Evidence |
 |--------|--------|----------|
-| API for custom pipelines | 3/3 | BasePipelineElement class supports custom input filters, output validators, defense logic |
+| API for custom pipelines | 3/3 | `BasePipelineElement` class supports custom input filters, output validators, defense logic |
 | Run against own agent | 3/3 | Student implements pipeline, plugs it in, runs the full benchmark |
 | Beyond model swap | 3/3 | Student can add attacks, suites, and injection tasks without touching core code |
 
@@ -608,11 +608,14 @@ Reasons:
 
 ### Vectors and risks not covered
 
+Uncovered vectors:
 + direct prompt injection (V4)
 + malicious data injection (V2)
 + tool poisoning (V3)
 + model poisoning (V5)
 + memory poisoning (V6)
+
+Uncovered risks:
 + hallucination-driven harm (R4)
 
 

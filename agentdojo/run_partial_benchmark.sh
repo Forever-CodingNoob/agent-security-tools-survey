@@ -37,6 +37,7 @@ for model in "${MODELS[@]}"; do
         --model OPENAI_COMPATIBLE \
         --model-id "$model" \
         --logdir "$logdir" \
+        --force-rerun \
         2>&1 | tee "${logdir}/console_utility.log"
     echo "End utility: $(date)"
 
@@ -70,6 +71,7 @@ for model in "${MODELS[@]}"; do
             -s "$suite" \
             $ut_args \
             --logdir "$logdir" \
+            --force-rerun \
             2>&1 | tee -a "${logdir}/console_attack.log"
     done
 

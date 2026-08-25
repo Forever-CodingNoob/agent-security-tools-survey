@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # AgentHarm full run: both tasks (harmful + benign), all 3 models, test_public split.
-# Total: 1056 samples (176 per model per task). Estimated time: ~14.5 hours sequential.
-#
+# Total: 1056 samples (176 per model per task)
 # Log directories use the pattern your-results/<shortname>_<task>, for example your-results/gptoss_harmful.
 set -euo pipefail
 

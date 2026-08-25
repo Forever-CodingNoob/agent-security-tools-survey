@@ -109,10 +109,10 @@ The verdict words map to score ranges:
 | Extensibility | Extension points documented | 3 | 1 | 3 |
 | Extensibility | Changes scoped to one module | 3 | 2 | 3 |
 | **Extensibility** | **Average** | **3.0** | **1.7** | **3.0** |
-| Maintenance | Commit frequency | 3 | 1 | 3 |
+| Maintenance | Commit frequency | 3 | 1 | 2 |
 | Maintenance | Issue responsiveness | 2 | 1 | 3 |
 | Maintenance | Dependencies install cleanly | 1 | 1 | 2 |
-| **Maintenance** | **Average** | **2.0** | **1.0** | **2.7** |
+| **Maintenance** | **Average** | **2.0** | **1.0** | **2.3** |
 | Execution isolation | Tool isolation level | 3 | 3 | 3 |
 | **Execution isolation** | **Average** | **3.0** | **3.0** | **3.0** |
 | Content sensitivity | Harmful content presence | 1 | 2 | 3 |
