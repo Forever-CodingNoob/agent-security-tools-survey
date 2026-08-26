@@ -6,6 +6,7 @@
 + [Getting Started](#getting-started)
 + [Installation](#installation)
 + [Usage](#usage)
+    + [Key Arguments](#key-arguments)
 + [Dataset](#dataset)
     + [Suites, user tasks, injection tasks, and attack pairs](#suites-user-tasks-injection-tasks-and-attack-pairs)
     + [Attacks](#attacks)
@@ -178,7 +179,8 @@ python -m agentdojo.scripts.benchmark \
     --logdir ./your-results/runs_qwen3_14b
 ```
 
-Key arguments:
+### Key Arguments
+
 - `--model`: provider name. `OPENAI_COMPATIBLE` reads from `.env`.
 - `--model-id`: the ollama model tag (for example `qwen3:14b`).
 - `--attack`: attack name. The framework ships 17 registered attacks (for example `important_instructions`, `injecagent`, `tool_knowledge`).

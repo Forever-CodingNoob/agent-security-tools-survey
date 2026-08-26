@@ -16,6 +16,7 @@ MODELS=("qwen3:14b" "qwen3-coder:30b" "gpt-oss:120b")
 ATTACK_TYPES=("naive" "fake_completion" "escape_characters")
 
 mkdir -p ../your-results/smoke
+rm -f ../your-results/smoke/test_*.csv
 
 echo "=== ASB quick validation ==="
 echo "Start: $(date)"

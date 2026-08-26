@@ -6,6 +6,7 @@
 + [Getting Started](#getting-started)
 + [Installation](#installation)
 + [Usage](#usage)
+    + [Key Arguments](#key-arguments)
     + [Adding a jailbreak template](#adding-a-jailbreak-template)
 + [Dataset](#dataset)
     + [Splits and size](#splits-and-size)
@@ -141,7 +142,9 @@ To view the logs with the Inspect viewer:
 uv run inspect view
 ```
 
-Key arguments (pass with `-T`):
+### Key Arguments
+
+AgentHarm's arguments (pass with `-T`):
 - `split`: which subset of the dataset to evaluate. 
     + `val` (32 samples): for development
     + `test_public` (176 samples): full public evaluation
@@ -153,7 +156,7 @@ Key arguments (pass with `-T`):
 - `n_irrelevant_tools`: add distractor tools.
 - `agent_kwargs`: set `tool_choice`, `prompt_technique` (`standard`, `cot`, `react`, `refusal`), and prompt templates.
 
-Key Inspect arguments:
+Inspect's (`inspect_ai`) arguments:
 - `--model`: the agent model (e.g. `ollama/qwen3-coder:30b`).
 - `--max-connections`: maximum concurrent model requests. Set to 1 for a single ollama server.
 - `--limit`: maximum number of samples to evaluate.

@@ -13,17 +13,22 @@ export JUDGE_API_KEY="${JUDGE_API_KEY:-ollama}"
 export JUDGE_MODEL="${JUDGE_MODEL:-qwen3:14b}"
 export OPENAI_API_KEY="${OPENAI_API_KEY:-ollama}"
 
-MODELS=("qwen3:14b" "qwen3-coder:30b" "gpt-oss:120b")
+# Space-separated list of models to run. Override to rerun a subset, for example:
+#   MODELS="qwen3-coder:30b" ./run_full_benchmark.sh
+read -r -a MODELS <<< "${MODELS:-qwen3:14b qwen3-coder:30b gpt-oss:120b}"
 
 mkdir -p ../your-results
+rm -f ../your-results/timing_summary.csv
 
 echo "=== ASB full benchmark (naive DPI, 400 tasks per model) ==="
+echo "Models: ${MODELS[*]}"
 echo "Start: $(date)"
 
 for model in "${MODELS[@]}"; do
     model_slug="${model//:/_}"
     model_slug="${model_slug//-/_}"
     res_file="../your-results/full_${model_slug}_naive.csv"
+    rm -f "$res_file"
 
     echo ""
     echo "=== Starting full run: $model ==="
@@ -49,7 +54,7 @@ for model in "${MODELS[@]}"; do
 done
 
 echo "=== All full runs complete at $(date) ==="
-for f in ../your-results/dpi/full_*.csv; do
+for f in ../your-results/full_*.csv; do
     echo "$f: $(wc -l < "$f") rows"
 done
 
@@ -59,7 +64,7 @@ python3 -c "
 import csv, glob, os
 
 rows = []
-for f in sorted(glob.glob('../your-results/dpi/full_*.csv')):
+for f in sorted(glob.glob('../your-results/full_*.csv')):
     model_tag = os.path.basename(f).replace('full_', '').replace('_naive.csv', '')
     with open(f, newline='') as fh:
         reader = csv.DictReader(fh)
