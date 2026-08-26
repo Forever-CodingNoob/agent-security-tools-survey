@@ -17,6 +17,93 @@ This skill drives a repeatable evaluation of one agentic-LLM security tool at a 
 - Default ollama server base URL: `http://korn.ics.uci.edu:48763`. Evaluation scripts use environment variables with this default, so anyone can override the endpoint by setting the variable before running the script. See Phase 5 for the pattern.
 - If a tool cannot use an ollama endpoint, state this clearly in the report.
 
+## Report format and writing style
+
+These conventions apply to every tool report (`<tool>/README.md`) and the rollup report (`report.md`). They supplement the ASD-STE100 rules above. The AgentHarm and AgentDojo READMEs are the reference examples.
+
+### Section order
+
+Every tool report follows this section order:
+1. Title (with parenthesized links to repo, paper, and dataset)
+2. Table of Contents
+3. Summary
+4. File Hierarchy
+5. Getting Started
+6. Installation
+7. Usage (including extension how-tos such as "Adding a jailbreak template")
+8. Dataset (with subsections for splits/size, scoring, and evaluation trajectory)
+9. Conducting Evaluation (scripts table, experimental settings, full and partial how-to)
+10. Experimental Results (results tables, execution time, findings with analysis)
+11. Criteria (all seven, in the fixed order from the Evaluation criteria section below)
+12. Attack vectors and security risks (covered vectors, covered risks, vectors and risks not covered)
+13. References (collected links to paper, repo, dataset, framework, taxonomy)
+
+### Table of Contents
+
+List every heading and subheading. Use `+` list items with indentation for nesting. The reader must be able to jump to any subsection from the ToC.
+
+### Title line and source links
+
+The H1 title includes parenthesized links to the tool's repository, paper, and dataset (when applicable):
+```markdown
+# ToolName ([repo](URL)) ([paper](URL)) ([dataset](URL))
+```
+
+Link to primary sources inline at first mention throughout the report. When you refer to a framework, a dataset, a viewer, or any external project by name, make the name a markdown link to its primary URL. For example: `[Inspect AI framework](https://github.com/UKGovernmentBEIS/inspect_ai)`. Collect all such links again in the References section at the end.
+
+### Term definitions
+
+Define each domain-specific term before its first use. Use italics for the term and a colon or parenthetical for the definition:
+```markdown
+The paper also tests with *jailbreaks*: prompt wrappers that rephrase
+the harmful request to bypass safety training.
+```
+
+If a term has a synonym at a different layer (for example, "behavior" in the JSON dataset vs "sample" in the Inspect runtime), state the 1:1 relationship explicitly at the point of definition, then use one term consistently after that. When the tool's own terminology is jargon that a student would not know (for example, "solver" in Inspect means "agent"), state the mapping once in a NOTE callout and use the clearer term in the report text.
+
+### Sentence style
+
+Join related facts with connectives (because, so, while, which) or adverbs (typically, however, instead) rather than writing isolated short sentences. Use subordinate clauses to explain cause or consequence inline.
+
+Example of what to avoid:
+```
+A refusal scores 0. The grading function finds no correct tool calls.
+```
+
+Preferred form:
+```
+A refusal typically scores 0 because the grading function finds few or
+no correct tool calls.
+```
+
+This does not conflict with STE100's sentence-length limits. The goal is to avoid a choppy sequence of sentence fragments that each lack context. Two short sentences that share a causal relationship read better as one sentence with "because" or "so."
+
+### Lists over paragraphs
+
+When a section covers multiple items (splits, task types, extension points, metrics), introduce them with a short sentence ending with a colon, then use a `+` or `-` list. Each list item names the value and gives a concise description. Do not flatten multiple items into a single paragraph.
+
+### List-before-table
+
+When a table has labeled rows or columns that need explanation, introduce each dimension with a short sentence followed by a list before the table. The table then serves as a numerical summary. For example, define the splits in a list, define the task types in a second list, then place the count table after both.
+
+### Callouts
+
+- `> [!NOTE]`: supporting evidence such as file paths, code locations, or implementation details.
+- `> [!IMPORTANT]`: caveats that affect the evaluation (timing, cost, limitations, or required patches).
+- `> [!TIP]`: practical shortcuts (for example, where result files are stored).
+
+### Code examples
+
+Each code block has a `#` comment on the first line that says what the command does. When showing before/after patches, use `# BEFORE:` and `# AFTER:` comments inside the block.
+
+### Server URL in READMEs
+
+READMEs use `<url_to_your_ollama_server>` as a placeholder in installation and usage examples. The actual server URL (`http://korn.ics.uci.edu:48763`) belongs only in evaluation scripts (as an environment variable default) and in the rollup report's test harness section. A README must not expose the specific server address.
+
+### Findings section
+
+Structure findings as `+` list items. Start each item with a `**bold label**:` that names the pattern or insight, then explain with supporting data. When two effects interact, describe both in the same item so the reader sees the relationship.
+
 ## Evaluation criteria
 
 Score each tool on these seven criteria. Answer the concrete questions for each one.
@@ -72,19 +159,13 @@ Reasons:
 > As of Aug 21, 2026, the most recent commit was on Jun 2, 2026.
 ```
 
-After writing the tool report, update three sections in the rollup `report.md`:
+After writing the tool report, update two sections in the rollup `report.md`:
 
 **Comparison Table.** Add or update the tool's row. Format each cell as `Verdict-word: one or two summary sentences`. The Tool cell is a markdown link: `[ToolName](tool/report.md)`. The Attack Vectors cell lists V-codes with canonical names, comma-separated (e.g., `V1 (Indirect prompt injection), V4 (Direct prompt injection)`). The Security Risks cell lists R-codes the same way.
 
 **Factor Scores.** Add a column for the new tool. Each factor row contains a bare integer (1 to 3). Each criterion's average row uses bold text: `| **Criterion** | **Average** | **N.N** | ... |` (one decimal place).
 
-**Per-tool Notes.** Add a bullet for the tool. Format:
-```markdown
-+ **ToolName** [tool-specific report](./tool/report.md):
-    + What the tool measures (one sentence).
-    + Key finding with metrics.
-    + Additional findings as needed.
-```
+The rollup report does not have per-tool notes. Tool-specific findings belong only in the tool's own README.
 
 ## Phase 1: Ground the tool
 
@@ -153,7 +234,7 @@ Place all evaluation scripts in `<tool>/` (next to `report.md`). Each script mus
 2. In the Installation section, document every source patch applied to the submodule.
    State the file, the change, and the reason.
 3. In the Installation or Usage section, tell the user which environment variables to set and state that the evaluation scripts fall back to the default server URL if unset.
-4. Update the rollup `report.md` as described in the "Factor scoring" subsection above (Comparison Table row, Factor Scores column, Per-tool Notes bullet).
+4. Update the rollup `report.md` as described in the "Factor scoring" subsection above (Comparison Table row, Factor Scores column).
 5. Use ASD-STE100 English. Quote real commands and real output in the Test Result section.
 6. For a harmful benchmark, quote sensitive prompt text only as much as the report needs.
 7. Read `attack-risk-coverage.md` (read-only data source). Find the tool's row in the coverage table. Use it to fill two parts of the reports:
