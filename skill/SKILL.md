@@ -1,11 +1,11 @@
---- name: agentic-tool-eval description: >- Evaluate an off-the-shelf agentic-LLM security tool, benchmark, fuzzer, or red-teaming suite for the CodeSafe education project. Use this when the user asks to assess, survey, smoke-test, or write a report on a tool such as AgentHarm, ASB, AgentDojo, InjecAgent, ToolEmu, or any similar agentic attack/defense benchmark. Produces one detailed per-tool report plus a row in the rollup report, scored on 5 fixed criteria, and drives all tests through the shared ollama server.
+--- name: agentic-tool-eval description: >- Evaluate an off-the-shelf agentic-LLM security tool, benchmark, fuzzer, or red-teaming suite for educational use. Use this when the user asks to assess, survey, smoke-test, or write a report on a tool such as AgentHarm, ASB, AgentDojo, InjecAgent, ToolEmu, or any similar agentic attack/defense benchmark. Produces one detailed per-tool report plus a row in the rollup report, scored on the BetterBench stages plus our Education stage (see criteria.md), and drives all tests through the shared ollama server.
 ---
 
 # Agentic-tool evaluation workflow
 
-This skill drives a repeatable evaluation of one agentic-LLM security tool at a time for the CodeSafe project. Follow the phases in order. Produce the two report files at the end.
+This skill drives a repeatable evaluation of one agentic-LLM security tool at a time for our tool survey. Follow the phases in order. Produce the two report files at the end.
 
-## Fixed context for CodeSafe
+## Fixed context
 
 - The goal is an education platform. It teaches attacks and defenses for agentic LLMs.
 - The user evaluates many tools. Each tool gets one detailed report. All tools share one rollup report with a comparison table.
@@ -34,7 +34,7 @@ Every tool report follows this section order:
 8. Dataset (with subsections for splits/size, scoring, and evaluation trajectory)
 9. Conducting Evaluation (scripts table, experimental settings, full and partial how-to)
 10. Experimental Results (results tables, execution time, findings with analysis)
-11. Criteria (all seven, in the fixed order from the Evaluation criteria section below)
+11. Criteria (stage summary table, then Design, Implementation, Documentation, Maintenance, Education; see Evaluation criteria and scoring below)
 12. Attack vectors and security risks (covered vectors, covered risks, vectors and risks not covered)
 13. References (collected links to paper, repo, dataset, framework, taxonomy)
 
@@ -98,72 +98,62 @@ Each code block has a `#` comment on the first line that says what the command d
 
 ### Server URL in READMEs
 
-READMEs use `<url_to_your_ollama_server>` as a placeholder in installation and usage examples. The actual server URL (`http://korn.ics.uci.edu:48763`) belongs only in evaluation scripts (as an environment variable default) and in the rollup report's test harness section. A README must not expose the specific server address.
+READMEs use `<url_to_your_ollama_server>` as a placeholder in installation and usage examples. The actual server URL (`http://korn.ics.uci.edu:48763`) belongs only in evaluation scripts (as an environment variable default) and in the top-level README's Evaluation Environment section. A README must not expose the specific server address.
 
 ### Findings section
 
 Structure findings as `+` list items. Start each item with a `**bold label**:` that names the pattern or insight, then explain with supporting data. When two effects interact, describe both in the same item so the reader sees the relationship.
 
-## Evaluation criteria
+## Evaluation criteria and scoring
 
-Score each tool on these seven criteria. Answer the concrete questions for each one.
+The scoring scheme is defined in `docs/criteria.md`. Read it before scoring. In brief:
 
-1. **Deployability**: How costly is it to set up and run the tool? Consider: hardware requirements (GPUs, RAM), software dependencies (Docker, VM, web server), API credits, gated dataset access (tokens, applications, approval wait), and time to complete a full evaluation. Give real numbers from test runs.
-2. **Extensibility**: How easily can a user add new benchmark content (tasks, attacks, tools, scoring functions) to the framework? Consider: whether extension requires modifying core framework code, whether extension points are documented, and whether changes are scoped to one module or spread across the codebase.
-3. **Maintenance & Support**: How actively is the tool maintained and supported? Consider:
-   date and frequency of commits, whether maintainers respond to issues, and whether dependencies install without fixes. Record exact dependency problems and their solutions.
-4. **Execution isolation**: How well are the tool's actions isolated from real systems?
-   Consider: whether tools operate on in-memory objects, stubbed API responses, sandboxed containers, or real external services. State what safeguards exist if any actions reach real systems.
-5. **Content sensitivity**: To what extent does the dataset contain content that is harmful or offensive to read? Check for: hate speech, sexual content, harassment, graphic violence, and explicit attack instructions. State which categories are present, how explicit the content is, and whether the tool provides a way to filter or subset the data.
-6. **Observability**: How well can a student trace what happened in a task run and why it scored the way it did? Consider: whether the output shows the full message sequence (user prompt, model responses, tool calls, tool results), whether the scoring breakdown explains why a task passed or failed, whether there is a trajectory viewer or only raw output, and whether the score is granular (0.0 to 1.0) or binary.
-7. **Experimentability**: To what extent can a student build and test their own agent defenses? Consider: whether the tool exposes an API for custom agent pipelines or defense logic, whether the student can run the benchmark against their own agent, and whether the tool only allows swapping the model.
+- Four stages are taken verbatim from BetterBench (betterbench.stanford.edu/methodology.html): Design (D1 to D14), Implementation (I1 to I10), Documentation (Do1 to Do20), Maintenance (M1 to M3). Score them from the developers' published material only: paper, website, repository, dataset host. Use the GitHub API for dated facts (last commit to the benchmark's own code, issue response times, CI status, releases).
+- A fifth stage, Education (E1 to E8), is ours. Score it from our own run: measured times, result files, trajectories, fixes applied.
+- Each criterion is scored 0 (neither acknowledged nor addressed), 5 (acknowledged but not addressed), 10 (partially addressed), 15 (fully addressed), or n/a (not relevant; excluded from averages). Use n/a only where `criteria.md` marks the criterion as usually inapplicable or the criterion says "(if applicable)" and the subject does not exist for the tool, and justify it.
+- A stage score is the mean of its applicable criteria, one decimal. Usability is the mean over all applicable Implementation, Documentation, and Maintenance criteria (BetterBench's criterion-count-weighted definition). Education is reported separately and never folded into usability.
+- Numbers only. Do not use verdict words.
 
-### Factor scoring
-
-Each criterion has one or more factors. Score every factor on a 1 to 3 scale. The rubric tables in `report.md` (the rollup report, under "Factor rubrics") define what 1, 2, and 3 mean for each factor. Use those definitions as the authoritative reference. For all criteria except Content sensitivity, 3 is the best outcome. For Content sensitivity, 3 means the most harmful content is present.
-
-The criterion average is the arithmetic mean of its factor scores. Map the average to a verdict word:
-
-| Verdict | Score range |
-|---------|------------|
-| High / Excellent | 2.5 to 3.0 |
-| Good / Active | 2.0 to 2.4 |
-| Moderate / Fair | 1.5 to 1.9 |
-| Low / Poor | 1.0 to 1.4 |
-
-In each tool's `report.md`, present the scores under every criterion heading in this order:
-
-1. **Verdict line.** `Verdict: <word> (<average>/3).`
-2. **Factor table.** A markdown table with three columns: Factor, Rating, Evidence. Each row is one factor. The Rating column shows `N/3`. The Evidence column is one sentence that cites a concrete, verifiable fact from the evaluation (a file path, a command output, a metric, a commit date, a dependency name). Do not write generic descriptions; every evidence sentence must point to something the reader can check.
-3. **Reasons.** The existing bullet list (`+` items) with the full rationale.
-4. **NOTE callout.** `> [!NOTE]` with supporting detail or file paths.
-
-Example (one criterion):
+### Criteria section format in a tool README
 
 ```markdown
-### Maintenance & Support
+## Criteria
 
-Verdict: active (2.0/3).
+<one paragraph: link to criteria.md, evidence rule per stage, "as of <date>">
 
-| Factor | Rating | Evidence |
-|--------|--------|----------|
-| Commit frequency | 3/3 | Regular commits 2024 to 2025; PyPI v0.1.35; most recent commit Jun 2, 2026 |
-| Issue responsiveness | 2/3 | Active SPYLab repository, but some issues remain open |
-| Dependencies install cleanly | 1/3 | Three code fixes needed; Pydantic forward-reference bug breaks cached result loading |
+| Stage | Score |
+|-------|-------|
+| Design | 12.3 |
+| Implementation | 10.5 |
+| Documentation | 13.3 |
+| Maintenance | 11.7 |
+| Education | 13.1 |
+| Usability | 12.3 |
 
-Reasons:
-+ The repository has regular commits, with activity through 2024 and 2025.
-+ There are some bugs in the source code.
+### Design
 
-> [!NOTE]
-> As of Aug 21, 2026, the most recent commit was on Jun 2, 2026.
+stage avg score: 12.3
+
+| Criterion | Score | Justification |
+|-----------|-------|---------------|
+| (D1) Definition of tested capability or characteristic | 15 | One or two sentences ending in a checkable citation (paper section, README heading, file path, issue number, or a measured value). |
+...
 ```
+
+Rules for the tables:
+- Five stage subsections in this order: Design, Implementation, Documentation, Maintenance, Education. Each starts with `stage avg score: N.N`.
+- The Criterion cell is `(ID) short name`, with the ID from `criteria.md`.
+- Every Justification cites something the reader can check. For Education criteria, cite the run (times, paths, fixes).
+- Keep existing `[!NOTE]` and `[!IMPORTANT]` callouts; place each under the stage whose criteria it supports.
+- Verify by script that every stage mean equals the mean of its applicable scores and that the summary table matches.
+
+### Rollup report updates
 
 After writing the tool report, update two sections in the rollup `report.md`:
 
-**Comparison Table.** Add or update the tool's row. Format each cell as `Verdict-word: one or two summary sentences`. The Tool cell is a markdown link: `[ToolName](tool/report.md)`. The Attack Vectors cell lists V-codes with canonical names, comma-separated (e.g., `V1 (Indirect prompt injection), V4 (Direct prompt injection)`). The Security Risks cell lists R-codes the same way.
+**Comparison Table.** Add or update the tool's row: Tool (markdown link to the README), the five stage scores, Usability, Content level (formulaic, concrete, or graphic, with categories present), Score granularity (binary, discrete, or continuous), Attack Vectors (V-codes with canonical names), Security Risks (R-codes with canonical names).
 
-**Factor Scores.** Add a column for the new tool. Each factor row contains a bare integer (1 to 3). Each criterion's average row uses bold text: `| **Criterion** | **Average** | **N.N** | ... |` (one decimal place).
+**Scores by criterion.** Add a column for the tool to each of the five stage tables (one row per criterion, a bold stage-score row last) and to the Summary table. Generate these tables from the README tables by script rather than retyping numbers.
 
 The rollup report does not have per-tool notes. Tool-specific findings belong only in the tool's own README.
 
@@ -171,7 +161,7 @@ The rollup report does not have per-tool notes. Tool-specific findings belong on
 
 1. Read the repository README and the paper abstract. Use WebFetch for both.
 2. Record: what it measures, the task or dataset size, the agent framework, the license.
-3. Find how the tool selects the model provider. Check for ollama or an OpenAI-compatible base URL. This decides Deployability and whether the ollama server works.
+3. Find how the tool selects the model provider. Check for ollama or an OpenAI-compatible base URL. This decides Implementation (I4, I5) and Education (E6), and whether the ollama server works.
 4. Find how the dataset loads. Check for gating, a token, or a manual download.
 
 ## Phase 2: Set up an isolated environment
@@ -183,13 +173,13 @@ The rollup report does not have per-tool notes. Tool-specific findings belong on
    ```
 3. Create an isolated environment inside `<tool>/<tool>/`. Prefer `uv` when the repo uses it. Record the exact install command and any extra step.
 4. Point the tool at the ollama server through environment variables. See `references/inspect-ollama-config.md` for the Inspect recipe, and adapt for other frameworks. Do not hardcode the server URL in scripts (see Phase 5 for the pattern).
-5. Record every dependency problem and its fix. This feeds Maintenance & Support.
+5. Record every dependency problem and its fix. This feeds Documentation (Do1) and Education (E6).
 
 ## Phase 3: Validate on a small sample
 
 1. Run one or two tasks first. Confirm the pipeline works end to end.
 2. Confirm the dataset downloads. Confirm the model makes tool calls. Confirm the grader runs.
-3. Read one full task trajectory. Confirm you can explain the score. This feeds Educational Viability.
+3. Read one full task trajectory. Confirm you can explain the score. This feeds the Education stage (E4).
 4. Measure the time and tokens for one task. Use this to estimate the full run.
 
 ## Phase 4: Run the full test
@@ -229,17 +219,17 @@ Place all evaluation scripts in `<tool>/` (next to `report.md`). Each script mus
 
 ## Phase 6: Write the reports
 
-1. Write `<tool>/report.md` from `templates/tool-report-template.md`. Each tool has its own directory at the project root: `<tool>/report.md` (the detailed report), `<tool>/<tool>/` (the source code submodule), and `<tool>/*.sh` or `<tool>/*.py`
+1. Write `<tool>/README.md` from `templates/tool-report-template.md`. Each tool has its own directory at the project root: `<tool>/README.md` (the detailed report), `<tool>/<tool>/` (the source code submodule), and `<tool>/*.sh` or `<tool>/*.py`
    (evaluation scripts). Add an "Evaluation scripts" table in the report that lists each script, its purpose, and the result files it produces. This lets a reader link a reported number to the command that produced it.
 2. In the Installation section, document every source patch applied to the submodule.
    State the file, the change, and the reason.
 3. In the Installation or Usage section, tell the user which environment variables to set and state that the evaluation scripts fall back to the default server URL if unset.
-4. Update the rollup `report.md` as described in the "Factor scoring" subsection above (Comparison Table row, Factor Scores column).
+4. Update the rollup `report.md` as described in "Rollup report updates" above (Comparison Table row, Scores by criterion columns).
 5. Use ASD-STE100 English. Quote real commands and real output in the Test Result section.
 6. For a harmful benchmark, quote sensitive prompt text only as much as the report needs.
-7. Read `attack-risk-coverage.md` (read-only data source). Find the tool's row in the coverage table. Use it to fill two parts of the reports:
+7. Read `docs/attack-risk-coverage.md` (read-only data source). Find the tool's row in the coverage table. Use it to fill two parts of the reports:
    - In the rollup comparison table (`report.md`), fill the "Attack Vectors" cell with the V codes and canonical names (for example, "V1 (Indirect prompt injection)") and the "Security Risks" cell with the R codes and canonical names.
-   - In the detailed report (`<tool>/report.md`), write the "Attack vectors and security risks" section. List each covered V and R code with a one-sentence explanation from the coverage table. End with a paragraph that lists the vectors and risks not covered.
+   - In the detailed report (`<tool>/README.md`), write the "Attack vectors and security risks" section. List each covered V and R code with a one-sentence explanation from the coverage table. End with a paragraph that lists the vectors and risks not covered.
 
 ## Notes learned from prior tools
 

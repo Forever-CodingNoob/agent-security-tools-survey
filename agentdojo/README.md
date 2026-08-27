@@ -32,13 +32,11 @@
         + [Phase 1](#phase-1)
         + [Phase 2](#phase-2)
 + [Criteria](#criteria)
-    + [Deployability](#deployability)
-    + [Extensibility](#extensibility)
-    + [Maintenance & Support](#maintenance--support)
-    + [Execution isolation](#execution-isolation)
-    + [Content sensitivity](#content-sensitivity)
-    + [Observability](#observability)
-    + [Experimentability](#experimentability)
+    + [Design](#design)
+    + [Implementation](#implementation)
+    + [Documentation](#documentation)
+    + [Maintenance](#maintenance)
+    + [Education](#education)
 + [Attack vectors and security risks](#attack-vectors-and-security-risks)
     + [Covered attack vectors](#covered-attack-vectors)
     + [Covered security risks](#covered-security-risks)
@@ -193,7 +191,7 @@ python -m agentdojo.scripts.benchmark \
 > The results are JSON files at `<logdir>/openai-compatible/<suite>/<user_task>/<attack>/<injection>.json`.
 
 > [!NOTE]
-> The claimed 17 atatcks are evidenced by subclass defs under `src/agentdojo/attacks/`.
+> The claimed 17 attacks are evidenced by subclass defs under `src/agentdojo/attacks/`.
 > The 4-suite claim is also backed by the directory `src/agentdojo/data/suites`.
 
 ## Dataset
@@ -253,9 +251,11 @@ The following trace shows one `important_instructions` attack on the banking sui
 ### Evaluation scripts
 | Script | Purpose | Linked results |
 |--------|---------|----------------|
-| `run_full_benchmark.sh` | Full evaluation: Phase 1 baseline (97 tasks) + Phase 2 attack (all 949 pairs), all 3 models. Prints a per-task timing summary at the end and writes `your-results/timing_summary.csv`. Use this to reproduce the complete experiment. Estimated time: ~60 h for `qwen3:14b`, ~7 h for `qwen3-coder:30b`, ~10 h for `gpt-oss:120b`. | `results/` |
-| `run_partial_benchmark.sh` | Partial benchmark: Phase 1 baseline (97 tasks) + Phase 2 attack (105 pairs, 3 user tasks per suite), all 3 models. Handles the `gpt-oss:120b` evaluation differently (e.g., test on user_task_20 instead of user_task_26). Prints a per-task timing summary at the end and writes `your-results/timing_summary.csv`. This produced the reported results. | (not used in the reported run) |
+| `run_full_benchmark.sh` | Full evaluation: Phase 1 baseline (97 tasks) + Phase 2 attack (all 949 pairs), all 3 models. Measured times are in [Execution Time](#execution-time). | `results/` |
+| `run_partial_benchmark.sh` | Partial benchmark: Phase 1 baseline (97 tasks) + Phase 2 attack (105 pairs, 3 user tasks per suite), all 3 models. Handles the `gpt-oss:120b` evaluation differently (e.g., test on user_task_20 instead of user_task_26). | (not used in the reported run) |
 | `extract_results.py` | Parse JSON result files and print per-suite averages. Usage: `python extract_results.py <logdir> [model_dir]`. | (post-processing) |
+
+Both benchmark scripts print a per-task timing summary at the end and write `your-results/timing_summary.csv`.
 
 
 > [!NOTE]
@@ -263,7 +263,7 @@ The following trace shows one `important_instructions` attack on the banking sui
 
 ### Experimental Settings
 
-+ Ollama server (see [the rollup report](../report.md)):
++ Ollama server (see [the summary report](../report.md)):
     + 4 GPUs
     + `OLLAMA_NUM_PARALLEL=1`
 + Agent models: 
@@ -279,12 +279,7 @@ The following trace shows one `important_instructions` attack on the banking sui
 
 
 #### Full Benchmark
-The full benchmark has 949 attack pairs per model. At the measured per-pair inference rates, the actual full-experiment time per model is:
-| Model | Per-pair time | Full time (949 pairs + baseline) |
-|-------|--------------|-------------------------------------------|
-| qwen3:14b | 185 s | ~53 h |
-| qwen3-coder:30b | 9 s | ~3 h |
-| gpt-oss:120b | 28 s | ~8 h |
+The full benchmark has 949 attack pairs per model. The measured per-pair and total times are in [Execution Time](#execution-time).
 
 > [!IMPORTANT]
 > Both the full and partial benchmarks test only the `important_instructions` attack. A true full evaluation covering all 17 registered attacks would run 17 * 949 = 16133 attack pairs per model. At the measured per-pair rates, the estimated time would be approximately 830 hours for `qwen3:14b`, 42 hours for `qwen3-coder:30b`, and 124 hours for `gpt-oss:120b`, totaling ~1,000 hours (~42 days) of sequential inference on a single ollama server.
@@ -352,7 +347,6 @@ The overall utility and security percentages in the following subsections are av
 #### Phase 1: utility baseline (no attack, all 97 user tasks)
 
 The full and partial benchmarks share the same Phase 1 (all 97 user tasks, no attack). The partial benchmark was run first; the full benchmark reused the cached results where they existed. 
-The baseline measures the agent's ability to complete user tasks without any attack.
 The table below shows the final scores from the full benchmark run.
 
 | Model | workspace (40) | travel (20) | banking (16) | slack (21) | Combined (97) |
@@ -410,7 +404,7 @@ The partial benchmark sampled 3 user tasks per suite (105 pairs total).
 
 #### Execution Time
 
-The total wall-clock time for all three models (sequential, one model at a time) was approximately 63 hours.
+The total wall-clock time for all three models (one model at a time) was approximately 63 hours.
 
 | Model | Phase 1 (97 tasks) | Phase 2 (949 pairs) | Total | Per-pair (Phase 2) |
 |-------|-------------------|--------------------|---------|--------------------|
@@ -443,15 +437,14 @@ The `qwen3:14b` and `qwen3-coder:30b` models did not produce this error on any t
 The failure is specific to `gpt-oss:120b` and appears on tasks that require many sequential tool calls (travel planning, complex workspace operations).
 The longer the conversation history, the more likely the model inserts reasoning text before the JSON arguments.
 
-This is a practical limitation of running reasoning-capable models through ollama's OpenAI-compatible tool-calling endpoint.
 Ollama does not strip or route the model's thinking tokens separately from the structured output.
 The benchmark's `run_partial_benchmark.sh` works around the workspace failures by substituting user_task_20 for user_task_26.
 The travel/user_task_19 failure was discovered during the full benchmark utility run and caused that run to abort.
 
 > [!NOTE]
-> This interesting issue was discovered when I was ruuning the full evaluation script. 
-> To repreduce the bug, run user_task_19 on gpt-oss:120b hosted by Ollama.
-> The main culprit is `src/agentdojo/benchmark.py` forgetting to catch `InternelServerError` and flag the utility score as `False`. (See fix 3 in installation steps)
+> This interesting issue was discovered when I was running the full evaluation script. 
+> To reproduce the bug, run user_task_19 on gpt-oss:120b hosted by Ollama.
+> The main culprit is `src/agentdojo/benchmark.py` forgetting to catch `InternalServerError` and flag the utility score as `False`. (See fix 3 in installation steps)
 
 
 ### Our Findings
@@ -470,126 +463,118 @@ The travel/user_task_19 failure was discovered during the full benchmark utility
 
 ## Criteria
 
-### Deployability
+We score the tool with the scheme in [`criteria.md`](../docs/criteria.md): the four BetterBench stages (Design, Implementation, Documentation, Maintenance) are scored from the developers' published material (paper, repository, documentation site), and our Education stage is scored from our own run. Each criterion is scored 0, 5, 10, 15, or n/a; a stage score is the mean of its applicable criteria; usability is the mean over all applicable Implementation, Documentation, and Maintenance criteria. Repository facts are as of Aug 27, 2026.
 
-Verdict: good (2.2/3).
+| Stage | Score |
+|-------|-------|
+| Design | 12.3 |
+| Implementation | 10.5 |
+| Documentation | 13.3 |
+| Maintenance | 11.7 |
+| Education | 13.1 |
+| Usability | 12.3 |
 
-| Factor | Rating | Evidence |
-|--------|--------|----------|
-| Hardware requirements | 2/3 | In-memory simulation, but needs GPU server for ollama (gpt-oss:120b needs 4 GPUs) |
-| Software dependencies | 2/3 | pip/uv installable, but three code fixes needed before first run |
-| API credits | 3/3 | Zero cost with local ollama inference |
-| Gated dataset access | 3/3 | MIT license, published on PyPI, dataset bundled in package |
-| Time to complete full eval | 1/3 | 949 pairs per model; 7h (fastest) to 53h (qwen3:14b reasoning) |
+### Design
 
-Reasons:
-+ The benchmark does not require Docker, a virtual machine, or a web environment. The tools operate on in-memory simulated state (email inboxes, calendar entries, bank accounts, chat channels). The only cost is model inference. With the ollama server, the inference cost is local compute, not API credits.
-+ Three code fixes are needed before the first run (timeout, Pydantic forward reference, and `InternalServerError` catch). Each is small (3 to 5 lines). After the fixes, the full benchmark (949 pairs) runs in under 8 hours for the non-reasoning models. The `qwen3:14b` reasoning model takes about 53 hours because of its long thinking traces.
-+ The estimated time for a full experiment (all 949 pairs) is 7 to 60 hours per model, depending on the model's inference speed.
+stage avg score: 12.3
+
+| Criterion | Score | Justification |
+|-----------|-------|---------------|
+| (D1) Definition of tested capability or characteristic | 15 | The paper defines the tested property as an agent's utility and security under prompt injection through tool outputs, with both terms formalized as task-level checks (paper Sec. 1 and Sec. 3; docs "Concepts"). |
+| (D2) Description of how tested capability translates to benchmark task | 15 | Each user task and injection task carries a formal utility or security function over the environment state, and the paper explains how the cross-product of the two forms the security test cases (paper Sec. 3.1). |
+| (D3) Description of how knowing about the tested concept is helpful in the real world | 15 | The introduction motivates the benchmark with assistants that read untrusted emails, documents, and web data on a user's behalf (paper Sec. 1). |
+| (D4) Description of use cases and user personas | 10 | The data card states intended and unsuitable uses (paper Appendix F.5.2), but user personas and cultural or geographic context are not described. |
+| (D5) Involvement of domain experts | 15 | The authors are security researchers at ETH Zurich's SPYLab and Invariant Labs, so co-authors have a professional background in the benchmark domain (paper author list; README). |
+| (D6) Integration of domain literature | 15 | The related-work section cites prior injection benchmarks and attacks, and the design reuses attack prompts from that literature (InjecAgent, "ignore previous instructions") as baselines (paper Sec. 2 and Sec. 4.2). |
+| (D7) Description of how the score should or shouldn't be interpreted | 15 | The data card lists unsuitable uses (evaluating robustness without an adaptive attack), and the results page states that the table is not a leaderboard and why (paper Appendix F.5.2; `docs/results.md`). |
+| (D8) Informed choice of performance metric(s) | 15 | Benign utility, utility under attack, and targeted attack success rate are defined and their joint reading is explained (paper Sec. 3.2 and Sec. 4.1). |
+| (D9) Includes floors and ceilings for metric | 5 | Benign utility serves as the ceiling for utility under attack in the figures, but the text does not state floors or ceilings for any metric (paper Fig. 6). |
+| (D10) Includes human performance level | n/a | Human performance on injection resistance is not a meaningful reference for this task; the criterion is excluded per [`criteria.md`](../docs/criteria.md). |
+| (D11) Includes random performance level | 0 | No random or chance performance level is reported for utility or attack success (paper Sec. 4). |
+| (D12) Addresses input sensitivity | 10 | The paper compares four injection phrasings and an adaptive attack that picks the best per task (paper Sec. 4.2), but user-task prompts have no paraphrased variants and the number of variations is not framed as a sensitivity study. |
+| (D13) Validated automatic evaluation available | 15 | Evaluation is fully automatic, and the authors validate it by running each task's ground-truth tool sequence and checking that it passes the utility and security functions, plus schema validation of all environment data (paper Appendix F.11). |
+| (D14) Explanation of differences to related benchmarks | 15 | The paper explains how AgentDojo differs from InjecAgent (dynamic multi-step execution versus single-turn) and from earlier non-agentic injection benchmarks (paper Sec. 2). |
+
+### Implementation
+
+stage avg score: 10.5
+
+| Criterion | Score | Justification |
+|-----------|-------|---------------|
+| (I1) Availability of evaluation code | 15 | The full evaluation code, including the utility and security checks for every task, is in the public repository and on PyPI (`agentdojo` 0.1.35). |
+| (I2) Script to replicate results is explicitly included | 10 | The repository ships `util_scripts/run_vllm.sh`, `run_vllm_parallel.sh`, and `create_results_table.py`, and the README gives the benchmark commands, but there is no single script that reproduces the paper's tables. |
+| (I3) Accessibility of evaluation data, prompts, or dynamic environment | 15 | All suites, tools, environment data, and attack prompts are bundled in the package under `src/agentdojo/data/` and `src/agentdojo/default_suites/`. |
+| (I4) Supports evaluation of models via API calls | 15 | Providers for OpenAI, Anthropic, Google, Cohere, Together, and any OpenAI-compatible endpoint are implemented (`src/agentdojo/agent_pipeline/llms/`). |
+| (I5) Supports evaluation of local models | 15 | Local models are supported through the vLLM scripts in `util_scripts/` and the `openai-compatible` provider added Jun 2, 2026; our ollama run used that provider. The three fixes we applied concern reasoning-model timeouts and cached-result loading, not local support itself. |
+| (I6) Inclusion of a globally unique identifier or encryption of evaluation instances | 0 | No canary string or GUID appears in the repository or data files, and contamination is not discussed. |
+| (I7) Inclusion of 'training_on_test_set' task | 0 | No such task exists in the repository and the possibility is not mentioned in the paper or data card (paper Appendix F). |
+| (I8) Assess need for warnings for sensitive/harmful content | 10 | The data card states that the tasks contain no sensitive data and carry no known risks (paper Appendix F.3.1), but says nothing about the expected outputs. |
+| (I9) Release requirements specified | 10 | The data card states dos and don'ts (do not evaluate robustness with only the default attacks) but does not phrase them as requirements for use (paper Appendix F.5.2). |
+| (I10) Includes build status or equivalent | 15 | The README shows a GitHub Actions workflow-status badge, and the Lint workflow passed on the latest commit (Jun 2, 2026). |
+
+### Documentation
+
+stage avg score: 13.3
+
+| Criterion | Score | Justification |
+|-----------|-------|---------------|
+| (Do1) Requirements file available | 15 | `pyproject.toml` lists all dependencies and `uv.lock` pins versions; `pip install -e .` installed cleanly in our run. |
+| (Do2) Quick-start guide or demo code available | 15 | The README "Quickstart" and "Running the benchmark" sections give step-by-step commands, and the docs site repeats them. |
+| (Do3) Includes informative in-line code comments | 10 | Public classes and functions carry docstrings (611 docstring markers in 19,847 lines), but in-line comments are sparse (1.1% of lines), so some code segments lack explanation. |
+| (Do4) Code documentation available | 15 | The documentation site has a concepts section and an API reference for pipelines, attacks, task suites, and the functions runtime (`docs/concepts/`, `docs/api/`), plus `docs/development.md`. |
+| (Do5) Documentation of test task categories & rationale | 15 | The four suites and their task types are defined, with the rationale of covering realistic productivity, messaging, travel, and banking assistants (paper Sec. 3.1). |
+| (Do6) Documentation of assumptions about normative properties | n/a | The benchmark measures task completion and injection resistance, not culturally dependent properties; the data card lists no cultural fields (paper Appendix F.3). |
+| (Do7) Documentation of limitations | 15 | The paper discusses limitations of the design (generic attacks and defenses, tasks may become too easy) and of applicability (unsuitable uses) (paper Sec. 5 and Appendix F.3.2 and F.5.2). |
+| (Do8) Documentation of benchmark construction process | 15 | Sec. 3 and the data card describe how environments, tools, tasks, and injection placeholders were built and the trade-offs behind them (paper Sec. 3; Appendix F). |
+| (Do9) Documentation of data collection or environment/prompt design process | 15 | The data card records the sources (authors, GPT-4o, Claude 3 Opus), the schema-guided generation, the collection date, and the manual inspection step (paper Appendix F.7.1). |
+| (Do10) Documentation of evaluation metric(s) | 15 | Utility and security are defined as boolean task checks with the exact functions in the code, and the aggregate rates are defined in the paper (paper Sec. 3.2; `docs/concepts/task_suite_and_tasks.md`). |
+| (Do11) Report statistical significance of benchmark results | 15 | The paper reports 95% confidence intervals for its results, computed with `statsmodels` proportion intervals (paper Checklist 3(c)). |
+| (Do12) Accepted at peer-reviewed venue | 15 | Accepted at NeurIPS 2024, Datasets and Benchmarks track. |
+| (Do13) Specifies applicable license | 15 | MIT license in `LICENSE`, stated in the paper with the exceptions for re-used code (paper Appendix E.1 and E.5). |
+| (Do14) Provision of a globally unique, persistent identifier | 15 | The dataset and its metadata have a Zenodo DOI (10.5281/zenodo.12528188) and the paper has an arXiv identifier (paper Appendix E.6). |
+| (Do15) Inclusion of standardized metadata (Croissant) | 5 | The authors acknowledge the Croissant standard and state that the mixed code-and-data release cannot be described in it; no standardized metadata is provided (paper Appendix E.6). |
+| (Do16) Documentation of data sources and how the data was collected | 15 | The data card documents sources, collection method, dates, and the responsibility and licensing statement (paper Appendix F.7 and E.5). |
+| (Do17) Documentation of the data preprocessing steps taken | 10 | The paper states that LLM-generated data was manually inspected and partly edited for realism, without a step-by-step account (paper Appendix F.7.1). |
+| (Do18) Documentation of the data annotation process | n/a | The tasks and environment data are authored by the researchers or generated by GPT-4o and Claude 3 Opus, not annotated (paper Appendix F.7.1). |
+| (Do19) Documentation of the representativeness of the data | 5 | The data card notes the dataset is small and sampling is not recommended (paper Appendix F.9.2), but gives no analysis of how representative the suites are of real assistant workloads. |
+| (Do20) Standardized documentation | 15 | The paper includes a full data card following a standard template (paper Appendix F). |
+
+### Maintenance
+
+stage avg score: 11.7
+
+| Criterion | Score | Justification |
+|-----------|-------|---------------|
+| (M1) Code usability checked within the last year | 15 | The main code was updated on Jun 2, 2026 (openai-compatible provider) and the Lint workflow passed on that commit. |
+| (M2) Maintained feedback channel for users | 5 | `CONTRIBUTING.md` directs users to open issues, but several open issues have had no response for more than three months (for example, #156 opened Apr 22, 2026 and #160 opened May 11, 2026, both with zero comments as of Aug 27, 2026). |
+| (M3) Provide contact details of person responsible | 15 | The paper lists corresponding authors with affiliations, and the README links each author's page. |
+
+### Education
+
+stage avg score: 13.1
+
+| Criterion | Score | Justification |
+|-----------|-------|---------------|
+| (E1) Tool execution isolation | 15 | All tools operate on in-memory Pydantic objects (email inboxes, calendar entries, bank accounts, chat channels) loaded from YAML at the start of each task (`src/agentdojo/data/suites/<suite>/environment.yaml`), so the agent does not send real emails, make real transfers, or delete real files, and the environment resets between runs. |
+| (E2) Support for user-built agents or defenses | 15 | A student implements `BasePipelineElement`, plugs it into the agent pipeline, runs the benchmark, and measures the effect on utility and security; the API is documented in the codebase, the docs site, and the paper. |
+| (E3) Extension points for tasks, attacks, and tools | 15 | Pipelines subclass `BasePipelineElement`, attacks register with `@attack_suite_register`, suites are `TaskSuite` instances, and injection tasks subclass `InjectionTask`; each extension is one file or class and the docs cover all four. |
+| (E4) Run trace inspection | 10 | Each result JSON (`<logdir>/openai-compatible/<suite>/<user_task>/<attack>/<injection>.json`) records the full message sequence, the injection text, and the two boolean scores, so a student can trace an injection from tool output to tool call, but there is no built-in viewer, so the student reads JSON or writes a parser. |
+| (E5) Assignment-sized evaluation | 10 | The full benchmark took 3 h (`qwen3-coder:30b`), 8 h (`gpt-oss:120b`), and 53 h (`qwen3:14b`) per model in our run, and the tool offers `-s` and `-ut` flags for subsets but documents no class-sized subset; our own `run_partial_benchmark.sh` fills that gap. |
+| (E6) Fully local evaluation | 10 | The run is fully local through the `openai-compatible` provider with no judge model and zero API cost, but three documented code fixes (timeout, Pydantic forward reference, `InternalServerError` catch) were needed to complete it. |
+| (E7) Hardware requirement | 15 | The framework adds no compute of its own beyond the model; the two smaller reference models run on a single GPU without special setup, and only `gpt-oss:120b` needs the 4-GPU server. |
+| (E8) Low-sensitivity subset for classroom use | 15 | The dataset contains no hate speech, sexual content, harassment, or graphic violence, and every user task can be run without an attack as a benign utility exercise (paper Appendix F.3.1; `run_full_benchmark.sh`, Phase 1). |
 
 > [!NOTE]
 > Evidence of the tool simulation architecture: initial data stored in `src/agentdojo/data/suites/`, and simulated tools are in `src/agentdojo/default_suites/v1/tools/`.
 
-### Extensibility
-
-Verdict: high (3.0/3).
-
-| Factor | Rating | Evidence |
-|--------|--------|----------|
-| Core modification required | 3/3 | Subclass BasePipelineElement; register attacks with @attack_suite_register decorator |
-| Extension points documented | 3/3 | API documented in codebase and NeurIPS 2024 paper; examples in default suites |
-| Changes scoped to one module | 3/3 | Each extension type (pipeline, attack, suite, injection task) is one file or class |
-
-Reasons:
-+ AgentDojo's design separates four extensible and customizable modules:
-	+  Agent pipelines: implement the `BasePipelineElement` class. The framework supports custom input filters, output validators, and defense logic. This is the key differentiator from other benchmarks: a student can build a defended agent and test it.
-    +  Attacks: register a function with `@attack_suite_register`. The function receives the environment and injects text into any data field.
-    +  Suites: define a new `TaskSuite` with its tools, environment, user tasks, and injection tasks.
-    +  Injection tasks: subclass `InjectionTask` and define the `security` check.
-+ The API is documented in the codebase and the paper. The `openai-compatible` provider makes it easy to test any model served via an OpenAI-compatible API.
-
 > [!NOTE]
 > `BasePipelineElement` is defined in `src/agentdojo/agent_pipeline/base_pipeline_element.py`.
-
-### Maintenance & Support
-
-Verdict: good (2.0/3).
-
-| Factor | Rating | Evidence |
-|--------|--------|----------|
-| Commit frequency | 3/3 | Regular commits 2024 to 2025; PyPI v0.1.35; most recent commit Jun 2, 2026 |
-| Issue responsiveness | 2/3 | Active SPYLab repository, but some issues remain open |
-| Dependencies install cleanly | 1/3 | Three code fixes needed; Pydantic forward-reference bug breaks cached result loading |
-
-Reasons:
-+ The repository has regular commits, with activity through 2024 and 2025. The package is published on PyPI (`agentdojo==0.1.35`).
-+ There are some bugs in the source code.
-
-> [!NOTE]
-> As of Aug 21, 2026, the most recent commit was on Jun 2, 2026.
-
-### Execution isolation
-
-Verdict: high (3.0/3).
-
-| Factor | Rating | Evidence |
-|--------|--------|----------|
-| Tool isolation level | 3/3 | All tools operate on in-memory Pydantic objects loaded from YAML; environment resets per task |
-
-Reasons:
-+ All tools operate on in-memory simulated state. The agent does not send real emails, make real transfers, or delete real files. The environment is a set of Pydantic objects (email inboxes, calendar entries, bank accounts, chat channels) loaded from YAML files at the start of each task. 
-+ The simulated environment resets between runs.
 
 > [!NOTE]
 > The aforementioned YAML files reside in `src/agentdojo/data/suites/<suite>/environment.yaml`.
 
-### Content sensitivity
-
-Verdict: poor (1.0/3).
-
-| Factor | Rating | Evidence |
-|--------|--------|----------|
-| Harmful content presence | 1/3 | Injection templates are formulaic instructions; content is not violent, sexual, or offensive |
-
-Reason: 
-+ The dataset does not contain hate speech, sexual content, harassment, or graphic violence.
-
-### Observability
-
-Verdict: fair (1.75/3).
-
-| Factor | Rating | Evidence |
-|--------|--------|----------|
-| Full message sequence | 3/3 | JSON files record system prompt, all messages, tool calls, tool results, and injection text |
-| Scoring breakdown | 2/3 | Binary utility/security per pair; dual score is informative but no per-step explanation |
-| Trajectory viewer | 1/3 | No built-in viewer; student must read raw JSON or write a parser |
-| Score granularity | 1/3 | Binary per pair (0 or 1); overall percentages are averages of binary scores |
-
-Reasons:
-+ The result files are structured JSON. 
-    + Each file records the full message sequence, the injection text, and the binary scores. 
-    + A student can trace indirect prompt injection end to end: read the injection text in the JSON result file and follow how it reached the agent through a tool call. 
-    + The dual utility/security score shows that an attack can degrade both task completion and security at the same time. 
-+ There is no built-in trajectory viewer like Inspect's log viewer, so a student must read the JSON or write a simple parser.
-
 > [!NOTE]
 > Result files: `<logdir>/openai-compatible/<suite>/<user_task>/<attack>/<injection>.json`.
-
-### Experimentability
-
-Verdict: high (3.0/3).
-
-| Factor | Rating | Evidence |
-|--------|--------|----------|
-| API for custom pipelines | 3/3 | `BasePipelineElement` class supports custom input filters, output validators, defense logic |
-| Run against own agent | 3/3 | Student implements pipeline, plugs it in, runs the full benchmark |
-| Beyond model swap | 3/3 | Student can add attacks, suites, and injection tasks without touching core code |
-
-Reasons:
-+ The extensible pipeline API lets students implement and compare defense strategies (for example, input sanitization, output filtering, instruction hardening).
-+ A student implements the `BasePipelineElement` class, plugs it into the agent pipeline, runs the benchmark, and measures the effect on utility and security scores. 
-
-(This is the key differentiator from other benchmarks, as a student can build a defended agent and test it against the full injection suite.)
 
 ## Attack vectors and security risks
 

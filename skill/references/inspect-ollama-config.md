@@ -2,7 +2,7 @@
 
 Many agentic benchmarks (AgentHarm and other `inspect_evals` tasks) run on the Inspect
 framework. Inspect supports ollama, even when the benchmark's own README does not mention it.
-This recipe is validated against the CodeSafe ollama server.
+This recipe is validated against the shared ollama server.
 
 ## Steps
 

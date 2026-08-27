@@ -1,19 +1,19 @@
-# CodeSafe tool survey: rollup report
+# Tool survey: rollup report
 
 > Write this report in ASD-STE100 Simplified Technical English.
 > This file collects all evaluated tools. Add one row per tool to the table.
-> Each tool also has a detailed report in `<tool>/report.md`.
+> Each tool also has a detailed report in `<tool>/README.md`.
 
 ## Comparison table
 
-| Tool | Deployability | Extensibility | Maintenance & Support | Execution isolation | Content sensitivity | Observability | Experimentability | Attack Vectors | Security Risks |
-|------|---------------|---------------|----------------------|---------------------|---------------------|---------------|-------------------|----------------|----------------|
-| <Tool name> | <short verdict> | <short verdict> | <short verdict> | <short verdict> | <short verdict> | <short verdict> | <short verdict> | <V codes from coverage table> | <R codes from coverage table> |
+| Tool | Design | Implementation | Documentation | Maintenance | Education | Usability | Content level | Score granularity | Attack Vectors | Security Risks |
+|------|--------|----------------|---------------|-------------|-----------|-----------|---------------|-------------------|----------------|----------------|
+| [<Tool name>](<tool>/README.md) | <N.N> | <N.N> | <N.N> | <N.N> | <N.N> | <N.N> | <formulaic, concrete, or graphic> | <binary, discrete, or continuous> | <V codes from coverage table> | <R codes from coverage table> |
 
-## Score legend
+## Evaluation Criteria
 
-State how you rate each cell (for example: Good, Fair, Poor). Keep the words consistent for all tools.
+Summarize the scale and aggregation in a few lines and link to `docs/criteria.md`. Then add "Scores by criterion": one table per stage (Criterion | tool columns) ending in a bold stage-score row, and a Summary table with the five stage scores and Usability per tool.
 
-## Test harness
+## Appendix
 
-State the shared test setup. All tools use the ollama server at `http://korn.ics.uci.edu:48763` with the models `gpt-oss:120b`, `qwen3-coder:30b`, and `qwen3:14b`. Each tool's evaluation scripts accept environment variables for the server URL and fall back to this default if unset.
+Optional cross-tool notes that do not belong to one tool's README (for example, whether the tools test models or agent systems). Keep each note to an intro sentence, a few bullets, and a closing sentence.

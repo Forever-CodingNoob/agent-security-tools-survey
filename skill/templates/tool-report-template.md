@@ -24,13 +24,11 @@
     + [Execution Time](#execution-time)
     + [Our Findings](#our-findings)
 + [Criteria](#criteria)
-    + [Deployability](#deployability)
-    + [Extensibility](#extensibility)
-    + [Maintenance & Support](#maintenance--support)
-    + [Execution isolation](#execution-isolation)
-    + [Content sensitivity](#content-sensitivity)
-    + [Observability](#observability)
-    + [Experimentability](#experimentability)
+    + [Design](#design)
+    + [Implementation](#implementation)
+    + [Documentation](#documentation)
+    + [Maintenance](#maintenance)
+    + [Education](#education)
 + [Attack vectors and security risks](#attack-vectors-and-security-risks)
     + [Covered attack vectors](#covered-attack-vectors)
     + [Covered security risks](#covered-security-risks)
@@ -207,23 +205,17 @@ Same pattern.
 
 ## Criteria
 
-For each criterion, follow this order:
+Follow the format in SKILL.md ("Criteria section format in a tool README"): opening paragraph with a link to `criteria.md`, the stage summary table (Design, Implementation, Documentation, Maintenance, Education, Usability), then five subsections:
 
-### <Criterion name>
+### Design
 
-Verdict: <word> (<average>/3).
+stage avg score: <N.N>
 
-| Factor | Rating | Evidence |
-|--------|--------|----------|
-| <factor> | N/3 | <one sentence citing a verifiable fact> |
+| Criterion | Score | Justification |
+|-----------|-------|---------------|
+| (D1) <short name> | <0, 5, 10, 15, or n/a> | <one or two sentences with a checkable citation> |
 
-Reasons:
-+ <rationale with evidence>.
-
-> [!NOTE]
-> <Supporting detail or file path>.
-
-(Repeat for all seven criteria in fixed order: Deployability, Extensibility, Maintenance & Support, Execution isolation, Content sensitivity, Observability, Experimentability.)
+(Repeat for Implementation (I1 to I10), Documentation (Do1 to Do20), Maintenance (M1 to M3), and Education (E1 to E8). Place existing NOTE and IMPORTANT callouts under the stage they support.)
 
 
 ## Attack vectors and security risks

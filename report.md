@@ -1,157 +1,166 @@
-# Roll-up Report
+# Summary Report
 
 > Each tool also has a detailed report in `<tool>/README.md`.
 
+## Table of Contents
++ [Comparison Table](#comparison-table)
++ [Evaluation Criteria](#evaluation-criteria)
+    + [Scores by criterion](#scores-by-criterion)
+        + [Design](#design)
+        + [Implementation](#implementation)
+        + [Documentation](#documentation)
+        + [Maintenance](#maintenance)
+        + [Education](#education)
+        + [Summary](#summary)
++ [Appendix](#appendix)
+    + [Model benchmarks vs Agent security testing](#model-benchmarks-vs-agent-security-testing)
+    + [Tool calling and output parsing](#tool-calling-and-output-parsing)
+
 ## Comparison Table
 
-| Tool | Deployability | Extensibility | Maintenance & Support | Execution isolation | Content sensitivity | Observability | Experimentability | Attack Vectors | Security Risks |
-|------|---------------|---------------|----------------------|---------------------|---------------------|---------------|-------------------|----------------|----------------|
-| [AgentHarm](agentharm/README.md) | High: no Docker, VM, or web server; synthetic tools; local ollama inference only | High: modular; add tools, grading, agents, or prompts one folder at a time; documented | High: very active repo (HEAD commit 2026-08-10); one small dependency fix needed | High: synthetic tools; no real actions; harm score measures tool calls against a template | High: harmful prompts in 8 categories (Hate, Sexual, Harassment); benign task subset available; withheld test_private split | High: Inspect viewer shows full message trajectory; clear grading breakdown (tool calls, order, arguments, refusal) | High: Inspect solver abstraction supports custom agent pipelines; jailbreak template not shipped, students must write their own | V4 (Direct prompt injection) | R2 (Wrong instruction following), R5 (Private data leakage), R6 (Unintended/unauthorized actions) |
-| [ASB](asb/README.md) | Good: ollama works but requires 4 code fixes (conda fallback, judge model, per-task duration, plan retry nudge) and 1 workaround (ChromaDB); incomplete requirements.txt; serial scheduler makes large runs slow | Fair: data-driven for new tools and agents; defense changes need deep code reading; no developer docs | Poor: 20 total commits; last commit 2026-04-17; 3 open issues with no maintainer response; incomplete dependencies; a corrupted data file (`agent_task_pot_all.jsonl`) shipped unnoticed since May 2025 | High: fully simulated tools; no real API calls, server connections, or transactions; tools return fixed confirmation strings | Good: concrete attack instructions (crypto mining, credential theft, privilege escalation); non-aggressive subset available | Fair: clear ASR output; verbose console text; no trajectory viewer; binary scoring (0 or 1); attack success is a substring match; refusal judge counts plan-generation failures as refusals | Poor: model-swap only; no API for custom agent pipelines or defense logic | V1 (Indirect prompt injection), V4 (Direct prompt injection), V6 (Memory poisoning) | R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions) |
-| [AgentDojo](agentdojo/README.md) | Good: simulated in-memory tools; 3 small code fixes needed (timeout, Pydantic, InternalServerError catch); ollama via openai-compatible provider | High: extensible pipeline API for custom agents and defenses; register new attacks, suites, and injection tasks independently | Good: NeurIPS 2024; active SPYLab repo; published on PyPI (v0.1.35); 3 code fixes needed | High: in-memory Pydantic objects; tools mutate simulated state only; environment resets between runs | Poor: injection templates are formulaic; language is not violent or offensive; actions described are malicious (financial fraud, data theft) but not graphic | Fair: structured JSON results with full message traces; dual utility/security scoring (0.0 to 1.0); no built-in trajectory viewer | High: extensible pipeline API for custom defense logic (input filtering, output checking, prompt hardening); student can benchmark their own agent | V1 (Indirect prompt injection) | R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions), R7 (Denial-of-service) |
+Stage scores and usability follow [`criteria.md`](docs/criteria.md) (0 to 15). Content level and score granularity are descriptive labels, not scores.
+
+The columns are:
++ Design, Implementation, Documentation, Maintenance, Education: the five stage scores, each the mean of the applicable criteria in that stage.
++ Usability: the mean over all applicable Implementation, Documentation, and Maintenance criteria, as BetterBench defines it.
++ Content level: how explicit the harmful content in the dataset is (formulaic, concrete, or graphic).
++ Score granularity: whether a task score is binary, discrete, or continuous.
++ Attack Vectors and Security Risks: the V and R codes the tool exercises, taken from [`attack-risk-coverage.md`](docs/attack-risk-coverage.md).
+
+| Tool | Design | Implementation | Documentation | Maintenance | Education | Usability | Content level | Score granularity | Attack Vectors | Security Risks |
+|------|--------|----------------|---------------|-------------|-----------|-----------|---------------|-------------------|----------------|----------------|
+| [AgentDojo](agentdojo/README.md) | 12.3 | 10.5 | 13.3 | 11.7 | 13.1 | 12.3 | formulaic | binary | V1 (Indirect prompt injection) | R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions), R7 (Denial-of-service) |
+| [ASB](asb/README.md) | 10.4 | 7.0 | 6.9 | 11.7 | 10.6 | 7.4 | concrete (crypto mining, credential theft, privilege escalation) | binary | V1 (Indirect prompt injection), V4 (Direct prompt injection), V6 (Memory poisoning) | R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions) |
+| [AgentHarm](agentharm/README.md) | 13.1 | 12.5 | 10.8 | 15.0 | 14.4 | 11.8 | graphic (8 categories, including Hate, Sexual, Harassment) | continuous | V4 (Direct prompt injection) | R2 (Wrong instruction following), R5 (Private data leakage), R6 (Unintended/unauthorized actions) |
 
 ## Evaluation Criteria
 
-Each criterion is scored on a 1 to 3 scale per factor. The criterion average is the mean of its factor scores. For all criteria except Content sensitivity, 3 is the best outcome. For Content sensitivity, 3 means the most harmful content is present.
+The scoring scheme, including a detailed rubric, is defined in [`criteria.md`](docs/criteria.md). 
 
-The verdict words map to score ranges:
-| Verdict | Score range |
-|---------|------------|
-| High / Excellent | 2.5 to 3.0 |
-| Good / Active | 2.0 to 2.4 |
-| Moderate / Fair | 1.5 to 1.9 |
-| Low / Poor | 1.0 to 1.4 |
 
-### Factor Rubrics
+### Scores by criterion
 
-#### Deployability
+Each table below covers one stage and lists the score of every criterion per tool, so that a reader can trace a stage score in the comparison table back to the criteria behind it. The last row of each table is the stage score, and the [Summary](#summary) table collects the stage scores and usability per tool. The justification for each score is in the Criteria section of the tool's README.
 
-> How costly/easy is it to set up and run the tool?
+#### Design
 
-| Factor | 1 | 2 | 3 |
-|--------|---|---|---|
-| Hardware requirements | Needs specialized hardware beyond a GPU server | Needs GPU server with extra configuration | Runs on standard hardware |
-| Software dependencies | Multiple fixes or workarounds; incomplete dependency list | Mostly complete; a few fixes needed | Installs cleanly with one command or one small fix |
-| API credits | Requires paid API credits | Partial local alternative | Fully local; zero API cost |
-| Gated dataset access | Gated (application, token, approval wait) | Public with restrictions | Open access |
-| Time to complete full eval | Over 24h per model | 2 to 24h per model | Under 2h per model |
+| Criterion | AgentDojo | ASB | AgentHarm |
+|-----------|-----------|-----|-----------|
+| (D1) Definition of tested capability or characteristic | 15 | 15 | 15 |
+| (D2) Description of how tested capability translates to benchmark task | 15 | 15 | 15 |
+| (D3) Description of how knowing about the tested concept is helpful in the real world | 15 | 15 | 15 |
+| (D4) Description of use cases and user personas | 10 | 10 | 10 |
+| (D5) Involvement of domain experts | 15 | 0 | 15 |
+| (D6) Integration of domain literature | 15 | 15 | 15 |
+| (D7) Description of how the score should or shouldn't be interpreted | 15 | 10 | 15 |
+| (D8) Informed choice of performance metric(s) | 15 | 15 | 15 |
+| (D9) Includes floors and ceilings for metric | 5 | 0 | 10 |
+| (D10) Includes human performance level | n/a | n/a | n/a |
+| (D11) Includes random performance level | 0 | 0 | 0 |
+| (D12) Addresses input sensitivity | 10 | 15 | 15 |
+| (D13) Validated automatic evaluation available | 15 | 10 | 15 |
+| (D14) Explanation of differences to related benchmarks | 15 | 15 | 15 |
+| **Design score** | **12.3** | **10.4** | **13.1** |
 
-#### Extensibility
+#### Implementation
 
-> How easily can someone add new benchmark content (tasks, attacks, tools, scoring functions) to the framework?
+| Criterion | AgentDojo | ASB | AgentHarm |
+|-----------|-----------|-----|-----------|
+| (I1) Availability of evaluation code | 15 | 15 | 15 |
+| (I2) Script to replicate results is explicitly included | 10 | 10 | 10 |
+| (I3) Accessibility of evaluation data, prompts, or dynamic environment | 15 | 15 | 15 |
+| (I4) Supports evaluation of models via API calls | 15 | 15 | 15 |
+| (I5) Supports evaluation of local models | 15 | 10 | 15 |
+| (I6) Inclusion of a globally unique identifier or encryption of evaluation instances | 0 | 0 | 10 |
+| (I7) Inclusion of 'training_on_test_set' task | 0 | 0 | 5 |
+| (I8) Assess need for warnings for sensitive/harmful content | 10 | 5 | 15 |
+| (I9) Release requirements specified | 10 | 0 | 15 |
+| (I10) Includes build status or equivalent | 15 | 0 | 10 |
+| **Implementation score** | **10.5** | **7.0** | **12.5** |
 
-| Factor | 1 | 2 | 3 |
-|--------|---|---|---|
-| Core modification required | Must modify core code to extend | Some extensions data-driven, others need core changes | All extensions through subclassing, decorators, or config |
-| Extension points documented | No developer documentation | Partial documentation | Documented in code, paper, or README with examples |
-| Changes scoped to one module | Changes spread across multiple files | Partially scoped | Each extension is one file or directory |
+#### Documentation
 
-#### Maintenance & Support
+| Criterion | AgentDojo | ASB | AgentHarm |
+|-----------|-----------|-----|-----------|
+| (Do1) Requirements file available | 15 | 10 | 10 |
+| (Do2) Quick-start guide or demo code available | 15 | 10 | 15 |
+| (Do3) Includes informative in-line code comments | 10 | 5 | 10 |
+| (Do4) Code documentation available | 15 | 5 | 10 |
+| (Do5) Documentation of test task categories & rationale | 15 | 10 | 15 |
+| (Do6) Documentation of assumptions about normative properties | n/a | n/a | n/a |
+| (Do7) Documentation of limitations | 15 | 0 | 15 |
+| (Do8) Documentation of benchmark construction process | 15 | 15 | 15 |
+| (Do9) Documentation of data collection or environment/prompt design process | 15 | 10 | 10 |
+| (Do10) Documentation of evaluation metric(s) | 15 | 15 | 15 |
+| (Do11) Report statistical significance of benchmark results | 15 | 0 | 0 |
+| (Do12) Accepted at peer-reviewed venue | 15 | 15 | 15 |
+| (Do13) Specifies applicable license | 15 | 10 | 15 |
+| (Do14) Provision of a globally unique, persistent identifier | 15 | 5 | 5 |
+| (Do15) Inclusion of standardized metadata (Croissant) | 5 | 0 | 10 |
+| (Do16) Documentation of data sources and how the data was collected | 15 | 10 | 10 |
+| (Do17) Documentation of the data preprocessing steps taken | 10 | 5 | 10 |
+| (Do18) Documentation of the data annotation process | n/a | n/a | n/a |
+| (Do19) Documentation of the representativeness of the data | 5 | 0 | 10 |
+| (Do20) Standardized documentation | 15 | 0 | 5 |
+| **Documentation score** | **13.3** | **6.9** | **10.8** |
 
-> How actively is the tool maintained and supported? 
+#### Maintenance
 
-| Factor | 1 | 2 | 3 |
-|--------|---|---|---|
-| Commit frequency | Under 50 commits; months between clusters | Moderate activity; periodic gaps | Active repository with regular commits |
-| Issue responsiveness | Open issues with no response | Some responses, but delays | Active community with timely responses |
-| Dependencies install cleanly | Multiple fixes or workarounds needed | One fix needed | Installs cleanly |
+| Criterion | AgentDojo | ASB | AgentHarm |
+|-----------|-----------|-----|-----------|
+| (M1) Code usability checked within the last year | 15 | 10 | 15 |
+| (M2) Maintained feedback channel for users | 5 | 10 | 15 |
+| (M3) Provide contact details of person responsible | 15 | 15 | 15 |
+| **Maintenance score** | **11.7** | **11.7** | **15.0** |
 
-#### Execution isolation
+#### Education
 
-> How well are the tool's actions isolated from real systems?
+| Criterion | AgentDojo | ASB | AgentHarm |
+|-----------|-----------|-----|-----------|
+| (E1) Tool execution isolation | 15 | 15 | 15 |
+| (E2) Support for user-built agents or defenses | 15 | 0 | 15 |
+| (E3) Extension points for tasks, attacks, and tools | 15 | 10 | 15 |
+| (E4) Run trace inspection | 10 | 10 | 15 |
+| (E5) Assignment-sized evaluation | 10 | 10 | 15 |
+| (E6) Fully local evaluation | 10 | 10 | 10 |
+| (E7) Hardware requirement | 15 | 15 | 15 |
+| (E8) Low-sensitivity subset for classroom use | 15 | 15 | 15 |
+| **Education score** | **13.1** | **10.6** | **14.4** |
 
-| Factor | 1 | 2 | 3 |
-|--------|---|---|---|
-| Tool isolation level | Tools interact with real systems | Sandboxed but with some real-system access | Fully simulated, in-memory, or mock tools |
+#### Summary
 
-#### Content sensitivity
+| Score | AgentDojo | ASB | AgentHarm |
+|-------|-----------|-----|-----------|
+| Design | 12.3 | 10.4 | 13.1 |
+| Implementation | 10.5 | 7.0 | 12.5 |
+| Documentation | 13.3 | 6.9 | 10.8 |
+| Maintenance | 11.7 | 11.7 | 15.0 |
+| Education | 13.1 | 10.6 | 14.4 |
+| Usability | 12.3 | 7.4 | 11.8 |
 
-> To what extent does the dataset contain content that is harmful or offensive to read?
+## Appendix
 
-(Higher score = more harmful content present)
+### Model benchmarks vs Agent security testing
 
-| Factor | 1 | 2 | 3 |
-|--------|---|---|---|
-| Harmful content presence | Formulaic or benign | Concrete harmful instructions, not graphic | Real harmful text across multiple categories |
+Most tools in this survey (i.e., those listed in [`attack-risk-coverage.md`](docs/attack-risk-coverage.md)) test model capability, not agent security. The typical design instantiates a fixed agent harness (a ReAct loop or function-calling wrapper), swaps in a model, and measures how that model behaves under attack. The orchestration logic, guardrails, and tool-access controls belong to the benchmark rather than the user. Thus, what the result answers is "how safe is this LLM when given tools?" rather than "how secure is my agent system?".
 
-#### Observability (i.e., Interpretability)
-
-> How well can a student trace what happened in a task run and why it scored the way it did? 
-
-| Factor | 1 | 2 | 3 |
-|--------|---|---|---|
-| Full message sequence | Partial trace | Full trace but unstructured | Full structured trace (prompt, messages, tool calls, results) |
-| Scoring breakdown | Aggregate score only | Per-task score with partial explanation | Per-task breakdown with rationale |
-| Trajectory viewer | No viewer; raw output only | Basic viewer | Structured trajectory browser with message-level detail |
-| Score granularity | Binary (0 or 1) | Few discrete levels | Continuous (0.0 to 1.0) |
-
-#### Experimentability
-
->  To what extent can a student plug in their own agent or defense pipeline (in lieu of merely swapping the model) and measure the effect?
-
-| Factor | 1 | 2 | 3 |
-|--------|---|---|---|
-| API for custom pipelines | No API for custom pipelines | Limited API | Full pipeline API (subclass, plug in, run) |
-| Run against own agent | Cannot plug in external agent | Possible with adaptation | Designed for user-built agents |
-| Beyond model swap | Model swap only | Some extension beyond model swap | Full extension (attacks, defenses, tasks, scoring) |
-
-### Factor Scores
-
-| Criterion | Factor | AgentDojo | ASB | AgentHarm |
-|-----------|--------|-----------|-----|-----------|
-| Deployability | Hardware requirements | 2 | 2 | 2 |
-| Deployability | Software dependencies | 2 | 1 | 3 |
-| Deployability | API credits | 3 | 3 | 3 |
-| Deployability | Gated dataset access | 3 | 3 | 3 |
-| Deployability | Time to complete full eval | 1 | 2 | 2 |
-| **Deployability** | **Average** | **2.2** | **2.2** | **2.6** |
-| Extensibility | Core modification required | 3 | 2 | 3 |
-| Extensibility | Extension points documented | 3 | 1 | 3 |
-| Extensibility | Changes scoped to one module | 3 | 2 | 3 |
-| **Extensibility** | **Average** | **3.0** | **1.7** | **3.0** |
-| Maintenance | Commit frequency | 3 | 1 | 2 |
-| Maintenance | Issue responsiveness | 2 | 1 | 3 |
-| Maintenance | Dependencies install cleanly | 1 | 1 | 2 |
-| **Maintenance** | **Average** | **2.0** | **1.0** | **2.3** |
-| Execution isolation | Tool isolation level | 3 | 3 | 3 |
-| **Execution isolation** | **Average** | **3.0** | **3.0** | **3.0** |
-| Content sensitivity | Harmful content presence | 1 | 2 | 3 |
-| **Content sensitivity** | **Average** | **1.0** | **2.0** | **3.0** |
-| Observability | Full message sequence | 3 | 2 | 3 |
-| Observability | Scoring breakdown | 2 | 2 | 3 |
-| Observability | Trajectory viewer | 1 | 1 | 3 |
-| Observability | Score granularity | 1 | 1 | 3 |
-| **Observability** | **Average** | **1.75** | **1.5** | **3.0** |
-| Experimentability | API for custom pipelines | 3 | 1 | 3 |
-| Experimentability | Run against own agent | 3 | 1 | 3 |
-| Experimentability | Beyond model swap | 3 | 1 | 3 |
-| **Experimentability** | **Average** | **3.0** | **1.0** | **3.0** |
-
-## Model benchmarks vs. agent security testing
-
-Most tools in this survey test model capability, not agent security. The typical design instantiates a fixed agent harness (a ReAct loop or function-calling wrapper), swaps in a model, and measures how that model behaves under attack. The orchestration logic, guardrails, and tool-access controls belong to the benchmark, not to the user. The result answers "how safe is this LLM when given tools?" rather than "how secure is my agent system?"
-
-A production agent's security depends on its full stack: input sanitization, output guardrails, memory isolation, tool-access controls, and orchestration logic. A model that scores well on a benchmark can still be exploited inside a poorly defended agent, and a weaker model can be adequately protected by strong system-level controls. The distinction matters for CodeSafe because classroom exercises should teach students to build and evaluate secure agent systems, not only to compare bare model refusal rates.
+On the other hand, a production agent's security depends on its full stack, including input sanitization, output guardrails, memory isolation, tool-access controls, and orchestration logic. **A model that scores well on a benchmark can still be exploited inside a poorly defended agent**, and a weaker model can be adequately protected by strong system-level controls.
 
 The tools fall into three tiers on this axis:
-
 1. **Supports custom agent pipelines**:
-    + AgentDojo: let users implement a custom pipeline class with their own defense logic (input filtering, output checking, prompt hardening) and test it against the injection suite. 
-    + AgentHarm: use Inspect AI's solver abstraction, which can wrap a full agent pipeline
-    + These two tools can evaluate a user-built agent, not only a model.
-
+    + These tools can evaluate a **user-built** agent, not only a model.
+    + Examples: **AgentDojo**, **AgentHarm**.
 2. **Tests existing agent systems as targets**: 
-    + RedCodeAgent: send adversarial prompts to diverse code-agent systems (OpenHands, Aider, and others) and grades by execution results.
-    + OS-Harm, RiOSWorld, SafeArena, BrowserART: run against specific agent frameworks in real environments. 
-    + A user could substitute their own agent if it speaks the same interface (BrowserGym, OSWorld), but the benchmarks were not designed for plug-and-play agent swapping.
-
+    + These tools send adversarial prompts to diverse code-agent systems in the wild and grade by execution results. A user could substitute their own agent if it speaks the same interface, but the benchmarks were not designed for plug-and-play agent swapping.
+    + Examples: RedCodeAgent, OS-Harm, RiOSWorld, SafeArena, BrowserART. 
 3. **Model benchmarks in agent clothing**:
-    + InjecAgent, ToolEmu, ASB, ToolSword, AgentPoison, EIA, AgentDAM, HAICOSYSTEM, MobileSafetyBench, VPI-Bench, RedCode, SafeArena: instantiate their own agent framework and only vary the model.
-    + They measure the model's inherent safety, not the security posture of an arbitrary agent system.
+    + These tools measure the model's inherent safety by instantiating their own agent framework and only allows swapping the model. They do not measure the security of an **arbitrary** agent system.
+    + Examples: InjecAgent, ToolEmu, **ASB**, ToolSword, AgentPoison, EIA, AgentDAM, HAICOSYSTEM, MobileSafetyBench, VPI-Bench, RedCode, SafeArena.
 
-For the CodeSafe curriculum, Tier 1 tools (AgentDojo, AgentHarm) are the most useful because students can build an agent, add defenses, and measure the effect. Tier 3 tools remain valuable for teaching students how attacks work and how model choice affects baseline safety, but they cannot evaluate a student-built defense.
+### Tool calling and output parsing
 
-## Test Harness
+The three tools use the same ollama server, but they differ in who parses the model's tool calls. This is why plan-format failures appear only in ASB (see the [full-run callout](asb/README.md#full-run-naive-dpi-all-400-attacker-tools-all-3-models) in the ASB README).
++ **AgentDojo and AgentHarm** pass the tool schemas in the `tools` field of the request. ollama renders them through the model's chat template and parses the model's native tool-call tokens into structured `message.tool_calls` objects, so the harness never parses free text. A malformed call surfaces as an HTTP 500 (see [Affected tasks](agentdojo/README.md#affected-tasks)) or as a tool error message.
++ **ASB** never sends `tools`. It describes the expected JSON format in the prompt text and receives only `message.content`, a plain string. Its own `parse_json_format` (`aios/llm_core/llm_classes/base_llm.py`) searches the string for JSON and returns `'[]'` when it finds none, which counts as a failed plan and, after 10 retries, as an empty trajectory that the judge tends to label as a refusal.
 
-All tools use the shared ollama server at `http://korn.ics.uci.edu:48763`.
-The agent models under test are `gpt-oss:120b` (large), `qwen3-coder:30b` (mid), and `qwen3:14b` (small).
+As a result, ASB's ASR and RR for a model with many plan failures measure **format compliance** first and resistance second.
