@@ -1,6 +1,6 @@
 # Evaluating Agentic LLM Security Benchmarks for Cybersecurity Education: A Reproducible Study
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22135957.svg)](https://doi.org/10.5281/zenodo.22135957)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22140262.svg)](https://doi.org/10.5281/zenodo.22140262)
 
 This artifact consists of the assessment results for several state-of-the-art frameworks/benchmarks targeting the security of agentic LLMs, as well as scripts and instructions to carry out (hopefully) replicable experiments. The assessments evaluate each tool's applicability in a cyber-educational scenario, with an eye to integrating them into a CTF or juice-shop-style educational platform.
 
