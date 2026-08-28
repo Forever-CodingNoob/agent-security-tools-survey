@@ -19,14 +19,17 @@ This artifact consists of the assessment results for several state-of-the-art fr
 
 This artifact contains the following:
 + [`README.{md|html}`](README.html): this documentation
-+ [`report.{md|html}`](report.html): the summary report that compares all evaluated tools, with per-criterion scores and crmd|htmloss-tool notes
++ [`report.{md|html}`](report.html): the summary report that compares all evaluated tools, with per-criterion scores and cross-tool notes
 + [`docs/`](docs/): supporting documents
     + [`requirements.{md|html}`](docs/requirements.html): hardware and software requirements for the Ollama server and the client
     + [`install.{md|html}`](docs/install.html): step-by-step installation of the Ollama server, the models, and the tools
     + [`criteria.{md|html}`](docs/criteria.html): the scoring scheme, which adopts the BetterBench criteria and adds our Education stage
     + [`attack-risk-coverage.{md|html}`](docs/attack-risk-coverage.html): the attack-vector and security-risk taxonomy and the coverage of 16 tools
     + [`faq.{md|html}`](docs/faq.html): answers to questions about our choices
-+ [`scripts/ollama.sbatch`](scripts/ollama.sbatch): the Slurm script that starts the Ollama server with the settings we used
+    + [`figures/`](docs/figures/): the per-stage bar charts embedded in the summary report
++ [`scripts/`](scripts/): helper scripts
+    + [`ollama.sbatch`](scripts/ollama.sbatch): the Slurm script that starts the Ollama server with the settings we used
+    + [`plot_stage_scores.py`](scripts/plot_stage_scores.py): draws the per-stage bar charts in `docs/figures/` from the Summary table of the summary report
 + [`agentdojo/`](agentdojo/), [`agentharm/`](agentharm/), [`asb/`](asb/): one directory per evaluated tool, each containing
     + `README.md`: the detailed report for the tool
     + `<tool>/`: the tool's source code, added as a git submodule and pinned to the commit we evaluated

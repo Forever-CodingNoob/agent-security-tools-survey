@@ -12,6 +12,7 @@
         + [Maintenance](#maintenance)
         + [Education](#education)
         + [Summary](#summary)
+        + [Charts](#charts)
 + [Appendix](#appendix)
     + [Model benchmarks vs Agent security testing](#model-benchmarks-vs-agent-security-testing)
     + [Tool calling and output parsing](#tool-calling-and-output-parsing)
@@ -137,6 +138,17 @@ Each table below covers one stage and lists the score of every criterion per too
 | Maintenance | 11.7 | 11.7 | 15.0 |
 | Education | 13.1 | 10.6 | 14.4 |
 | Usability | 12.3 | 7.4 | 11.8 |
+
+#### Charts
+
+One bar chart per stage, plus one for usability, drawn from the Summary table by [`scripts/plot_stage_scores.py`](scripts/plot_stage_scores.py).
+(To regenerate the figures, run `uv run scripts/plot_stage_scores.py`.)
+
+| | |
+|---|---|
+| ![Design score](docs/figures/stage-design.png) | ![Implementation score](docs/figures/stage-implementation.png) |
+| ![Documentation score](docs/figures/stage-documentation.png) | ![Maintenance score](docs/figures/stage-maintenance.png) |
+| ![Education score](docs/figures/stage-education.png) | ![Usability score](docs/figures/stage-usability.png) |
 
 ## Appendix
 
