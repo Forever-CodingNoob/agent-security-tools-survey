@@ -40,7 +40,7 @@ The scoring scheme, including a detailed rubric, is defined in [`criteria.md`](d
 
 ### Scores by criterion
 
-Each table below covers one stage and lists the score of every criterion per tool, so that a reader can trace a stage score in the comparison table back to the criteria behind it. The last row of each table is the stage score, and the [Summary](#summary) table collects the stage scores and usability per tool. The justification for each score is in the Criteria section of the tool's README.
+Each table below covers one stage and lists the score of every criterion per tool. The last row of each table is the stage score, and the [Summary](#summary) table collects the stage scores and usability per tool. The justification for each score is in the Criteria section of the tool's README.
 
 #### Design
 

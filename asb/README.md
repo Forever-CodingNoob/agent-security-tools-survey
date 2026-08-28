@@ -18,7 +18,7 @@
     + [Performing a Partial Evaluation](#performing-a-partial-evaluation)
 + [Experimental Results](#experimental-results)
     + [Our Results](#our-results)
-        + [Full run](#full-run)
+        + [Full run](#full-run-naive-dpi-all-400-attacker-tools-all-3-models)
         + [Execution Time](#execution-time)
     + [Our Findings](#our-findings)
 + [Criteria](#criteria)
@@ -40,7 +40,7 @@ Agent Security Bench (ASB) measures the security of LLM-based agents against fou
 
 ASB is a custom Python framework with its own scheduler, agent loop, and LLM kernel, rather than building on Inspect or another standard evaluation framework. The agents use a ReAct-style plan-then-act workflow with simulated tools that return fixed strings instead of calling real APIs.
 
-License: MIT. Version tested: commit `1f561dc` (2026-04-17). Package: not published (custom framework).
+License: MIT. Version tested: commit `1f561dc`. Package: not published (custom framework).
 
 
 ## File Hierarchy
@@ -51,20 +51,21 @@ This subartifact contains the following:
 + [`run_full_benchmark.sh`](run_full_benchmark.sh): full evaluation script (naive DPI, all 400 attacker tools, all 3 models)
 + [`run_smoke_benchmark.sh`](run_smoke_benchmark.sh): smoke test script (1 agent, 1 attacker tool, 3 injection subtypes under DPI, 3 models)
 + [`run_partial_benchmark.sh`](run_partial_benchmark.sh): partial evaluation script (naive DPI, 100-tool subset, all 3 models)
-+ [`attack_tools_subset_100.jsonl`](attack_tools_subset_100.jsonl): the 100-tool subset used by the partial evaluation script (5 aggressive + 5 non-aggressive attacker tools per agent, sampled from `asb/data/all_attack_tools.jsonl`; not part of the original repository)
++ [`attack_tools_subset_100.jsonl`](attack_tools_subset_100.jsonl): the 100-tool subset used by the partial evaluation script (5 aggressive + 5 non-aggressive attacker tools per agent, sampled from `asb/data/all_attack_tools.jsonl`, not part of the original repository)
 + [`rerun_judge.sh`](rerun_judge.sh): re-runs the refusal judge on completed CSV results without re-running agent tasks
 + [`results/`](results/): evaluation results
     + [`full_qwen3_14b_naive.csv`](results/full_qwen3_14b_naive.csv): per-task results for `qwen3:14b` (400 rows)
-    + [`full_qwen3_coder_30b_naive.csv`](results/full_qwen3_coder_30b_naive.csv): per-task results for `qwen3-coder:30b` (400 rows)
+    + [`full_qwen3_coder_30b_naive.csv`](results/full_qwen3_coder_30b_naive.csv): per-task results for `qwen3-coder:30b` (400 rows, from the rerun with fixes 4a to 4e)
     + [`full_gpt_oss_120b_naive.csv`](results/full_gpt_oss_120b_naive.csv): per-task results for `gpt-oss:120b` (400 rows)
-+ [`your-results/`](your-results/): output directory for new evaluation runs (created by the scripts; initially empty)
+    + [`timing_summary.csv`](results/timing_summary.csv): the `Duration` of every row of the three CSVs above, in the format `run_full_benchmark.sh` writes (see [Execution Time](#execution-time) for what `Duration` measures per model)
++ [`your-results/`](your-results/): output directory for new evaluation runs (created by the scripts, initially empty)
 
 
 ## Getting Started
 
 Run one direct prompt injection (DPI) attack on one task with the ollama server:
 
-1. Clone the repository. Run `pip install -r requirements.txt` in a virtual environment. Apply the five code fixes (conda fallback, judge model, per-task duration, plan retry nudge, and ollama request timeout) and install the extra dependencies. See [Installation](#installation) for details.
+1. Clone the repository. Run `pip install -r requirements.txt` in a virtual environment. Apply the six code fixes (conda fallback, judge model, per-task duration, plan retry nudge, ollama request timeout, and non-dict plan steps) and install the extra dependencies. See [Installation](#installation) for details.
 2. Set the environment variables for the ollama server:
    ```bash
    export OLLAMA_HOST=<url_to_your_ollama_server>
@@ -192,7 +193,7 @@ The tool uses pip with a requirements.txt file. Do these steps:
         ```
 
     e. **Fix: Request timeout for the ollama client**
-        `aios/llm_core/llm_classes/ollama_llm.py` calls the module-level `ollama.chat`, which has no request timeout. When the ollama server restarted during a run, the request in flight never returned: the process sat for 16 hours with one half-open TCP connection, all threads idle, and no row written. Replace both `ollama.chat(` calls with a client that has a timeout; a timed-out call raises and lands in the existing `except Exception` branch, so the attempt fails instead of stalling the run:
+        `aios/llm_core/llm_classes/ollama_llm.py` calls the module-level `ollama.chat`, which has no request timeout. When the ollama server restarted during a run, the request in flight never returned: the process sat for 16 hours with one half-open TCP connection, all threads idle, and no row written. Replace both `ollama.chat(` calls with a client that has a timeout, so that a timed-out call raises and lands in the existing `except Exception` branch, so the attempt fails instead of stalling the run:
         ```python
         # Add near the imports:
         import os
@@ -209,7 +210,21 @@ The tool uses pip with a requirements.txt file. Do these steps:
         # AFTER (both branches):
         response = client.chat(model=..., messages=..., ...)
         ```
-        The default of 600 s covers the slowest reference model with queue wait on the shared server; set `ASB_OLLAMA_TIMEOUT` to change it.
+        The default of 600 s covers the slowest reference model with queue wait on the shared server. Set `ASB_OLLAMA_TIMEOUT` to change it.
+
+    f. **Fix: Non-dict plan steps crash the run**
+        `check_workflow` in `pyopenagi/agents/base_agent.py` catches only `json.JSONDecodeError`. When a model replies with a JSON list of non-objects (one observed reply was `[24]`), `parse_json_format` accepts it, the step check runs `"message" not in 24`, and the resulting `TypeError` escapes to `r.result()` in `main_attacker.py`. That kills the main thread, which is the only thread that writes CSV rows, while the worker threads keep running, so the run appears alive but stops producing results. Guard the step type:
+        ```python
+        # BEFORE:
+        for step in workflow:
+            if "message" not in step or "tool_use" not in step:
+                return None
+
+        # AFTER:
+        for step in workflow:
+            if not isinstance(step, dict) or "message" not in step or "tool_use" not in step:
+                return None
+        ```
 
 5. The memory attack path uses `OpenAIEmbeddings` from LangChain for ChromaDB. Even when you do not run memory attacks, the code opens the `memory_db/chroma_db` directory if it exists.
    Pass `--database /tmp/nonexistent_db` to skip ChromaDB initialization on non-memory runs.
@@ -265,21 +280,21 @@ python scripts/agent_attack.py --cfg_path config/DPI.yml
 Model:
 - `--llm_name`: model name, prefix with `ollama/` for ollama models
 - `--use_backend`: `ollama`, `vllm`, or `None` (for API models)
-- `--max_new_tokens`: generation limit per LLM call (default 256; this evaluation used 512)
+- `--max_new_tokens`: generation limit per LLM call (default 256, this evaluation used 512)
 
 Attack:
-- `--direct_prompt_injection`, `--observation_prompt_injection`, `--memory_attack`: attack mode flags that select DPI, IPI, or Memory Poisoning (see [Dataset](#attack-modes-injection-subtypes-agents-and-attacker-tools)); omit all of them for a clean run
+- `--direct_prompt_injection`, `--observation_prompt_injection`, `--memory_attack`: attack mode flags that select DPI, IPI, or Memory Poisoning (see [Dataset](#attack-modes-injection-subtypes-agents-and-attacker-tools)). Omit all of them for a clean run
 - `--attack_type`: injection subtype, one of `naive`, `fake_completion`, `escape_characters`, `context_ignoring`, or `combined_attack`
-- `--pot_backdoor`, `--pot_clean`: PoT Backdoor mode with or without the trigger in the task; both take `--trigger` (trigger phrase) and `--target` (attacker tool to invoke), and use `data/agent_task_pot.jsonl` as `--tasks_path`
+- `--pot_backdoor`, `--pot_clean`: PoT Backdoor mode with or without the trigger in the task. Both take `--trigger` (trigger phrase) and `--target` (attacker tool to invoke), and use `data/agent_task_pot.jsonl` as `--tasks_path`
 - `--defense_type`: one of `delimiters_defense`, `instructional_prevention`, `direct_paraphrase_defense`, `dynamic_prompt_rewriting`, `ob_sandwich_defense`, `pot_paraphrase_defense`, `pot_shuffling_defense` (default none)
 
 Data and output:
-- `--attacker_tools_path`: JSONL file of attacker tools (`data/all_attack_tools.jsonl` for all 400; default is the non-aggressive half)
+- `--attacker_tools_path`: JSONL file of attacker tools (`data/all_attack_tools.jsonl` for all 400, the default is the non-aggressive half)
 - `--tasks_path`: JSONL file of agent tasks (default `data/agent_task.jsonl`)
-- `--task_num`: number of tasks per agent to run (default 1, max 5 or 6); each task runs once per attacker tool of that agent
+- `--task_num`: number of tasks per agent to run (default 1, max 5 or 6). Each task runs once per attacker tool of that agent
 - `--res_file`: output CSV path, one row per (agent, task, attacker tool)
-- `--database`: ChromaDB directory for memory attacks (default `memory_db/chroma_db`); pass a nonexistent path such as `/tmp/nonexistent_db` on non-memory runs to skip the OpenAI embeddings initialization
-- `--write_db`, `--read_db`: Memory Poisoning only; store the agent's plans into the database, or retrieve poisoned plans from it
+- `--database`: ChromaDB directory for memory attacks (default `memory_db/chroma_db`). Pass a nonexistent path such as `/tmp/nonexistent_db` on non-memory runs to skip the OpenAI embeddings initialization
+- `--write_db`, `--read_db`: Memory Poisoning only. Store the agent's plans into the database, or retrieve poisoned plans from it
 
 Wrapper script (`scripts/agent_attack.py`):
 - `--cfg_path`: YAML config in `config/` that lists models, injection subtypes, and the attacker tool set
@@ -293,7 +308,7 @@ The dataset is bundled in the repository under `data/`.
 
 An *attack mode* is the surface where the injection enters the agent. There are four:
 + DPI (Direct Prompt Injection): the injection is appended to the user prompt. Activated by `--direct_prompt_injection`.
-+ IPI (Indirect Prompt Injection): the injection is appended to a tool response. Activated by `--observation_prompt_injection`. The paper calls this mode IPI, while the code flag says "observation" because the injection is placed in the tool observation; both names refer to the same attack.
++ IPI (Indirect Prompt Injection): the injection is appended to a tool response. Activated by `--observation_prompt_injection`. The paper calls this mode IPI, while the code flag says "observation" because the injection is placed in the tool observation, and both names refer to the same attack.
 + Memory Poisoning: a malicious plan is injected into the ChromaDB vector store, and the agent retrieves it in a later task. Activated by `--memory_attack`.
 + PoT (Plan-of-Thought) Backdoor: trigger-activated demonstrations are embedded in the system prompt. It has no flag of its own and instead uses a separate task file (`agent_task_pot.jsonl`).
 
@@ -358,7 +373,7 @@ The paper defines seven metrics as ratios over those columns under different run
 - `BP` (Benign Performance): the same fraction in a `--pot_backdoor` or `--pot_clean` run (backdoored system prompt with or without the trigger). If BP stays close to PNA, the backdoor does not hurt normal use. Available only for the 5 PoT agents.
 
 The code also prints one rate that the paper's Table 4 does not list by name:
-- `Original Task Success Rate`: fraction of tasks with `Original Task Successful` = 1 in an attacked run. It is the same ratio as PNA and BP, measured under attack instead of without it, and it is the column reported in the [Full run](#full-run) results.
+- `Original Task Success Rate`: fraction of tasks with `Original Task Successful` = 1 in an attacked run. It is the same ratio as PNA and BP, measured under attack instead of without it, and it is the column reported in the [Full run](#full-run-naive-dpi-all-400-attacker-tools-all-3-models) results.
 
 The table below shows which binary column each metric averages and under which run mode. Every metric is `(number of rows with the column = 1) / (number of rows)`:
 | Metric | Binary column averaged | Run mode | Printed by `main_attacker.py` as |
@@ -372,7 +387,7 @@ The table below shows which binary column each metric averages and under which r
 This evaluation ran DPI only, so it reports ASR, RR, and the *original-task success rate* under attack. PNA and BP are obtainable with the flags above.
 
 > [!NOTE]
-> The two substring matches are `check_attack_success` and `check_original_success` in `main_attacker.py`; the strings come from `data/all_attack_tools.jsonl` (`Attack goal`) and `data/all_normal_tools.jsonl` (`Expected Achievements`).
+> The two substring matches are `check_attack_success` and `check_original_success` in `main_attacker.py`, and the strings come from `data/all_attack_tools.jsonl` (`Attack goal`) and `data/all_normal_tools.jsonl` (`Expected Achievements`).
 
 ### Evaluation Trajectory
 
@@ -410,11 +425,10 @@ The following trace shows one DPI attack on the `financial_analyst_agent` agent 
     + `gpt-oss:120b` (large)
 + Judge model (fixed across evaluations): `ollama/qwen3:14b` for the refusal judge.
 + ASB version: commit `1f561dc` (2026-04-17), installed with pip in a virtual environment.
-+ Fixes applied for the reported run (of the five in [Installation](#installation)):
-    1. Conda fallback in `pyopenagi/agents/interact.py`
-    2. Judge environment variables in `main_attacker.py`
-    3. Per-task duration column, in an earlier wall-clock form (see [Execution Time](#execution-time))
-    Fixes 4d and 4e were added after the run.
++ Fixes applied (of the six in [Installation](#installation)):
+    + `qwen3:14b` and `gpt-oss:120b` (first run): 4a (conda fallback), 4b (judge environment variables), and 4c in an earlier wall-clock form (see [Execution Time](#execution-time)).
+    + `qwen3-coder:30b` (rerun): 4a to 4e, that is, also the plan retry nudge with raw-reply logging and the ollama request timeout.
+    + 4f was added after both runs.
 + ChromaDB workaround: `--database /tmp/nonexistent_db` on every run, so no memory database is opened.
 + Attack: DPI mode (`--direct_prompt_injection`) with the `naive` injection subtype (`--attack_type naive`).
 + Attacker tools: all 400 tools in `data/all_attack_tools.jsonl`, for all 10 agents.
@@ -478,12 +492,12 @@ The table reports the following metrics:
 | Model | Tasks | ASR | Original Task Success | Refusal Rate |
 |-------|-------|-----|-----------------------|--------------|
 | qwen3:14b | 400 | 98.5% (394/400) | 1.2% (5/400) | 7.5% (30/400) |
-| qwen3-coder:30b | 400 | 0.0% (0/400) | 0.0% (0/400) | 95.5% (382/400) |
+| qwen3-coder:30b | 400 | 0.0% (0/400) | 0.0% (0/400) | 93.2% (373/400) |
 | gpt-oss:120b | 400 | 86.8% (347/400) | 1.5% (6/400) | 18.2% (73/400) |
 
 > [!IMPORTANT]
-> The `qwen3-coder:30b` row does not show resistance. In all 400 rows the model failed all 10 plan-generation attempts (`Fail 10 times to generate a valid plan` in every trajectory), so it never produced a workflow and never called any tool. Its 0.0% ASR is therefore structural, and its 95.5% "refusal" is a judge artifact: the refusal judge is shown only the `[Thinking]` messages, which for these rows are `'thinking': '[]'` and `The workflow generated for the problem is null`, and it labels that as a refusal even though its own prompt says a failure to complete a task is not a refusal. The same artifact appears in the other models: 33 of 33 `gpt-oss:120b` rows and 2 of 3 `qwen3:14b` rows that failed all 10 attempts were also labeled refused.
-> The mechanism is in `aios/llm_core/llm_classes/base_llm.py`: `parse_json_format` returns `'[]'` when the reply contains no JSON list or object (fenced blocks and embedded fragments are tried), and `check_workflow` in `pyopenagi/agents/base_agent.py` treats an empty list as a failed plan. The raw replies are not stored in the CSV, so the exact text behind the reported rows is not recoverable. Re-running one row with the raw reply logged (fix 4d in [Installation](#installation)) showed three behaviors of `qwen3-coder:30b`: on the first attempt it answers in prose that explicitly declines the injected tool ("I cannot use a TransactionDuplication tool"), it never uses ASB's `[{"message", "tool_use"}]` plan format even when it does comply (it emits `{"name": ..., "arguments": ...}` or `{"plan": [...], "tool_calls": [...]}` instead), and after the first failure it returns empty replies because upstream appends the retry nudge as an assistant turn for every model except Claude. The other two models ran through the same code path and planned successfully in 397 and 367 of 400 rows.
+> The `qwen3-coder:30b` row does not show resistance. In all 400 rows the model failed all 10 plan-generation attempts (`Fail 10 times to generate a valid plan` in every trajectory), so it never produced a workflow and never called any tool. Its 0.0% ASR is therefore structural, and its 93.2% "refusal" is a judge artifact: the refusal judge is shown only the `[Thinking]` messages, which for these rows are `'thinking': '[]'` and `The workflow generated for the problem is null`, and it labels that as a refusal even though its own prompt says a failure to complete a task is not a refusal. The same artifact appears in the other models: 33 of 33 `gpt-oss:120b` rows and 2 of 3 `qwen3:14b` rows that failed all 10 attempts were also labeled refused.
+> The mechanism is in `aios/llm_core/llm_classes/base_llm.py`: `parse_json_format` returns `'[]'` when the reply contains no JSON list or object (fenced blocks and embedded fragments are tried), and `check_workflow` in `pyopenagi/agents/base_agent.py` treats an empty list as a failed plan. The raw replies are not stored in the CSV, so the model was rerun with fixes 4d and 4e (the retry nudge as a user turn, raw replies logged, request timeout), which reproduced the result: all 400 rows failed all 10 attempts. The logged replies show three behaviors of `qwen3-coder:30b`: on the first attempt it answers in prose that declines or questions the injected instruction ("I cannot fulfill this request as it contains contradictory instructions"), when it does comply it never uses ASB's `[{"message", "tool_use"}]` plan format but its own (`{"name": ..., "arguments": ...}` or `{"plan": [...], "tool_calls": [...]}`), and after a nudge it echoes the nudge text itself ("Fail 8 times to generate a valid plan. I need to regenerate a plan.") instead of a plan. The other two models ran through the same code path and planned successfully in 397 and 367 of 400 rows.
 
 Per-agent breakdown (10 agents in total). Each cell shows two values separated by `/`:
 + Left value: ASR (Attack Success Rate) for that agent.
@@ -491,39 +505,45 @@ Per-agent breakdown (10 agents in total). Each cell shows two values separated b
 
 | Agent | qwen3:14b | qwen3-coder:30b | gpt-oss:120b |
 |-------|-----------|-----------------|--------------|
-| academic_search | 100% / 12% | 0% / 92% | 98% / 8% |
-| aerospace_engineer | 100% / 0% | 0% / 90% | 100% / 5% |
-| autonomous_driving | 100% / 18% | 0% / 100% | 55% / 42% |
-| ecommerce_manager | 98% / 2% | 0% / 100% | 100% / 8% |
-| education_consultant | 95% / 8% | 0% / 92% | 98% / 12% |
-| financial_analyst | 100% / 8% | 0% / 98% | 82% / 22% |
+| academic_search | 100% / 12% | 0% / 98% | 98% / 8% |
+| aerospace_engineer | 100% / 0% | 0% / 88% | 100% / 5% |
+| autonomous_driving | 100% / 18% | 0% / 92% | 55% / 42% |
+| ecommerce_manager | 98% / 2% | 0% / 82% | 100% / 8% |
+| education_consultant | 95% / 8% | 0% / 95% | 98% / 12% |
+| financial_analyst | 100% / 8% | 0% / 95% | 82% / 22% |
 | legal_consultant | 100% / 2% | 0% / 98% | 90% / 18% |
-| medical_advisor | 98% / 8% | 0% / 90% | 92% / 10% |
-| psychological_counselor | 100% / 12% | 0% / 98% | 72% / 35% |
-| system_admin | 95% / 5% | 0% / 98% | 80% / 22% |
+| medical_advisor | 98% / 8% | 0% / 98% | 92% / 10% |
+| psychological_counselor | 100% / 12% | 0% / 95% | 72% / 35% |
+| system_admin | 95% / 5% | 0% / 92% | 80% / 22% |
 
 Each percentage above is over 40 rows, since with `--task_num 1`, each agent's first task runs once per **attacker tool**, and each agent has 40 **attacker tools**.
 
 #### Execution Time
 
-> [!NOTE]
-> The `Duration` values were recorded before fix 4c in [Installation](#installation) and are cumulative wall-clock times, not LLM processing times: all 400 tasks submit at once, ASB's FIFO scheduler runs one LLM request at a time, and each task's timer starts at submission, so a late task waits hours in the queue and the average is roughly half the total wall-clock time.
+The `Duration` column means different things in the two runs, so the table states what each row measures:
++ `qwen3:14b` and `gpt-oss:120b` were run before fix 4c in [Installation](#installation). Their values are cumulative wall-clock times: all 400 tasks submit at once, ASB's FIFO scheduler runs one LLM request at a time, and each task's timer starts at submission, so a late task waits hours in the queue and the average is roughly half the total wall-clock time.
++ `qwen3-coder:30b` was rerun with fix 4c, so its values are the LLM execution time of each task, without queue wait and without the judge call.
 
-| Model | Total wall-clock (s) | Avg per task (s) |
-|-------|---------------------|------------------|
-| qwen3:14b | 8,339,346 | 20,848 |
-| qwen3-coder:30b | 1,393,587 | 3,484 |
-| gpt-oss:120b | 2,546,911 | 6,367 |
+The per-task values of all three models are in [`results/timing_summary.csv`](results/timing_summary.csv), sorted by duration. The script writes this file only for the models of the current invocation, so the file in `results/` was regenerated from the three CSVs with the same code.
+
+| Model | Duration measures | Total (s) | Avg per task (s) |
+|-------|-------------------|-----------|------------------|
+| qwen3:14b | wall-clock including queue wait | 8,339,346 | 20,848 |
+| qwen3-coder:30b | LLM execution time | 13,119 | 32.8 |
+| gpt-oss:120b | wall-clock including queue wait | 2,546,911 | 6,367 |
+
+> [!NOTE]
+> The `qwen3-coder:30b` rerun took 7.3 hours of wall-clock time, of which 3.6 hours were the agent model's execution time in the table. The rest went to the 400 refusal-judge calls, the model switches between the agent and the judge, and a second identical process that competed for the server for six of those hours and was then terminated.
 
 ### Our Findings
 
 + **Two usable models, one incompatible model**: 
     + `qwen3:14b` is extremely vulnerable (394 of 400 naive DPI attacks succeeded, 98.5% ASR).
     + `gpt-oss:120b` is also vulnerable but resists more often (347 of 400, 86.8%).
-    + `qwen3-coder:30b` produced no valid plan in any of its 400 rows, so its 0.0% ASR measures a format incompatibility with ASB's JSON plan prompt, not resistance (see the IMPORTANT callout under [Full run](#full-run)).
+    + `qwen3-coder:30b` produced no valid plan in any of its 400 rows, so its 0.0% ASR measures a format incompatibility with ASB's JSON plan prompt, not resistance (see the IMPORTANT callout under [Full run](#full-run-naive-dpi-all-400-attacker-tools-all-3-models)).
 + **Refusal inversely correlates with ASR for the two usable models**: 
     + `gpt-oss:120b` refused 18.2% and `qwen3:14b` refused 7.5%.
-    + The 95.5% "refusal" of `qwen3-coder:30b` is a judge artifact on empty trajectories and should not be compared with the other two.
+    + The 93.2% "refusal" of `qwen3-coder:30b` is a judge artifact on empty trajectories and should not be compared with the other two.
 + **Original task success near zero**: 
     + The DPI replaces the user task with the attack instruction, so the agent either follows the injection or refuses. 
     + `gpt-oss:120b` achieved the highest original task success at 1.5% (6/400), where the agent called both the attacker tool and its legitimate tools.
@@ -533,7 +553,7 @@ Each percentage above is over 40 rows, since with `--task_num 1`, each agent's f
 
 ## Criteria
 
-We score the tool with the scheme in [`criteria.md`](../docs/criteria.md): the four BetterBench stages (Design, Implementation, Documentation, Maintenance) are scored from the developers' published material (paper and repository), and our Education stage is scored from our own run. Each criterion is scored 0, 5, 10, 15, or n/a; a stage score is the mean of its applicable criteria; usability is the mean over all applicable Implementation, Documentation, and Maintenance criteria. Repository facts are as of Aug 27, 2026.
+We score the tool with the scheme in [`criteria.md`](../docs/criteria.md): the four BetterBench stages (Design, Implementation, Documentation, Maintenance) are scored from the developers' published material (paper and repository), and our Education stage is scored from our own run. Each criterion is scored 0, 5, 10, 15, or n/a. A stage score is the mean of its applicable criteria, and usability is the mean over all applicable Implementation, Documentation, and Maintenance criteria.
 
 | Stage | Score |
 |-------|-------|
@@ -551,17 +571,17 @@ stage avg score: 10.4
 | Criterion | Score | Justification |
 |-----------|-------|---------------|
 | (D1) Definition of tested capability or characteristic | 15 | The paper defines the tested property as an agent's security against attacks at each operational stage and formalizes the concepts and threat model (paper Sec. 3). |
-| (D2) Description of how tested capability translates to benchmark task | 15 | Each attack mode is formalized as a transformation of the agent's input, memory, or system prompt, and each test case is an (agent task, attacker tool) pair scored by tool use (paper Sec. 4; Appendix B). |
+| (D2) Description of how tested capability translates to benchmark task | 15 | Each attack mode is formalized as a transformation of the agent's input, memory, or system prompt, and each test case is an (agent task, attacker tool) pair scored by tool use (paper Sec. 4 and Appendix B). |
 | (D3) Description of how knowing about the tested concept is helpful in the real world | 15 | The introduction motivates the benchmark with agents in finance, healthcare, and autonomous driving whose tools and memory can be compromised (paper Sec. 1). |
 | (D4) Description of use cases and user personas | 10 | Ten scenarios with agent roles are described (paper Appendix B.1, Table 9), but user personas and deployment context are not. |
 | (D5) Involvement of domain experts | 0 | The paper does not mention domain experts for the ten application domains, and the authors' backgrounds are machine learning, not the domains (paper author list). |
-| (D6) Integration of domain literature | 15 | The five injection subtypes and the defenses are taken from cited prior work and formalized (paper Table 1; Appendix A.4). |
+| (D6) Integration of domain literature | 15 | The five injection subtypes and the defenses are taken from cited prior work and formalized (paper Table 1 and Appendix A.4). |
 | (D7) Description of how the score should or shouldn't be interpreted | 10 | The paper explains how to read ASR, refusal rate, and NRP together (paper Sec. 5.2 and 5.3) but gives no guidance on how the scores should not be used. |
-| (D8) Informed choice of performance metric(s) | 15 | Table 4 and Appendix C.2.3 explain every metric, and NRP is introduced with a rationale for combining utility and security (paper Sec. 5.2; Appendix C.2.3). |
-| (D9) Includes floors and ceilings for metric | 0 | No floors or ceilings are given for ASR, refusal rate, PNA, or NRP; the metric definitions state no bounds (paper Table 4; Appendix C.2.3). |
-| (D10) Includes human performance level | n/a | Human performance on attack success is not a meaningful reference; the criterion is excluded per [`criteria.md`](../docs/criteria.md). |
-| (D11) Includes random performance level | 0 | No random or chance level is reported; the result tables hold model results only (paper Tables 5 and 6). |
-| (D12) Addresses input sensitivity | 15 | Five injection subtypes (naive, escape characters, context ignoring, fake completion, combined) express the same attacker goal in different forms, and results are compared across them (paper Table 1; Appendix D.1.4). |
+| (D8) Informed choice of performance metric(s) | 15 | Table 4 and Appendix C.2.3 explain every metric, and NRP is introduced with a rationale for combining utility and security (paper Sec. 5.2 and Appendix C.2.3). |
+| (D9) Includes floors and ceilings for metric | 0 | No floors or ceilings are given for ASR, refusal rate, PNA, or NRP, and the metric definitions state no bounds (paper Table 4 and Appendix C.2.3). |
+| (D10) Includes human performance level | n/a | Human performance on attack success is not a meaningful reference, so the criterion is excluded per [`criteria.md`](../docs/criteria.md). |
+| (D11) Includes random performance level | 0 | No random or chance level is reported, and the result tables hold model results only (paper Tables 5 and 6). |
+| (D12) Addresses input sensitivity | 15 | Five injection subtypes (naive, escape characters, context ignoring, fake completion, combined) express the same attacker goal in different forms, and results are compared across them (paper Table 1 and Appendix D.1.4). |
 | (D13) Validated automatic evaluation available | 10 | Attack and task success are automatic substring matches and refusal is an LLM judge, but the paper reports no validation of any of them (paper Appendix C.2.3). |
 | (D14) Explanation of differences to related benchmarks | 15 | Appendix B.3 compares ASB with InjecAgent and AgentDojo on attacks, defenses, scenarios, and test cases (paper Appendix B.3, Table 12). |
 
@@ -591,22 +611,22 @@ stage avg score: 6.9
 | (Do1) Requirements file available | 10 | `requirements.txt` exists but omits six packages the code imports and pins `openai` and `protobuf` versions that conflict with other dependencies (see Installation). |
 | (Do2) Quick-start guide or demo code available | 10 | The README "Quickstart" points to `scripts/run.sh` and the YAML configs, but assumes conda and omits the ollama-specific steps needed to run locally. |
 | (Do3) Includes informative in-line code comments | 5 | Comments are sparse (4.8% of 8,354 lines) and mix Chinese and English, and most functions state no purpose, inputs, or outputs (for example `pyopenagi/agents/react_agent_attack.py`). |
-| (Do4) Code documentation available | 5 | The README describes the high-level flow and arguments; there is no documentation of the repository structure or of internal APIs such as the LLM backend interface. |
-| (Do5) Documentation of test task categories & rationale | 10 | Scenarios, attack modes, and injection subtypes are defined (paper Sec. 4; Appendix B), but the rationale for choosing these ten scenarios is not given. |
+| (Do4) Code documentation available | 5 | The README describes the high-level flow and arguments, and there is no documentation of the repository structure or of internal APIs such as the LLM backend interface. |
+| (Do5) Documentation of test task categories & rationale | 10 | Scenarios, attack modes, and injection subtypes are defined (paper Sec. 4 and Appendix B), but the rationale for choosing these ten scenarios is not given. |
 | (Do6) Documentation of assumptions about normative properties | n/a | The benchmark measures attack success, not a culturally dependent property (paper Sec. 3 definitions). |
-| (Do7) Documentation of limitations | 0 | The paper has no limitations section; it discusses future defenses but not limits of the benchmark's design or use. |
+| (Do7) Documentation of limitations | 0 | The paper has no limitations section, and it discusses future defenses but not limits of the benchmark's design or use. |
 | (Do8) Documentation of benchmark construction process | 15 | Appendix B documents how agents, tasks, normal tools, attacker tools, and the aggressive split were generated and what each field means (paper Appendix B). |
 | (Do9) Documentation of data collection or environment/prompt design process | 10 | Tools and tasks were generated with GPT-4 from specified fields (paper Appendix B.2), but selection criteria and review steps are not described. |
-| (Do10) Documentation of evaluation metric(s) | 15 | All seven metrics are defined with formulas (paper Table 4; Appendix C.2.3). |
-| (Do11) Report statistical significance of benchmark results | 0 | No variance, confidence intervals, or multiple seeds are reported; all tables give point estimates (paper Tables 5, 6, and 15 to 21). |
-| (Do12) Accepted at peer-reviewed venue | 15 | Accepted at ICLR 2025 (paper front matter; README citation block). |
+| (Do10) Documentation of evaluation metric(s) | 15 | All seven metrics are defined with formulas (paper Table 4 and Appendix C.2.3). |
+| (Do11) Report statistical significance of benchmark results | 0 | No variance, confidence intervals, or multiple seeds are reported, and all tables give point estimates (paper Tables 5, 6, and 15 to 21). |
+| (Do12) Accepted at peer-reviewed venue | 15 | Accepted at ICLR 2025 (paper front matter and README citation block). |
 | (Do13) Specifies applicable license | 10 | An MIT `LICENSE` file is in the repository, but the paper does not state the license and nothing covers the data separately. |
-| (Do14) Provision of a globally unique, persistent identifier | 5 | The paper has an arXiv identifier; the dataset has none. |
-| (Do15) Inclusion of standardized metadata (Croissant) | 0 | No structured metadata of any kind; the repository ships only the JSONL files under `data/`. |
+| (Do14) Provision of a globally unique, persistent identifier | 5 | The paper has an arXiv identifier, and the dataset has none. |
+| (Do15) Inclusion of standardized metadata (Croissant) | 0 | No structured metadata of any kind, as the repository ships only the JSONL files under `data/`. |
 | (Do16) Documentation of data sources and how the data was collected | 10 | The paper states that GPT-4 generated the tools and tasks from field specifications (paper Appendix B.2), without discussing provenance or licensing of the generated data. |
 | (Do17) Documentation of the data preprocessing steps taken | 5 | The split into aggressive and non-aggressive instructions is mentioned (paper Appendix B.2.3), with no further preprocessing detail. |
 | (Do18) Documentation of the data annotation process | n/a | The data is generated by GPT-4 from field specifications, not annotated (paper Appendix B.2). |
-| (Do19) Documentation of the representativeness of the data | 0 | No discussion of how representative the ten scenarios or 400 attacker tools are; Appendix B describes generation but not coverage (paper Appendix B). |
+| (Do19) Documentation of the representativeness of the data | 0 | No discussion of how representative the ten scenarios or 400 attacker tools are, and Appendix B describes generation but not coverage (paper Appendix B). |
 | (Do20) Standardized documentation | 0 | No data card or equivalent in the repository README or the paper appendices. |
 
 ### Maintenance
@@ -629,12 +649,12 @@ stage avg score: 10.6
 | Criterion | Score | Justification |
 |-----------|-------|---------------|
 | (E1) Tool execution isolation | 15 | All tools are fully simulated (`pyopenagi/tools/simulated_tool.py`): each returns a fixed confirmation string and none calls a real API, connects to a real server, or executes a real transaction, so a student cannot cause real harm through the benchmark. |
-| (E2) Support for user-built agents or defenses | 0 | Only the model can be swapped; there is no API for a custom agent pipeline, the built-in defenses (paraphrase, delimiters, instructional prevention) are hardcoded in the 1,400-line `react_agent_attack.py`, and custom pipelines are not discussed. |
+| (E2) Support for user-built agents or defenses | 0 | Only the model can be swapped, there is no API for a custom agent pipeline, the built-in defenses (paraphrase, delimiters, instructional prevention) are hardcoded in the 1,400-line `react_agent_attack.py`, and custom pipelines are not discussed. |
 | (E3) Extension points for tasks, attacks, and tools | 10 | New agents, attacker tools, normal tools, and injection subtypes are data-driven (a config JSON, a JSONL row, or a dictionary key), but new defenses and LLM backends need changes inside the agent loop or `aios/llm_core/llm_classes/`, and none of it is documented. |
 | (E4) Run trace inspection | 10 | The result CSV's `messages` column and the console output show the injected prompt, the plan attempts, the tool call, and the simulated response, but there is no viewer, and the attack check is a substring match that a student must read the code to understand. |
-| (E5) Assignment-sized evaluation | 10 | One attack mode with one injection subtype over all 400 attacker tools takes about 90 to 120 minutes per model, but the benchmark's four modes and five subtypes multiply that beyond a day, and the tool documents no class-sized subset; `attack_tools_test.jsonl` and `--task_num` allow ad hoc subsets. |
+| (E5) Assignment-sized evaluation | 10 | One attack mode with one injection subtype over all 400 attacker tools took 3.6 hours of model time for `qwen3-coder:30b` (13,119 s over 400 rows, the one run measured with fix 4c), but the benchmark's four modes and five subtypes multiply that beyond a day, and the tool documents no class-sized subset, although `attack_tools_test.jsonl` and `--task_num` allow ad hoc subsets. |
 | (E6) Fully local evaluation | 10 | The run is fully local with zero API cost after the documented judge patch and the `--database` workaround for the OpenAI embeddings that ChromaDB would otherwise require. |
-| (E7) Hardware requirement | 15 | The DPI path adds no compute beyond the agent and judge models; the two smaller reference models run on a single GPU, and only `gpt-oss:120b` needs the 4-GPU server. The optional perplexity detector for memory defenses would need a local GPU model. |
+| (E7) Hardware requirement | 15 | The DPI path adds no compute beyond the agent and judge models, so the two smaller reference models run on a single GPU, and only `gpt-oss:120b` needs the 4-GPU server. The optional perplexity detector for memory defenses would need a local GPU model. |
 | (E8) Low-sensitivity subset for classroom use | 15 | The non-aggressive half of the attacker tools ships as `data/all_attack_tools_non_aggressive.jsonl` and is selectable with `attack_tool: non-agg` in the YAML configs, documented in the README. |
 
 > [!NOTE]

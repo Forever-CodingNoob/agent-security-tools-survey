@@ -52,7 +52,7 @@ This subartifact contains the following:
 + [`run_smoke_benchmark.sh`](run_smoke_benchmark.sh): smoke test script (<describe scope>)
 + [`results/`](results/): evaluation results
     + [`<model_dir>/`](results/<model_dir>/): result files for `<model>`
-+ [`your-results/`](your-results/): output directory for new evaluation runs (created by the scripts; initially empty)
++ [`your-results/`](your-results/): output directory for new evaluation runs (created by the scripts, initially empty)
 
 ## Getting Started
 

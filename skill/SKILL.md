@@ -34,7 +34,7 @@ Every tool report follows this section order:
 8. Dataset (with subsections for splits/size, scoring, and evaluation trajectory)
 9. Conducting Evaluation (scripts table, experimental settings, full and partial how-to)
 10. Experimental Results (results tables, execution time, findings with analysis)
-11. Criteria (stage summary table, then Design, Implementation, Documentation, Maintenance, Education; see Evaluation criteria and scoring below)
+11. Criteria (stage summary table, then Design, Implementation, Documentation, Maintenance, Education. See Evaluation criteria and scoring below)
 12. Attack vectors and security risks (covered vectors, covered risks, vectors and risks not covered)
 13. References (collected links to paper, repo, dataset, framework, taxonomy)
 
@@ -98,7 +98,7 @@ Each code block has a `#` comment on the first line that says what the command d
 
 ### Server URL in READMEs
 
-READMEs use `<url_to_your_ollama_server>` as a placeholder in installation and usage examples. The actual server URL (`http://korn.ics.uci.edu:48763`) belongs only in evaluation scripts (as an environment variable default) and in the top-level README's Evaluation Environment section. A README must not expose the specific server address.
+READMEs use `<url_to_your_ollama_server>` as a placeholder in installation and usage examples. The actual server URL (`http://korn.ics.uci.edu:48763`) belongs only in evaluation scripts (as an environment variable default) and in `docs/install.md` as the example of our setup. A README must not expose the specific server address.
 
 ### Findings section
 
@@ -110,7 +110,7 @@ The scoring scheme is defined in `docs/criteria.md`. Read it before scoring. In 
 
 - Four stages are taken verbatim from BetterBench (betterbench.stanford.edu/methodology.html): Design (D1 to D14), Implementation (I1 to I10), Documentation (Do1 to Do20), Maintenance (M1 to M3). Score them from the developers' published material only: paper, website, repository, dataset host. Use the GitHub API for dated facts (last commit to the benchmark's own code, issue response times, CI status, releases).
 - A fifth stage, Education (E1 to E8), is ours. Score it from our own run: measured times, result files, trajectories, fixes applied.
-- Each criterion is scored 0 (neither acknowledged nor addressed), 5 (acknowledged but not addressed), 10 (partially addressed), 15 (fully addressed), or n/a (not relevant; excluded from averages). Use n/a only where `criteria.md` marks the criterion as usually inapplicable or the criterion says "(if applicable)" and the subject does not exist for the tool, and justify it.
+- Each criterion is scored 0 (neither acknowledged nor addressed), 5 (acknowledged but not addressed), 10 (partially addressed), 15 (fully addressed), or n/a (not relevant, excluded from averages). Use n/a only where `criteria.md` marks the criterion as usually inapplicable or the criterion says "(if applicable)" and the subject does not exist for the tool, and justify it.
 - A stage score is the mean of its applicable criteria, one decimal. Usability is the mean over all applicable Implementation, Documentation, and Maintenance criteria (BetterBench's criterion-count-weighted definition). Education is reported separately and never folded into usability.
 - Numbers only. Do not use verdict words.
 
@@ -144,7 +144,7 @@ Rules for the tables:
 - Five stage subsections in this order: Design, Implementation, Documentation, Maintenance, Education. Each starts with `stage avg score: N.N`.
 - The Criterion cell is `(ID) short name`, with the ID from `criteria.md`.
 - Every Justification cites something the reader can check. For Education criteria, cite the run (times, paths, fixes).
-- Keep existing `[!NOTE]` and `[!IMPORTANT]` callouts; place each under the stage whose criteria it supports.
+- Keep existing `[!NOTE]` and `[!IMPORTANT]` callouts, and place each under the stage whose criteria it supports.
 - Verify by script that every stage mean equals the mean of its applicable scores and that the summary table matches.
 
 ### Rollup report updates
@@ -188,7 +188,7 @@ The rollup report does not have per-tool notes. Tool-specific findings belong on
 2. Hold the judge or grader model constant across runs for a fair comparison. Prefer a small judge model that co-resides with the agent models, to avoid VRAM thrash.
 3. The ollama server has 4 GPUs. The model is sharded across all 4 GPUs, so every request flows through all 4 in sequence. Run the models sequentially, one model at a time.
    Different models contend for the same GPUs, so parallel model runs slow each other down.
-   The server is configured with `OLLAMA_NUM_PARALLEL=1`, so it processes one request at a time; additional requests queue. `OLLAMA_KEEP_ALIVE=-1` keeps models loaded indefinitely, so there is no reload overhead between requests. The context window is `OLLAMA_CONTEXT_LENGTH=65536`. Check `GET /api/ps`: if `size_vram` is less than `size`, the model spills to CPU and inference slows down.
+   The server is configured with `OLLAMA_NUM_PARALLEL=1`, so it processes one request at a time, and additional requests queue. `OLLAMA_KEEP_ALIVE=-1` keeps models loaded indefinitely, so there is no reload overhead between requests. The context window is `OLLAMA_CONTEXT_LENGTH=65536`. Check `GET /api/ps`: if `size_vram` is less than `size`, the model spills to CPU and inference slows down.
 4. Capture logs, scores, refusals, and errors for each run.
 
 ## Phase 5: Write evaluation scripts

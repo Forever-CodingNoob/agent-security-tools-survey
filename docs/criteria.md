@@ -11,7 +11,6 @@ This document defines how we score an agentic-security tool. It adopts the asses
     + [Maintenance (3 criteria)](#maintenance-3-criteria)
 + [Our stage: Education](#our-stage-education)
     + [Education (8 criteria)](#education-8-criteria)
-+ [Descriptive labels (not scored)](#descriptive-labels-not-scored)
 + [References](#references)
 
 ## Scale and aggregation
@@ -232,7 +231,7 @@ Explanation: The benchmark developers give access to the input, output, and eval
 Justification: Providing access to the input, output, and code allows for transparency and reproducibility of the reported results, fostering trust into the benchmark, and contributing to overcome the current reproducibility crisis in AI/ML research.
 
 Points:
-+ 0: [No description provided] (the BetterBench page gives no text for this level; by the scale definition, 0 means the criterion is neither acknowledged nor addressed)
++ 0: [No description provided] (the BetterBench page gives no text for this level, so by the scale definition 0 means the criterion is neither acknowledged nor addressed)
 + 5: The issue of result replicability is mentioned in the benchmark paper but not addressed.
 + 10: A script to reproduce some results in the benchmark paper is available.
 + 15: A script to reproduce all results in the benchmark paper is available.
@@ -630,7 +629,7 @@ Points:
 + 0: Tools act on real systems (network, files, accounts) and the benchmark does not mention the risk.
 + 5: The benchmark acknowledges the risk of real side effects, but tools still act on real systems.
 + 10: Tools run in a sandbox or container, but some real-system access remains (for example, live web requests).
-+ 15: All tools are simulated, mocked, or in-memory; the agent cannot cause a real side effect.
++ 15: All tools are simulated, mocked, or in-memory, so the agent cannot cause a real side effect.
 
 #### E2. Support for user-built agents or defenses
 
@@ -653,7 +652,7 @@ Justification: Course material needs new vulnerable-agent tasks and new attacks 
 Points:
 + 0: Extension requires core code changes, and extension is not discussed.
 + 5: Extension is mentioned, but no mechanism is provided.
-+ 10: Some extension types are data-driven or subclassable; others need core changes.
++ 10: Some extension types are data-driven or subclassable, while others need core changes.
 + 15: Every extension type goes through configuration, subclassing, or decorators, and the extension points are documented.
 
 #### E4. Run trace inspection
@@ -665,7 +664,7 @@ Justification: A student learns from a benchmark by tracing how an injected inst
 Points:
 + 0: Only aggregate scores are available.
 + 5: The value of per-run traces is acknowledged, but traces are not stored.
-+ 10: Raw per-run logs or files contain the full message sequence; the user reads them without tooling.
++ 10: Raw per-run logs or files contain the full message sequence, and the user reads them without tooling.
 + 15: A structured trajectory browser shows message-level detail and a per-task explanation of the score.
 
 #### E5. Assignment-sized evaluation
@@ -680,7 +679,7 @@ Points:
 + 10: A full evaluation takes 2 to 24 hours per model, or a subset exists but is undocumented.
 + 15: A full evaluation takes under 2 hours per model, or a documented subset runs within a class session.
 
-Measurement: times are measured on the shared ollama server with the three reference models (`qwen3:14b`, `qwen3-coder:30b`, `gpt-oss:120b`); the tool's README states the numbers.
+Measurement: times are measured on the shared ollama server with the three reference models (`qwen3:14b`, `qwen3-coder:30b`, `gpt-oss:120b`), and the tool's README states the numbers.
 
 #### E6. Fully local evaluation
 
@@ -720,12 +719,14 @@ Points:
 + 10: A lower-sensitivity subset can be obtained by filtering on a documented field.
 + 15: A benign or non-aggressive split is shipped and documented.
 
+<!--
 ## Descriptive labels (not scored)
 
 These properties inform course placement but are not qualities, so they carry no score. They appear in the comparison table beside the stage scores.
 + Content level: formulaic, concrete, or graphic, with the categories present (for example, Hate, Sexual, Harassment).
 + Score granularity: binary, discrete, or continuous.
 + Attack vectors and security risks covered, from [`attack-risk-coverage.md`](attack-risk-coverage.md).
+-->
 
 <!--
 ## Mapping from our previous factors

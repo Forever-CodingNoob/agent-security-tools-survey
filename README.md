@@ -1,37 +1,81 @@
 # A Survey of Security Benchmarks for Agentic LLMs
 
-This artifact consists of the assessment results for several state-of-the-art frameworks/benchmarks targeting the security of agentic LLMs, as well as scripts and instructions to carry out (hopefully) replicable experiments.  The assessments evaluate each tool's applicability in a cyber-educational scenario, with an eye to integrating them into a CTF or juice-shop-style educational platform.
+This artifact consists of the assessment results for several state-of-the-art frameworks/benchmarks targeting the security of agentic LLMs, as well as scripts and instructions to carry out (hopefully) replicable experiments. The assessments evaluate each tool's applicability in a cyber-educational scenario, with an eye to integrating them into a CTF or juice-shop-style educational platform.
 
 ## Table of Contents
-+ [Setup and Installation](#Setup_and_Installation)
-+ [Evaluation Environment](#Evaluation_Environment)
-+ [Evaluation Workflow](#Evaluation_Workflow)
-+ [Evaluation Results](#Evaluation_Results)
++ [File Hierarchy](#file-hierarchy)
++ [Setting Up Evaluation Environment](#setting-up-evaluation-environment)
+    + [System Requirements](#system-requirements)
+    + [Installation Guide](#installation-guide)
++ [Evaluation](#evaluation)
+    + [Experimental Settings](#experimental-settings)
+    + [Evaluation Workflow](#evaluation-workflow)
+    + [Evaluation Results](#evaluation-results)
++ [License](#license)
 
-## Setup and Installation
+## File Hierarchy
+
+This artifact contains the following:
++ [`README.md`](README.md): this documentation
++ [`report.md`](report.md): the summary report that compares all evaluated tools, with per-criterion scores and cross-tool notes
++ [`docs/`](docs/): supporting documents
+    + [`requirements.md`](docs/requirements.md): hardware and software requirements for the Ollama server and the client
+    + [`install.md`](docs/install.md): step-by-step installation of the Ollama server, the models, and the tools
+    + [`criteria.md`](docs/criteria.md): the scoring scheme, which adopts the BetterBench criteria and adds our Education stage
+    + [`attack-risk-coverage.md`](docs/attack-risk-coverage.md): the attack-vector and security-risk taxonomy and the coverage of 16 tools
+    + [`faq.md`](docs/faq.md): answers to questions about our choices
++ [`scripts/ollama.sbatch`](scripts/ollama.sbatch): the Slurm script that starts the Ollama server with the settings we used
++ [`agentdojo/`](agentdojo/), [`agentharm/`](agentharm/), [`asb/`](asb/): one directory per evaluated tool, each containing
+    + `README.md`: the detailed report for the tool
+    + `<tool>/`: the tool's source code, added as a git submodule and pinned to the commit we evaluated
+    + `run_*.sh`: the evaluation scripts (full, partial, or smoke), plus tool-specific helpers such as `extract_results.py` (AgentDojo) and `rerun_judge.sh` (ASB)
+    + `results/`: the result files of our evaluation
+    + `your-results/`: the output directory for new runs, created by the scripts
++ [`skill/`](skill/): the agent skill (instructions and templates) used to evaluate a tool and write its report in this format, enabling agnets to add and evaluate a new tool in the same way
++ [`LICENSE`](LICENSE): the CC-BY-4.0 license of this artifact
+
+## Setting Up Evaluation Environment
+
+### System Requirements
+
+Please refer to [`docs/requirements.md`](docs/requirements.md).
+
+### Installation Guide
 
 Please refer to [`docs/install.md`](docs/install.md).
 
-## Evaluation Environment
+## Evaluation
 
-In a nutshell, we ran our experiments on [SORA-WS2](https://jgarcia.ics.uci.edu/), and LLMs used in the experiments were hosted locally by an Ollama server running on [korn](https://wiki.ics.uci.edu/doku.php/hardware:cluster:opengpu) (korn.ics.uci.edu), a node of [UCI's OpenGPU cluster](https://wiki.ics.uci.edu/doku.php/hardware:cluster:opengpu).
+### Experimental Settings
 
-Detailed specs:
-+ [SORA-WS2](https://jgarcia.ics.uci.edu/): 12th Gen Intel(R) Core(TM) i7-12700KF CPU (with 24 logical cores) + ~31GiB RAM 
-+ Ollama: version 0.23.1, started as a Slurm job on [korn](https://wiki.ics.uci.edu/doku.php/hardware:cluster:opengpu) via the Slurm script file [`ollama.sbatch`](scripts/ollama.sbatch).
-+ [korn](https://wiki.ics.uci.edu/doku.php/hardware:cluster:opengpu): AMD EPYC 9124 CPU @3Ghz (with 32 logical cores) + 4 x NVIDIA RTX 4000 Ada Generation 20GB GDDR6 GPU + 752 GB RAM
+In a nutshell, we ran our experiments on [SORA-WS2](https://jgarcia.ics.uci.edu/), and the LLMs used in the experiments were hosted locally by an Ollama server running on [korn](https://wiki.ics.uci.edu/doku.php/hardware:cluster:opengpu) (korn.ics.uci.edu), a node of [UCI's OpenGPU cluster](https://wiki.ics.uci.edu/doku.php/hardware:cluster:opengpu). The specifications of both machines are in [`docs/requirements.md`](docs/requirements.md#tested-environment).
 
-## Evaluation Workflow
+The settings shared by all tools are:
++ Ollama server: version 0.23.1, started as a Slurm job by [`scripts/ollama.sbatch`](scripts/ollama.sbatch) with 4 GPUs, `OLLAMA_NUM_PARALLEL=1` (one request at a time, others queue), `OLLAMA_KEEP_ALIVE=-1` (models stay loaded), and `OLLAMA_CONTEXT_LENGTH=65536`.
++ Agent models under test: `qwen3:14b` (small), `qwen3-coder:30b` (mid), and `gpt-oss:120b` (large). The models were run one at a time, because they share the same GPUs.
++ Judge model: `qwen3:14b` on the same server, for the tools that use an LLM judge (AgentHarm's refusal and semantic judges, and ASB's refusal judge). It is the same for all three agent models so that the agent-model comparison is fair.
++ Tool versions, patches, and tool-specific parameters (attack, split, task subset, token limits): see the "Experimental Settings" section of each tool README.
 
-(TBA)
+### Evaluation Workflow
 
-## Evaluation Results
+To reproduce our evaluation, or to evaluate a new model, follow these steps:
+1. Check [`docs/requirements.md`](docs/requirements.md) and set up the Ollama server, pull and preload the three models, and verify the server from the client, as described in [`docs/install.md`](docs/install.md).
+2. Pick a tool and install it by the "Installation" section of its README, including the source patches listed there.
+3. Point the tool at your server by setting the environment variables named in the tool README (the evaluation scripts read the same variables).
+4. Run the smoke test where one exists (`run_smoke_benchmark.sh` for AgentHarm and ASB) or one task by the "Getting Started" section, to confirm that the pipeline works end to end.
+5. Run `run_full_benchmark.sh` for the full evaluation, or `run_partial_benchmark.sh` for a shorter one. The "Conducting Evaluation" section of each README states what each script covers and how long it took us.
+6. Read the results in `<tool>/your-results/` with the method given in the "Performing a Full Evaluation" section of the README, and compare them with ours in `<tool>/results/` and the "Experimental Results" section.
+7. To evaluate a new tool, ask your agent to follow the workflow in [`skill/SKILL.md`](skill/SKILL.md) and score the tool with [`docs/criteria.md`](docs/criteria.md), then add its row to [`report.md`](report.md).
 
-The results are compiled and organized to the following files:
+### Evaluation Results
+
+The results are compiled and organized into the following files:
 + a summary report for ALL tools: [`report.md`](report.md)
-+ individual report for each tool: `<tool_name>/README.md`
++ an individual report for each tool: `<tool_name>/README.md`
 
-Besides, under each `<tool_name>/` directory are also scripts that the agent used to perform full/partial evaluations.
-If you are to replicate our experiments, please kindly reuse these scripts and perhaps report any issue where possible.
+Besides, under each `<tool_name>/` directory are also the scripts used to perform full and partial evaluations. If you are to replicate our experiments, please kindly reuse these scripts and report any issue where possible.
 
 As a side note, all reports are written either by hand or by Claude Opus 4.6/4.8 with comprehensive human fact-checking.
+
+## License
+The artifact is licensed under CC-BY-4.0. See [LICENSE](./LICENSE).

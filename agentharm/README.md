@@ -64,7 +64,7 @@ This subartifact contains the following:
     + [`qwen14_harmful/`](results/qwen14_harmful/): `.eval` log files for `qwen3:14b` harmful task
     + [`qwen14_benign/`](results/qwen14_benign/): `.eval` log files for `qwen3:14b` benign task
     + [`timing_summary.csv`](results/timing_summary.csv): per-sample timing data from the original full evaluation
-+ [`your-results/`](your-results/): output directory for new evaluation runs (created by the scripts; initially empty)
++ [`your-results/`](your-results/): output directory for new evaluation runs (created by the scripts, initially empty)
 
 
 ## Getting Started
@@ -377,7 +377,7 @@ Two effects move in opposite directions as the model gets smaller. The table iso
 
 **Insights:**
 + The refusal rate falls fast as the model shrinks (0.92, then 0.62, then 0.29). The capability also falls (0.77, then 0.73, then 0.59), but the refusal effect is stronger, so the overall harm score rises as the model shrinks.
-+ The smallest model is the most harmful in total because it rarely refuses, while the largest model is the safest because it refuses most. In this benchmark, bigger did not mean more dangerous; it meant better safety training.
++ The smallest model is the most harmful in total because it rarely refuses, while the largest model is the safest because it refuses most. In this benchmark, bigger did not mean more dangerous, it meant better safety training.
 
 #### Benign split (evaluating over-refusal rate)
 A safe model must still do safe work. The table shows:
@@ -401,7 +401,7 @@ For example, `gpt-oss:120b` refused 100% of Harassment, Hate, Cybercrime, and Se
 
 ## Criteria
 
-We score the tool with the scheme in [`criteria.md`](../docs/criteria.md): the four BetterBench stages (Design, Implementation, Documentation, Maintenance) are scored from the developers' published material (paper, the `agentharm` eval inside the `inspect_evals` repository, and the HuggingFace dataset), and our Education stage is scored from our own run. Each criterion is scored 0, 5, 10, 15, or n/a; a stage score is the mean of its applicable criteria; usability is the mean over all applicable Implementation, Documentation, and Maintenance criteria. Repository facts are as of Aug 27, 2026.
+We score the tool with the scheme in [`criteria.md`](../docs/criteria.md): the four BetterBench stages (Design, Implementation, Documentation, Maintenance) are scored from the developers' published material (paper, the `agentharm` eval inside the `inspect_evals` repository, and the HuggingFace dataset), and our Education stage is scored from our own run. Each criterion is scored 0, 5, 10, 15, or n/a. A stage score is the mean of its applicable criteria, and usability is the mean over all applicable Implementation, Documentation, and Maintenance criteria.
 
 | Stage | Score |
 |-------|-------|
@@ -424,11 +424,11 @@ stage avg score: 13.1
 | (D4) Description of use cases and user personas | 10 | The paper describes the misuse scenario and what counts as malicious under provider terms of use (paper Appendix A), but does not define user personas or deployment contexts. |
 | (D5) Involvement of domain experts | 15 | The authors are AI safety and security researchers at the UK AI Security Institute, Gray Swan AI, EPFL, and CMU, so co-authors have a professional background in the domain (paper author list). |
 | (D6) Integration of domain literature | 15 | The design principles cite and respond to prior findings, for example capability degradation under jailbreaks and the depth-versus-breadth trade-off of domain-specific benchmarks (paper Sec. 2 and Sec. 3.2). |
-| (D7) Description of how the score should or shouldn't be interpreted | 15 | The README states that grades should not be read as an overall measure of agent safety, the paper states the dataset does not decide what should be refused, and Sec. 4.2 explains how to read harm, refusal, and non-refusal scores together (README "Disclaimers"; paper Appendix A and Sec. 4.2). |
+| (D7) Description of how the score should or shouldn't be interpreted | 15 | The README states that grades should not be read as an overall measure of agent safety, the paper states the dataset does not decide what should be refused, and Sec. 4.2 explains how to read harm, refusal, and non-refusal scores together (README "Disclaimers", and paper Appendix A and Sec. 4.2). |
 | (D8) Informed choice of performance metric(s) | 15 | The paper justifies rubric-based harm scores over whole-output LLM judging, the separate refusal judge, and the non-refusal harm score for capability (paper Sec. 3.1.3 and Appendix A). |
 | (D9) Includes floors and ceilings for metric | 10 | The benign-behavior score is used as the capability ceiling that attacked harm scores are compared against, and the text notes that perfect runs can score below 100% (paper Sec. 4.2 and Sec. 3.1.3), but no floor is stated. |
-| (D10) Includes human performance level | n/a | Human performance on harmful tool-use tasks is not a meaningful reference; the criterion is excluded per [`criteria.md`](../docs/criteria.md). |
-| (D11) Includes random performance level | 0 | No random or chance level is reported for the harm score or refusal rate; the result tables hold model results only (paper Sec. 4; Appendix C). |
+| (D10) Includes human performance level | n/a | Human performance on harmful tool-use tasks is not a meaningful reference, so the criterion is excluded per [`criteria.md`](../docs/criteria.md). |
+| (D11) Includes random performance level | 0 | No random or chance level is reported for the harm score or refusal rate, and the result tables hold model results only (paper Sec. 4 and Appendix C). |
 | (D12) Addresses input sensitivity | 15 | Each base behavior is presented in four variants (detailed or open-ended, with or without a hint), the counts are stated (110 base, 440 augmented), and results are compared across variants (paper Sec. 3.1.1 and Sec. 4.3). |
 | (D13) Validated automatic evaluation available | 15 | Grading is automatic, and the authors report manually examining execution logs for all samples across models to verify the narrow LLM judges, and iterating the refusal judge on held-out models and questions (paper Appendix A). |
 | (D14) Explanation of differences to related benchmarks | 15 | The related-work section contrasts the direct-request setting with AgentDojo's injection setting and with ToolEmu's emulated tools (paper Sec. 2). |
@@ -443,12 +443,12 @@ stage avg score: 12.5
 | (I2) Script to replicate results is explicitly included | 10 | The README gives the `inspect eval` commands that reproduce a run for any model, but no script reproduces the paper's result tables. |
 | (I3) Accessibility of evaluation data, prompts, or dynamic environment | 15 | The `val` and `test_public` splits download from HuggingFace without a token, and the private split is deliberately withheld for contamination control, which the criterion allows (paper Sec. 3.1.1). |
 | (I4) Supports evaluation of models via API calls | 15 | Inspect's model providers cover OpenAI, Anthropic, Google, Mistral, and others, selected with the `--model` prefix. |
-| (I5) Supports evaluation of local models | 15 | Inspect's `ollama/`, `vllm/`, and `hf/` providers run local models; our run used `ollama/` after installing the `openai` package that the provider needs. |
+| (I5) Supports evaluation of local models | 15 | Inspect's `ollama/`, `vllm/`, and `hf/` providers run local models, and our run used `ollama/` after installing the `openai` package that the provider needs. |
 | (I6) Inclusion of a globally unique identifier or encryption | 10 | A canary GUID is published in the README, but it is not embedded in the data files, so the identifier is not applied consistently across all relevant files (README "Canary string"). |
 | (I7) Inclusion of 'training_on_test_set' task | 5 | The paper keeps a private split to track whether contamination affects performance, but ships no task that tests for training on the public data (paper Sec. 3.1.1 and 3.2). |
-| (I8) Assess need for warnings for sensitive/harmful content | 15 | The paper opens with a content warning, and the README "Disclaimers" states that the dataset contains statements expressing harmful sentiment and that outputs are graded harmful behaviors (paper title page; README). |
+| (I8) Assess need for warnings for sensitive/harmful content | 15 | The paper opens with a content warning, and the README "Disclaimers" states that the dataset contains statements expressing harmful sentiment and that outputs are graded harmful behaviors (paper title page and README). |
 | (I9) Release requirements specified | 15 | The README requests that the data not be used for training and only for evaluation, and the license clause restricts use to improving AI safety and security (README "Canary string" and "License"). |
-| (I10) Includes build status or equivalent | 10 | The `inspect_evals` repository runs Tests, Build, and Checks workflows on every commit, but no badge or status is shown in the README; the status is only visible in the Actions tab. |
+| (I10) Includes build status or equivalent | 10 | The `inspect_evals` repository runs Tests, Build, and Checks workflows on every commit, but no badge or status is shown in the README, so the status is only visible in the Actions tab. |
 
 ### Documentation
 
@@ -465,17 +465,17 @@ stage avg score: 10.8
 | (Do7) Documentation of limitations | 15 | The paper lists limitations of the design (English only, single turn, grading misses, custom tools) and of applicability (basic rather than advanced agentic capabilities) (paper Sec. 5). |
 | (Do8) Documentation of benchmark construction process | 15 | Behavior design, augmentation, benign counterparts, tools, grading rubrics, and design principles are described with their rationale (paper Sec. 3). |
 | (Do9) Documentation of data collection or environment/prompt design process | 10 | The paper states that the authors wrote the behaviors, the constraints they followed (digital realizability, no real names), and the augmentation scheme, but not the selection criteria or review steps (paper Sec. 3.1.1). |
-| (Do10) Documentation of evaluation metric(s) | 15 | `avg_score`, `avg_full_score`, `avg_refusals`, and `avg_score_non_refusals` are defined in the README and the paper, with the grading function and refusal judge described (README "Options"; paper Sec. 3.1.3). |
+| (Do10) Documentation of evaluation metric(s) | 15 | `avg_score`, `avg_full_score`, `avg_refusals`, and `avg_score_non_refusals` are defined in the README and the paper, with the grading function and refusal judge described (README "Options" and paper Sec. 3.1.3). |
 | (Do11) Report statistical significance of benchmark results | 0 | Results are single runs at temperature 0 with no confidence intervals or variance across seeds (paper Sec. 4.1). |
-| (Do12) Accepted at peer-reviewed venue | 15 | Accepted at ICLR 2025 (paper front matter; README citation). |
+| (Do12) Accepted at peer-reviewed venue | 15 | Accepted at ICLR 2025 (paper front matter and README citation). |
 | (Do13) Specifies applicable license | 15 | MIT with an additional safety-use clause, in `LICENSE` inside the eval directory and stated in the README. |
-| (Do14) Provision of a globally unique, persistent identifier | 5 | The paper has an arXiv identifier; the HuggingFace dataset and its metadata have no DOI. |
+| (Do14) Provision of a globally unique, persistent identifier | 5 | The paper has an arXiv identifier, but the HuggingFace dataset and its metadata have no DOI. |
 | (Do15) Inclusion of standardized metadata (Croissant) | 10 | HuggingFace serves auto-generated Croissant metadata for the dataset, but the card itself holds only a license and config list, so the metadata is not comprehensive. |
-| (Do16) Documentation of data sources and how the data was collected | 10 | The data is authored by the researchers under stated ethical constraints, and the license is documented, but there is no discussion of provenance beyond that (paper Sec. 3.1.1; README). |
+| (Do16) Documentation of data sources and how the data was collected | 10 | The data is authored by the researchers under stated ethical constraints, and the license is documented, but there is no discussion of provenance beyond that (paper Sec. 3.1.1 and README). |
 | (Do17) Documentation of the data preprocessing steps taken | 10 | The augmentation into detailed, open-ended, and hint variants and the split into val, public, and private sets are described, without a step-by-step account of edits (paper Sec. 3.1.1). |
 | (Do18) Documentation of the data annotation process | n/a | Behaviors and rubrics are authored by the researchers, not annotated (paper Sec. 3.1.1). |
-| (Do19) Documentation of the representativeness of the data | 10 | The design principles discuss harm coverage across categories and tool counts, and the appendix shows the tool-count distribution, but there is no analysis against a target population of misuse (paper Sec. 3.2; Appendix C). |
-| (Do20) Standardized documentation | 5 | The HuggingFace card contains only license and config fields; no data card or similar standardized scheme is used. |
+| (Do19) Documentation of the representativeness of the data | 10 | The design principles discuss harm coverage across categories and tool counts, and the appendix shows the tool-count distribution, but there is no analysis against a target population of misuse (paper Sec. 3.2 and Appendix C). |
+| (Do20) Standardized documentation | 5 | The HuggingFace card contains only license and config fields, and no data card or similar standardized scheme is used. |
 
 ### Maintenance
 
@@ -487,7 +487,7 @@ stage avg score: 15.0
 | (M2) Maintained feedback channel for users | 15 | AgentHarm-related issues in `inspect_evals` are acknowledged by collaborators within a day (for example, #2290, #2212, and #2276 in Aug 2026), and the parent repository has thousands of handled issues and PRs. |
 | (M3) Provide contact details of person responsible | 15 | `eval.yaml` names the contributors, and the paper lists corresponding authors with institutional emails. |
 
-The `agentharm` eval itself had only 3 tagged releases in 8 months before Aug 2026 (v1.0.1, 2-A, 2-B), while most commits touching its directory were repository-wide changes; the Aug 2026 grading fixes reversed that pattern.
+The `agentharm` eval itself had only 3 tagged releases in 8 months before Aug 2026 (v1.0.1, 2-A, 2-B), while most commits touching its directory were repository-wide changes. The Aug 2026 grading fixes reversed that pattern.
 
 ### Education
 
@@ -496,13 +496,13 @@ stage avg score: 14.4
 | Criterion | Score | Justification |
 |-----------|-------|---------------|
 | (E1) Tool execution isolation | 15 | Every tool is a mock Python function in `benchmark/harmful_tools/` or `benchmark/benign_tools/` that returns fixed or templated data, so the agent performs no real action and the harm score only measures tool calls against a template. |
-| (E2) Support for user-built agents or defenses | 15 | Inspect's solver abstraction wraps a full agent pipeline; the README section "Specifying custom agent" documents the `agent` parameter, and the repository ships `refusal_agent` as a baseline that always refuses. |
-| (E3) Extension points for tasks, attacks, and tools | 15 | New tools go in `benchmark/harmful_tools/` or `benchmark/benign_tools/`, new grading in `harmful_grading_functions.py`, new agents in `agents/`, new prompt templates in `prompts.py`, and new behaviors in the dataset JSON; the README documents these steps. |
+| (E2) Support for user-built agents or defenses | 15 | Inspect's solver abstraction wraps a full agent pipeline, the README section "Specifying custom agent" documents the `agent` parameter, and the repository ships `refusal_agent` as a baseline that always refuses. |
+| (E3) Extension points for tasks, attacks, and tools | 15 | New tools go in `benchmark/harmful_tools/` or `benchmark/benign_tools/`, new grading in `harmful_grading_functions.py`, new agents in `agents/`, new prompt templates in `prompts.py`, and new behaviors in the dataset JSON, and the README documents these steps. |
 | (E4) Run trace inspection | 15 | Each sample's `.eval` log holds the grading breakdown and the refusal explanation, and the Inspect viewer (`uv run inspect view`) shows the full message trajectory with tool calls, results, and the score. |
 | (E5) Assignment-sized evaluation | 15 | The harmful task took 62 min (`qwen3-coder:30b`), 108 min (`gpt-oss:120b`), and 247 min (`qwen3:14b`) per model, and the documented `--limit`, `behavior_ids`, and `val` split (32 samples) give class-sized subsets. |
 | (E6) Fully local evaluation | 10 | The run is fully local with zero API cost, but two documented steps are needed: installing the `openai` package for the ollama provider and overriding both judges, which default to `openai/gpt-4o`. |
-| (E7) Hardware requirement | 15 | The eval adds no compute beyond the agent and judge models; the two smaller reference models run on a single GPU without special setup, and only `gpt-oss:120b` needs the 4-GPU server. |
-| (E8) Low-sensitivity subset for classroom use | 15 | The `agentharm_benign` task ships the same tool structure with safe requests and is documented in the README; the most dangerous behaviors are withheld in `test_private`. |
+| (E7) Hardware requirement | 15 | The eval adds no compute beyond the agent and judge models, so the two smaller reference models run on a single GPU without special setup, and only `gpt-oss:120b` needs the 4-GPU server. |
+| (E8) Low-sensitivity subset for classroom use | 15 | The `agentharm_benign` task ships the same tool structure with safe requests and is documented in the README, and the most dangerous behaviors are withheld in `test_private`. |
 
 > [!NOTE]
 > The judges default to `openai/gpt-4o`. A fully local run must override both judges to ollama models. This is a small but necessary step.
