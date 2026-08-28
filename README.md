@@ -1,4 +1,4 @@
-# A Survey of Security Benchmarks for Agentic LLMs
+# Evaluating Agentic LLM Security Benchmarks for Cybersecurity Education: A Reproducible Study
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22135957.svg)](https://doi.org/10.5281/zenodo.22135957)
 
