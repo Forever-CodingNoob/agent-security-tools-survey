@@ -18,14 +18,14 @@
 
 ## Comparison Table
 
-Stage scores and usability follow [`criteria.md`](docs/criteria.md) (0 to 15). Content level and score granularity are descriptive labels, not scores.
+Stage scores and usability follow [`criteria.{md|html}`](docs/criteria.html) (0 to 15). Content level and score granularity are descriptive labels, not scores.
 
 The columns are:
 + Design, Implementation, Documentation, Maintenance, Education: the five stage scores, each the mean of the applicable criteria in that stage.
 + Usability: the mean over all applicable Implementation, Documentation, and Maintenance criteria, as BetterBench defines it.
 + Content level: how explicit the harmful content in the dataset is (formulaic, concrete, or graphic).
 + Score granularity: whether a task score is binary, discrete, or continuous.
-+ Attack Vectors and Security Risks: the V and R codes the tool exercises, taken from [`attack-risk-coverage.md`](docs/attack-risk-coverage.md).
++ Attack Vectors and Security Risks: the V and R codes the tool exercises, taken from [`attack-risk-coverage.{md|html}`](docs/attack-risk-coverage.html).
 
 | Tool | Design | Implementation | Documentation | Maintenance | Education | Usability | Content level | Score granularity | Attack Vectors | Security Risks |
 |------|--------|----------------|---------------|-------------|-----------|-----------|---------------|-------------------|----------------|----------------|
@@ -35,7 +35,7 @@ The columns are:
 
 ## Evaluation Criteria
 
-The scoring scheme, including a detailed rubric, is defined in [`criteria.md`](docs/criteria.md). 
+The scoring scheme, including a detailed rubric, is defined in [`criteria.{md|html}`](docs/criteria.html). 
 
 
 ### Scores by criterion
@@ -142,7 +142,7 @@ Each table below covers one stage and lists the score of every criterion per too
 
 ### Model benchmarks vs Agent security testing
 
-Most tools in this survey (i.e., those listed in [`attack-risk-coverage.md`](docs/attack-risk-coverage.md)) test model capability, not agent security. The typical design instantiates a fixed agent harness (a ReAct loop or function-calling wrapper), swaps in a model, and measures how that model behaves under attack. The orchestration logic, guardrails, and tool-access controls belong to the benchmark rather than the user. Thus, what the result answers is "how safe is this LLM when given tools?" rather than "how secure is my agent system?".
+Most tools in this survey (i.e., those listed in [`attack-risk-coverage.{md|html}`](docs/attack-risk-coverage.html)) test model capability, not agent security. The typical design instantiates a fixed agent harness (a ReAct loop or function-calling wrapper), swaps in a model, and measures how that model behaves under attack. The orchestration logic, guardrails, and tool-access controls belong to the benchmark rather than the user. Thus, what the result answers is "how safe is this LLM when given tools?" rather than "how secure is my agent system?".
 
 On the other hand, a production agent's security depends on its full stack, including input sanitization, output guardrails, memory isolation, tool-access controls, and orchestration logic. **A model that scores well on a benchmark can still be exploited inside a poorly defended agent**, and a weaker model can be adequately protected by strong system-level controls.
 

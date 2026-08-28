@@ -1,7 +1,7 @@
 # Attack and Risk Coverage of Agentic-LLM Security Tools
 
 This document maps 16 agentic-LLM security tools onto the taxonomy of Xie et al., [The Attack and Defense Landscape of Agentic AI: A Comprehensive Survey](https://arxiv.org/abs/2603.11088). 
-Each tool's README uses the codes defined here in its "Attack vectors and security risks" section, and the [summary report](../report.md) lists them in its comparison table.
+Each tool's README uses the codes defined here in its "Attack vectors and security risks" section, and the [summary report](../report.html) lists them in its comparison table.
 
 ## Table of Contents
 + [Taxonomy](#taxonomy)
@@ -92,4 +92,4 @@ The vectors and risks below are covered by few or no tools, so a curriculum buil
 
 ## References
 + Taxonomy: [The Attack and Defense Landscape of Agentic AI: A Comprehensive Survey](https://arxiv.org/abs/2603.11088)
-+ Scoring scheme that uses these codes as descriptive labels: [`criteria.md`](criteria.md)
++ Scoring scheme that uses these codes as descriptive labels: [`criteria.{md|html}`](criteria.html)

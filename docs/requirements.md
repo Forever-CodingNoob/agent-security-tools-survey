@@ -63,13 +63,13 @@ Instaed, it needs:
 + An NVIDIA GPU supported by Ollama, with a current NVIDIA driver. Ollama ships its own CUDA runtime, so no separate CUDA toolkit is needed. See [Ollama's GPU documentation](https://docs.ollama.com/gpu) for the supported GPU list.
 + [Ollama](https://github.com/ollama/ollama/releases) 0.23.1. Other versions may work, but the tool patches and the results in this artifact were made against this one.
 + `curl`, to pull and preload models through the HTTP API.
-+ Slurm, only if you start the server as a cluster job as described in [`install.md`](install.md).
++ Slurm, only if you start the server as a cluster job as described in [`install.{md|html}`](install.html).
 
 ### Client
 
 + Linux on x86_64.
 + `git` with submodule support (any version from the last several years), to clone this artifact together with the three tool repositories.
-+ `curl` and `python3`, for the HTTP checks in [`install.md`](install.md).
++ `curl` and `python3`, for the HTTP checks in [`install.{md|html}`](install.html).
 + A Python interpreter and environment manager per tool, since each tool has its own virtual environment:
 
 | Tool | Python | Environment manager | Dependency file |

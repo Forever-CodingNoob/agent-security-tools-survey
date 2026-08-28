@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta property="og:type" content="article">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);
+        html[lang^=ja] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, Hiragino Kaku Gothic Pro, ヒラギノ角ゴ Pro W3, Osaka, Meiryo, メイリオ, MS Gothic, ＭＳ ゴシック, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        html[lang=zh-tw] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, PingFang TC, Microsoft JhengHei, 微軟正黑, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        html[lang=zh-cn] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, PingFang SC, Microsoft YaHei, 微软雅黑, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        :root {
+            --body-background: #f0f0f0;
+            --hr-color: #e7e7e7;
+        }
+
+        body {
+            background-color: var(--body-background);
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 10px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.42857143;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 2rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.3rem 0;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        h5 {
+            font-size: 1.1rem;
+            margin: 1.1rem 0;
+        }
+
+        h6 {
+            font-size: 1rem;
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol,
+        li,
+        section,
+        summary,
+        p {
+            font-size: 1rem;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+        }
+
+        li.task-list-item{
+            list-style-type: none;
+        }
+
+        input.task-list-item-checkbox{
+            float: left;
+            margin: .31em 0 .2em -1.3em !important;
+            vertical-align: middle;   
+        }
+
+        main {
+            background-color: #fff;
+            box-sizing: border-box;
+            border-radius: 20px;
+            margin: 0px auto;
+            max-width: 900px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        a {
+            color: #337ab7;
+            text-decoration: none;
+        }
+
+        a:focus,
+        a:hover {
+            color: #23527c;
+            text-decoration: underline;
+        }
+
+        a:focus {
+            outline: 5px auto -webkit-focus-ring-color;
+            outline-offset: -2px;
+        }
+
+        .success {
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+            color: #3c763d;
+        }
+
+        .info {
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+            color: #31708f;
+        }
+
+        .warning {
+            background-color: #fcf8e3;
+            border-color: #faebcc;
+            color: #8a6d3b;
+        }
+
+        .danger {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+            color: #a94442;
+        }
+
+        .success,
+        .info,
+        .warning,
+        .danger {
+            border: 1px solid transparent;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        hr{
+            margin: 24px 0px;
+            height: .25rem;
+            background-color: var(--hr-color);
+            border: 0px;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        blockquote {
+            border-left: 0.25rem solid #ddd;
+            color: #777;
+            font-size: 1rem;
+            margin: 0px;
+            padding: 0 1rem;
+        }
+
+        span.blockquoteX{
+            display: block;
+            font-size: 80%;
+        }
+
+        span.blockquoteX::before{
+            content: '\2014 \00A0';
+        }
+
+        span.material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 48;
+            font-size: 1rem;
+            margin: 3px 5px;
+            vertical-align: bottom;
+        }
+
+        span.material-symbols-outlined-fill{
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 48;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            display: block;
+            margin-top: 0;
+            margin-bottom: 16px;
+            overflow: auto;
+            width: 100%;
+            word-break: keep-all;
+        }
+
+        table tr {
+            border-top: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table th {
+            border: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table td {
+            border: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table tr:nth-child(2n) {
+            background-color: var(--body-background);
+        }
+
+        pre {
+            /* padding: 16px; */
+            overflow: auto;
+            line-height: 1.45;
+        }
+
+        code{
+            padding: .2em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            background-color: var(--body-background);
+            font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+        }
+
+        dl dt{
+            padding: 0;
+            margin-top: 16px;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /*block code*/
+        pre code {
+            display: block;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        code table tr:nth-child(2n) {
+            background-color: transparent;
+        }
+
+        code.break {
+            white-space: break-spaces;
+            word-break: break-all;
+        }
+
+        code.language-mermaid,
+        code.language-sequence,
+        code.language-graphviz,
+        code.language-vega,
+        code.language-abc,
+        code.language-flow {
+            background-color: transparent;
+            text-align: center;
+        }
+
+        mark {
+            padding: 0.2rem;
+            background-color: #fff1a7;
+        }
+
+        /*---embed---*/
+        embed{
+            overflow: auto; 
+            width: 100%; 
+            height: 400px;
+        }
+
+        iframe{
+            margin: 10px auto;
+            width: 100%; 
+            height: 480px;
+        }
+        
+        .gist table tr{
+            border: 0px;
+        }
+
+        .gist table td{
+            border: 0px;
+        }
+
+        /*---hljs---*/
+        .hljs-comment {
+            color: #708090;
+        }
+
+        .hljs-punctuation,
+        .hljs-tag {
+            color: #444a
+        }
+
+        .hljs-tag .hljs-attr,
+        .hljs-tag .hljs-name {
+            color: #444
+        }
+
+        .hljs-attribute,
+        .hljs-doctag,
+        .hljs-keyword,
+        .hljs-meta .hljs-keyword,
+        .hljs-name,
+        .hljs-selector-tag {
+            color: #07a;
+        }
+
+        .hljs-deletion,
+        .hljs-number,
+        .hljs-quote,
+        .hljs-selector-class,
+        .hljs-selector-id,
+        .hljs-template-tag,
+        .hljs-type {
+            color: #690
+        }
+
+        .hljs-section,
+        .hljs-title {
+            color: #dd4a68;
+        }
+
+        .hljs-link,
+        .hljs-operator,
+        .hljs-regexp,
+        .hljs-selector-attr,
+        .hljs-selector-pseudo,
+        .hljs-symbol,
+        .hljs-template-variable,
+        .hljs-variable {
+            color: #bc6060
+        }
+
+        .hljs-literal {
+            color: #78a960
+        }
+
+        .hljs-addition,
+        .hljs-built_in,
+        .hljs-bullet,
+        .hljs-code {
+            color: #397300
+        }
+
+        .hljs-meta {
+            color: #1f7199
+        }
+
+        .hljs-meta,
+        .hljs-string {
+            color: #690
+        }
+
+        .hljs-emphasis {
+            font-style: italic
+        }
+
+        .hljs-strong {
+            font-weight: 700
+        }
+
+        table.hljs-ln,
+        .hljs-ln td,
+        .hljs-ln tr {
+            /*override table style*/
+            border: 0px;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .hljs-ln-numbers {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            color: #afafaf !important;
+            border-right: 3px solid #6ce26c !important;
+        }
+
+        .hljs-ln-n {
+            box-sizing: content-box;
+            vertical-align: top;
+            padding: 0px 8px 0px 0px;
+            min-width: 20px;
+            text-align: right;
+        }
+
+        .hljs-ln-code {
+            padding: 0px 0px 0px 16px !important;
+        }
+
+        /*---fretboard---*/
+        .fretTitle {
+            color: #555;
+            text-align: center;
+            font-family: "Helvetica Neue", sans-serif;
+            line-height: 1.4;
+            font-size: 1.6em;
+            margin: 10px 0 10px 0;
+            font-weight: 900;
+            padding: 5px;
+        }
+
+        .fretContainer section {
+            padding: 20px;
+        }
+
+        .fretContainer .content {
+            max-width: 960px;
+            margin: auto;
+        }
+
+        .fretContainer,
+        .fretContainer_h {
+            outline: solid 1px #eeee;
+            margin: 0 auto;
+            padding: 15px 0;
+        }
+
+        .fretContainer {
+            width: 320px;
+        }
+
+        .fretContainer_h {
+            max-width: 400px;
+        }
+
+        .svg_wrapper {
+            background-color: #fff;
+            position: relative;
+            height: 0;
+        }
+
+        .svg_wrapper svg.fretboard_bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .svg_wrapper .cells {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .svg_wrapper.v4 {
+            padding-top: 91.6666666667%;
+        }
+
+        .svg_wrapper.v5 {
+            padding-top: 106.9444444444%;
+        }
+
+        .svg_wrapper.v7 {
+            padding-top: 137.5%;
+        }
+
+        .svg_wrapper.v9 {
+            padding-top: 168.0555555556%;
+        }
+
+        .svg_wrapper.v12 {
+            padding-top: 213.8888888889%;
+        }
+
+        .svg_wrapper.v15 {
+            padding-top: 259.7222222222%;
+        }
+
+        .svg_wrapper.v .cell svg {
+            width: 12.5%;
+            float: left;
+            display: block;
+        }
+
+        .svg_wrapper.v4 .cell svg {
+            height: 16.6666666667%;
+        }
+
+        .svg_wrapper.v5 .cell svg {
+            height: 14.2857142857%;
+        }
+
+        .svg_wrapper.v7 .cell svg {
+            height: 11.1111111111%;
+        }
+
+        .svg_wrapper.v9 .cell svg {
+            height: 9.0909090909%;
+        }
+
+        .svg_wrapper.v12 .cell svg {
+            height: 7.1428571429%;
+        }
+
+        .svg_wrapper.v15 .cell svg {
+            height: 5.8823529412%;
+        }
+
+        .svg_wrapper.h5 {
+            padding-top: 85.7142857143%;
+        }
+
+        .svg_wrapper.h6 {
+            padding-top: 75%;
+        }
+
+        .svg_wrapper.h7 {
+            padding-top: 72.7272727273%;
+        }
+
+        .svg_wrapper.h .cell svg {
+            height: 12.5%;
+            float: left;
+            display: block;
+            z-index: 2;
+        }
+
+        .svg_wrapper.h5 .cell svg {
+            width: 14.2857142857%;
+        }
+
+        .svg_wrapper.h6 .cell svg {
+            width: 12.5%;
+        }
+
+        .svg_wrapper.h7 .cell svg {
+            width: 12.1212121212%;
+        }
+
+        /* Fretboard Element Styles */
+
+        .cell.dot .fretb_dot {
+            fill: #27a9e1;
+        }
+
+        .cell.dot.root .fretb_dot {
+            fill: #f05a28;
+        }
+
+        .cell.dot.faded .fretb_dot {
+            opacity: .25;
+        }
+
+        .fretboard_bg .fret_bg rect {
+            fill: #fff;
+        }
+
+        .fretboard_bg .frets rect {
+            fill: #ddd;
+        }
+
+        .fretboard_bg .nut rect {
+            fill: #6e6e6e;
+        }
+
+        .fretboard_bg .strings rect {
+            fill: #6e6e6e;
+        }
+
+        .svg_wrapper.noNut .fretboard_bg .nut rect {
+            fill: none;
+        }
+
+        @media all and (max-width: 400px) {
+            .fretContainer_h {
+                max-width: 288px;
+            }
+        }
+
+        @media all and (max-width: 420px) {
+            .fretContainer {
+                max-width: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1 id="a-survey-of-security-benchmarks-for-agentic-llms" tabindex="-1">A Survey of Security Benchmarks for Agentic LLMs</h1>
+<p><a href="https://doi.org/10.5281/zenodo.22135957"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.22135957.svg" alt="DOI"></a></p>
+<p>This artifact consists of the assessment results for several state-of-the-art frameworks/benchmarks targeting the security of agentic LLMs, as well as scripts and instructions to carry out (hopefully) replicable experiments. The assessments evaluate each tool’s applicability in a cyber-educational scenario, with an eye to integrating them into a CTF or juice-shop-style educational platform.</p>
+<h2 id="table-of-contents" tabindex="-1">Table of Contents</h2>
+<ul>
+<li><a href="#file-hierarchy">File Hierarchy</a></li>
+<li><a href="#setting-up-evaluation-environment">Setting Up Evaluation Environment</a>
+<ul>
+<li><a href="#system-requirements">System Requirements</a></li>
+<li><a href="#installation-guide">Installation Guide</a></li>
+</ul>
+</li>
+<li><a href="#evaluation">Evaluation</a>
+<ul>
+<li><a href="#experimental-settings">Experimental Settings</a></li>
+<li><a href="#evaluation-workflow">Evaluation Workflow</a></li>
+<li><a href="#evaluation-results">Evaluation Results</a></li>
+</ul>
+</li>
+<li><a href="#license">License</a></li>
+</ul>
+<h2 id="file-hierarchy" tabindex="-1">File Hierarchy</h2>
+<p>This artifact contains the following:</p>
+<ul>
+<li><a href="README.html"><code>README.{md|html}</code></a>: this documentation</li>
+<li><a href="report.html"><code>report.{md|html}</code></a>: the summary report that compares all evaluated tools, with per-criterion scores and crmd|htmloss-tool notes</li>
+<li><a href="docs/"><code>docs/</code></a>: supporting documents
+<ul>
+<li><a href="docs/requirements.html"><code>requirements.{md|html}</code></a>: hardware and software requirements for the Ollama server and the client</li>
+<li><a href="docs/install.html"><code>install.{md|html}</code></a>: step-by-step installation of the Ollama server, the models, and the tools</li>
+<li><a href="docs/criteria.html"><code>criteria.{md|html}</code></a>: the scoring scheme, which adopts the BetterBench criteria and adds our Education stage</li>
+<li><a href="docs/attack-risk-coverage.html"><code>attack-risk-coverage.{md|html}</code></a>: the attack-vector and security-risk taxonomy and the coverage of 16 tools</li>
+<li><a href="docs/faq.html"><code>faq.{md|html}</code></a>: answers to questions about our choices</li>
+</ul>
+</li>
+<li><a href="scripts/ollama.sbatch"><code>scripts/ollama.sbatch</code></a>: the Slurm script that starts the Ollama server with the settings we used</li>
+<li><a href="agentdojo/"><code>agentdojo/</code></a>, <a href="agentharm/"><code>agentharm/</code></a>, <a href="asb/"><code>asb/</code></a>: one directory per evaluated tool, each containing
+<ul>
+<li><code>README.md</code>: the detailed report for the tool</li>
+<li><code>&lt;tool&gt;/</code>: the tool’s source code, added as a git submodule and pinned to the commit we evaluated</li>
+<li><code>run_*.sh</code>: the evaluation scripts (full, partial, or smoke), plus tool-specific helpers such as <code>extract_results.py</code> (AgentDojo) and <code>rerun_judge.sh</code> (ASB)</li>
+<li><code>results/</code>: the result files of our evaluation</li>
+<li><code>your-results/</code>: the output directory for new runs, created by the scripts</li>
+</ul>
+</li>
+<li><a href="skill/"><code>skill/</code></a>: the agent skill (instructions and templates) used to evaluate a tool and write its report in this format, enabling agnets to add and evaluate a new tool in the same way</li>
+<li><a href="LICENSE"><code>LICENSE</code></a>: the CC-BY-4.0 license of this artifact</li>
+</ul>
+<h2 id="setting-up-evaluation-environment" tabindex="-1">Setting Up Evaluation Environment</h2>
+<h3 id="system-requirements" tabindex="-1">System Requirements</h3>
+<p>Please refer to <a href="docs/requirements.html"><code>docs/requirements.{md|html}</code></a>.</p>
+<h3 id="installation-guide" tabindex="-1">Installation Guide</h3>
+<p>Please refer to <a href="docs/install.html"><code>docs/install.{md|html}</code></a>.</p>
+<h2 id="evaluation" tabindex="-1">Evaluation</h2>
+<h3 id="experimental-settings" tabindex="-1">Experimental Settings</h3>
+<p>In a nutshell, we ran our experiments on <a href="https://jgarcia.ics.uci.edu/">SORA-WS2</a>, and the LLMs used in the experiments were hosted locally by an Ollama server running on <a href="https://wiki.ics.uci.edu/doku.php/hardware:cluster:opengpu">korn</a> (<a href="http://korn.ics.uci.edu">korn.ics.uci.edu</a>), a node of <a href="https://wiki.ics.uci.edu/doku.php/hardware:cluster:opengpu">UCI’s OpenGPU cluster</a>. The specifications of both machines are in <a href="docs/requirements.html#tested-environment"><code>docs/requirements.{md|html}</code></a>.</p>
+<p>The settings shared by all tools are:</p>
+<ul>
+<li>Ollama server: version 0.23.1, started as a Slurm job by <a href="scripts/ollama.sbatch"><code>scripts/ollama.sbatch</code></a> with 4 GPUs, <code>OLLAMA_NUM_PARALLEL=1</code> (one request at a time, others queue), <code>OLLAMA_KEEP_ALIVE=-1</code> (models stay loaded), and <code>OLLAMA_CONTEXT_LENGTH=65536</code>.</li>
+<li>Agent models under test: <code>qwen3:14b</code> (small), <code>qwen3-coder:30b</code> (mid), and <code>gpt-oss:120b</code> (large). The models were run one at a time, because they share the same GPUs.</li>
+<li>Judge model: <code>qwen3:14b</code> on the same server, for the tools that use an LLM judge (AgentHarm’s refusal and semantic judges, and ASB’s refusal judge). It is the same for all three agent models so that the agent-model comparison is fair.</li>
+<li>Tool versions, patches, and tool-specific parameters (attack, split, task subset, token limits): see the “Experimental Settings” section of each tool README.</li>
+</ul>
+<h3 id="evaluation-workflow" tabindex="-1">Evaluation Workflow</h3>
+<p>To reproduce our evaluation, or to evaluate a new model, follow these steps:</p>
+<ol>
+<li>Check <a href="docs/requirements.html"><code>docs/requirements.{md|html}</code></a> and set up the Ollama server, pull and preload the three models, and verify the server from the client, as described in <a href="docs/install.html"><code>docs/install.{md|html}</code></a>.</li>
+<li>Pick a tool and install it by the “Installation” section of its README, including the source patches listed there.</li>
+<li>Point the tool at your server by setting the environment variables named in the tool README (the evaluation scripts read the same variables).</li>
+<li>Run the smoke test where one exists (<code>run_smoke_benchmark.sh</code> for AgentHarm and ASB) or one task by the “Getting Started” section, to confirm that the pipeline works end to end.</li>
+<li>Run <code>run_full_benchmark.sh</code> for the full evaluation, or <code>run_partial_benchmark.sh</code> for a shorter one. The “Conducting Evaluation” section of each README states what each script covers and how long it took us.</li>
+<li>Read the results in <code>&lt;tool&gt;/your-results/</code> with the method given in the “Performing a Full Evaluation” section of the README, and compare them with ours in <code>&lt;tool&gt;/results/</code> and the “Experimental Results” section.</li>
+<li>To evaluate a new tool, ask your agent to follow the workflow in <a href="skill/SKILL.md"><code>skill/SKILL.md</code></a> and score the tool with <a href="docs/criteria.html"><code>docs/criteria.md|html}</code></a>, then add its row to <a href="report.md"><code>report.md</code></a>.</li>
+</ol>
+<h3 id="evaluation-results" tabindex="-1">Evaluation Results</h3>
+<p>The results are compiled and organized into the following files:</p>
+<ul>
+<li>a summary report for ALL tools: <a href="report.html"><code>report.{md|html}</code></a></li>
+<li>an individual report for each tool: <code>&lt;tool_name&gt;/README.md</code></li>
+</ul>
+<p>Besides, under each <code>&lt;tool_name&gt;/</code> directory are also the scripts used to perform full and partial evaluations. If you are to replicate our experiments, please kindly reuse these scripts and report any issue where possible.</p>
+<p>As a side note, all reports are written either by hand or by Claude Opus 4.6/4.8 with comprehensive human fact-checking.</p>
+<h2 id="license" tabindex="-1">License</h2>
+<p>The artifact is licensed under CC-BY-4.0. See <a href="./LICENSE">LICENSE</a>.</p>
+
+    </main>
+    <!--highlight-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.8.0/dist/highlightjs-line-numbers.min.js"></script>
+    <!--mermaid-->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!--sequence-->
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/webfont.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/snap.svg-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/underscore-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/sequence-diagram-min.js"></script>
+    <!--flowchart-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+    <script src="https://flowchart.js.org/flowchart-latest.js"></script>
+    <!--Graphviz powered by viz.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/viz.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/full.render.js"></script>
+    <!--Vega-Lite-->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <!--Abc-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/abcjs/6.1.9/abcjs-basic-min.min.js"></script>
+    <script>
+        mermaid.init({ noteMargin: 10 }, document.querySelectorAll(".language-mermaid"));
+        mermaid.initialize({ startOnLoad: true });
+        document.querySelectorAll(".language-sequence")?.forEach((dom, i) => {
+            dom.id = `sequence-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            Diagram.parse(content).drawSVG(dom.id, { theme: 'simple' });
+        });
+        document.querySelectorAll(".language-flow")?.forEach((dom, i) => {
+            dom.id = `flow-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            flowchart.parse(content).drawSVG(dom.id);
+        });
+
+        var viz = new Viz();
+        document.querySelectorAll(".language-graphviz")?.forEach((dom, i) => {
+            dom.id = `graphviz-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            viz.renderSVGElement(content)
+                .then(function (element) {
+                    dom.appendChild(element);
+                })
+                .catch(error => {
+                    // Create a new Viz instance (@see Caveats page for more info)
+                    viz = new Viz();
+
+                    // Possibly display the error
+                    console.error(error);
+                });
+        });
+
+        document.querySelectorAll(".language-abc")?.forEach((dom, i) => {
+            dom.id = `abc-${i}`;
+            let content = dom.textContent;
+            ABCJS.renderAbc(dom.id, content);
+        });
+
+        document.querySelectorAll(".language-vega")?.forEach((dom, i) => {
+            dom.id = `vega-${i}`;
+            let content = dom.textContent;
+            let spec = {};
+            try {
+                spec = JSON.parse(content);
+            } catch (e) {
+                spec = {};
+            }
+            dom.textContent = "";
+            vegaEmbed(`#${dom.id}`, spec);
+        });
+
+        // https://github.com/highlightjs/highlight.js/
+        // modified from: https://github.com/wcoder/highlightjs-line-numbers.js/
+        let lastLine = 0;
+        const BREAK_LINE_REGEXP = /\r\n|\r|\n/g;
+        function getLinesCount(text) {
+            return (text.trim().match(BREAK_LINE_REGEXP) || []).length;
+        }
+        document.querySelectorAll('code')?.forEach((dom) => {
+            let lang = dom.className.match(/language\-([^=]*)?(=?)(\+?[0-9]*)$/);
+            if (lang === null) return;
+            if (lang[1] === '!') {
+                dom.classList.add("break");
+                return;
+            } else {
+                hljs.highlightElement(dom);
+            }
+
+            if (lang[2]) {
+                let line;
+                if (lang[3] === '') {
+                    line = 1;
+                } else if (lang[3] === '+') {
+                    line = lastLine + 1;
+                } else {
+                    line = Number(lang[3]);
+                }
+                lastLine = line + getLinesCount(dom.innerText);
+                hljs.lineNumbersBlock(dom, {
+                    startFrom: line
+                });
+            }
+        });
+
+        // automatically set title
+        const h1 = document.querySelector("h1");
+        if (!document.title && h1 && h1.textContent) {
+            document.title = h1.textContent;
+        }
+    </script>
+</body>
+
+</html>

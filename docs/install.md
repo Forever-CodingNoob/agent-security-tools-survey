@@ -1,6 +1,6 @@
 # Installation Guide
 
-This guide sets up the two roles described in [`requirements.md`](requirements.md), i.e., (1) an Ollama server that hosts the models and (2) a client that holds this artifact and runs the benchmark tools.
+This guide sets up the two roles described in [`requirements.{md|html}`](requirements.html), i.e., (1) an Ollama server that hosts the models and (2) a client that holds this artifact and runs the benchmark tools.
 
 ## Table of Contents
 + [1. Clone the artifact](#1-clone-the-artifact)

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta property="og:type" content="article">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);
+        html[lang^=ja] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, Hiragino Kaku Gothic Pro, ヒラギノ角ゴ Pro W3, Osaka, Meiryo, メイリオ, MS Gothic, ＭＳ ゴシック, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        html[lang=zh-tw] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, PingFang TC, Microsoft JhengHei, 微軟正黑, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        html[lang=zh-cn] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, PingFang SC, Microsoft YaHei, 微软雅黑, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        :root {
+            --body-background: #f0f0f0;
+            --hr-color: #e7e7e7;
+        }
+
+        body {
+            background-color: var(--body-background);
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 10px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.42857143;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 2rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.3rem 0;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        h5 {
+            font-size: 1.1rem;
+            margin: 1.1rem 0;
+        }
+
+        h6 {
+            font-size: 1rem;
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol,
+        li,
+        section,
+        summary,
+        p {
+            font-size: 1rem;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+        }
+
+        li.task-list-item{
+            list-style-type: none;
+        }
+
+        input.task-list-item-checkbox{
+            float: left;
+            margin: .31em 0 .2em -1.3em !important;
+            vertical-align: middle;   
+        }
+
+        main {
+            background-color: #fff;
+            box-sizing: border-box;
+            border-radius: 20px;
+            margin: 0px auto;
+            max-width: 900px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        a {
+            color: #337ab7;
+            text-decoration: none;
+        }
+
+        a:focus,
+        a:hover {
+            color: #23527c;
+            text-decoration: underline;
+        }
+
+        a:focus {
+            outline: 5px auto -webkit-focus-ring-color;
+            outline-offset: -2px;
+        }
+
+        .success {
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+            color: #3c763d;
+        }
+
+        .info {
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+            color: #31708f;
+        }
+
+        .warning {
+            background-color: #fcf8e3;
+            border-color: #faebcc;
+            color: #8a6d3b;
+        }
+
+        .danger {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+            color: #a94442;
+        }
+
+        .success,
+        .info,
+        .warning,
+        .danger {
+            border: 1px solid transparent;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        hr{
+            margin: 24px 0px;
+            height: .25rem;
+            background-color: var(--hr-color);
+            border: 0px;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        blockquote {
+            border-left: 0.25rem solid #ddd;
+            color: #777;
+            font-size: 1rem;
+            margin: 0px;
+            padding: 0 1rem;
+        }
+
+        span.blockquoteX{
+            display: block;
+            font-size: 80%;
+        }
+
+        span.blockquoteX::before{
+            content: '\2014 \00A0';
+        }
+
+        span.material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 48;
+            font-size: 1rem;
+            margin: 3px 5px;
+            vertical-align: bottom;
+        }
+
+        span.material-symbols-outlined-fill{
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 48;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            display: block;
+            margin-top: 0;
+            margin-bottom: 16px;
+            overflow: auto;
+            width: 100%;
+            word-break: keep-all;
+        }
+
+        table tr {
+            border-top: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table th {
+            border: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table td {
+            border: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table tr:nth-child(2n) {
+            background-color: var(--body-background);
+        }
+
+        pre {
+            /* padding: 16px; */
+            overflow: auto;
+            line-height: 1.45;
+        }
+
+        code{
+            padding: .2em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            background-color: var(--body-background);
+            font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+        }
+
+        dl dt{
+            padding: 0;
+            margin-top: 16px;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /*block code*/
+        pre code {
+            display: block;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        code table tr:nth-child(2n) {
+            background-color: transparent;
+        }
+
+        code.break {
+            white-space: break-spaces;
+            word-break: break-all;
+        }
+
+        code.language-mermaid,
+        code.language-sequence,
+        code.language-graphviz,
+        code.language-vega,
+        code.language-abc,
+        code.language-flow {
+            background-color: transparent;
+            text-align: center;
+        }
+
+        mark {
+            padding: 0.2rem;
+            background-color: #fff1a7;
+        }
+
+        /*---embed---*/
+        embed{
+            overflow: auto; 
+            width: 100%; 
+            height: 400px;
+        }
+
+        iframe{
+            margin: 10px auto;
+            width: 100%; 
+            height: 480px;
+        }
+        
+        .gist table tr{
+            border: 0px;
+        }
+
+        .gist table td{
+            border: 0px;
+        }
+
+        /*---hljs---*/
+        .hljs-comment {
+            color: #708090;
+        }
+
+        .hljs-punctuation,
+        .hljs-tag {
+            color: #444a
+        }
+
+        .hljs-tag .hljs-attr,
+        .hljs-tag .hljs-name {
+            color: #444
+        }
+
+        .hljs-attribute,
+        .hljs-doctag,
+        .hljs-keyword,
+        .hljs-meta .hljs-keyword,
+        .hljs-name,
+        .hljs-selector-tag {
+            color: #07a;
+        }
+
+        .hljs-deletion,
+        .hljs-number,
+        .hljs-quote,
+        .hljs-selector-class,
+        .hljs-selector-id,
+        .hljs-template-tag,
+        .hljs-type {
+            color: #690
+        }
+
+        .hljs-section,
+        .hljs-title {
+            color: #dd4a68;
+        }
+
+        .hljs-link,
+        .hljs-operator,
+        .hljs-regexp,
+        .hljs-selector-attr,
+        .hljs-selector-pseudo,
+        .hljs-symbol,
+        .hljs-template-variable,
+        .hljs-variable {
+            color: #bc6060
+        }
+
+        .hljs-literal {
+            color: #78a960
+        }
+
+        .hljs-addition,
+        .hljs-built_in,
+        .hljs-bullet,
+        .hljs-code {
+            color: #397300
+        }
+
+        .hljs-meta {
+            color: #1f7199
+        }
+
+        .hljs-meta,
+        .hljs-string {
+            color: #690
+        }
+
+        .hljs-emphasis {
+            font-style: italic
+        }
+
+        .hljs-strong {
+            font-weight: 700
+        }
+
+        table.hljs-ln,
+        .hljs-ln td,
+        .hljs-ln tr {
+            /*override table style*/
+            border: 0px;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .hljs-ln-numbers {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            color: #afafaf !important;
+            border-right: 3px solid #6ce26c !important;
+        }
+
+        .hljs-ln-n {
+            box-sizing: content-box;
+            vertical-align: top;
+            padding: 0px 8px 0px 0px;
+            min-width: 20px;
+            text-align: right;
+        }
+
+        .hljs-ln-code {
+            padding: 0px 0px 0px 16px !important;
+        }
+
+        /*---fretboard---*/
+        .fretTitle {
+            color: #555;
+            text-align: center;
+            font-family: "Helvetica Neue", sans-serif;
+            line-height: 1.4;
+            font-size: 1.6em;
+            margin: 10px 0 10px 0;
+            font-weight: 900;
+            padding: 5px;
+        }
+
+        .fretContainer section {
+            padding: 20px;
+        }
+
+        .fretContainer .content {
+            max-width: 960px;
+            margin: auto;
+        }
+
+        .fretContainer,
+        .fretContainer_h {
+            outline: solid 1px #eeee;
+            margin: 0 auto;
+            padding: 15px 0;
+        }
+
+        .fretContainer {
+            width: 320px;
+        }
+
+        .fretContainer_h {
+            max-width: 400px;
+        }
+
+        .svg_wrapper {
+            background-color: #fff;
+            position: relative;
+            height: 0;
+        }
+
+        .svg_wrapper svg.fretboard_bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .svg_wrapper .cells {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .svg_wrapper.v4 {
+            padding-top: 91.6666666667%;
+        }
+
+        .svg_wrapper.v5 {
+            padding-top: 106.9444444444%;
+        }
+
+        .svg_wrapper.v7 {
+            padding-top: 137.5%;
+        }
+
+        .svg_wrapper.v9 {
+            padding-top: 168.0555555556%;
+        }
+
+        .svg_wrapper.v12 {
+            padding-top: 213.8888888889%;
+        }
+
+        .svg_wrapper.v15 {
+            padding-top: 259.7222222222%;
+        }
+
+        .svg_wrapper.v .cell svg {
+            width: 12.5%;
+            float: left;
+            display: block;
+        }
+
+        .svg_wrapper.v4 .cell svg {
+            height: 16.6666666667%;
+        }
+
+        .svg_wrapper.v5 .cell svg {
+            height: 14.2857142857%;
+        }
+
+        .svg_wrapper.v7 .cell svg {
+            height: 11.1111111111%;
+        }
+
+        .svg_wrapper.v9 .cell svg {
+            height: 9.0909090909%;
+        }
+
+        .svg_wrapper.v12 .cell svg {
+            height: 7.1428571429%;
+        }
+
+        .svg_wrapper.v15 .cell svg {
+            height: 5.8823529412%;
+        }
+
+        .svg_wrapper.h5 {
+            padding-top: 85.7142857143%;
+        }
+
+        .svg_wrapper.h6 {
+            padding-top: 75%;
+        }
+
+        .svg_wrapper.h7 {
+            padding-top: 72.7272727273%;
+        }
+
+        .svg_wrapper.h .cell svg {
+            height: 12.5%;
+            float: left;
+            display: block;
+            z-index: 2;
+        }
+
+        .svg_wrapper.h5 .cell svg {
+            width: 14.2857142857%;
+        }
+
+        .svg_wrapper.h6 .cell svg {
+            width: 12.5%;
+        }
+
+        .svg_wrapper.h7 .cell svg {
+            width: 12.1212121212%;
+        }
+
+        /* Fretboard Element Styles */
+
+        .cell.dot .fretb_dot {
+            fill: #27a9e1;
+        }
+
+        .cell.dot.root .fretb_dot {
+            fill: #f05a28;
+        }
+
+        .cell.dot.faded .fretb_dot {
+            opacity: .25;
+        }
+
+        .fretboard_bg .fret_bg rect {
+            fill: #fff;
+        }
+
+        .fretboard_bg .frets rect {
+            fill: #ddd;
+        }
+
+        .fretboard_bg .nut rect {
+            fill: #6e6e6e;
+        }
+
+        .fretboard_bg .strings rect {
+            fill: #6e6e6e;
+        }
+
+        .svg_wrapper.noNut .fretboard_bg .nut rect {
+            fill: none;
+        }
+
+        @media all and (max-width: 400px) {
+            .fretContainer_h {
+                max-width: 288px;
+            }
+        }
+
+        @media all and (max-width: 420px) {
+            .fretContainer {
+                max-width: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1 id="attack-and-risk-coverage-of-agentic-llm-security-tools" tabindex="-1">Attack and Risk Coverage of Agentic-LLM Security Tools</h1>
+<p>This document maps 16 agentic-LLM security tools onto the taxonomy of Xie et al., <a href="https://arxiv.org/abs/2603.11088">The Attack and Defense Landscape of Agentic AI: A Comprehensive Survey</a>.<br>
+Each tool’s README uses the codes defined here in its “Attack vectors and security risks” section, and the <a href="../report.html">summary report</a> lists them in its comparison table.</p>
+<h2 id="table-of-contents" tabindex="-1">Table of Contents</h2>
+<ul>
+<li><a href="#taxonomy">Taxonomy</a>
+<ul>
+<li><a href="#attack-vectors-by-threat-model">Attack vectors (by threat model)</a></li>
+<li><a href="#security-risks-by-category">Security risks (by category)</a></li>
+</ul>
+</li>
+<li><a href="#coverage-table">Coverage Table</a></li>
+<li><a href="#coverage-gaps">Coverage Gaps</a>
+<ul>
+<li><a href="#attack-vectors-with-weak-coverage">Attack vectors with weak coverage</a></li>
+<li><a href="#security-risks-with-weak-coverage">Security risks with weak coverage</a></li>
+</ul>
+</li>
+<li><a href="#references">References</a></li>
+</ul>
+<h2 id="taxonomy" tabindex="-1">Taxonomy</h2>
+<p>The taxonomy separates two questions: an <em>attack vector</em> is the path by which an attacker’s input reaches the agent, while a <em>security risk</em> is the property of the agent system that the attack exploits or the harm that results.</p>
+<h3 id="attack-vectors-(by-threat-model)" tabindex="-1">Attack vectors (by threat model)</h3>
+<p>The following threat models are classified based on attackers’ access to the agent at the time of attack execution rather than during the attack’s development, per the SoK paper:</p>
+<ul>
+<li>External: the attacker controls resources the agent fetches, such as web pages, documents, or tools.</li>
+<li>User-level: the attacker controls part of the user input.</li>
+<li>Internal: the attacker has modified a component inside the agent, such as the model or its memory.</li>
+</ul>
+<p>The six attack vectors are:</p>
+<ul>
+<li><strong>V1 Indirect prompt injection</strong> [External]: attacker injects malicious instructions into external resources the agent retrieves, such as web pages or documents.</li>
+<li><strong>V2 Malicious data injection</strong> [External]: attacker injects non-prompt malicious data consumed during sensitive operations, such as malicious packages or manipulated parameter values.</li>
+<li><strong>V3 Tool poisoning and manipulation</strong> [External]: attacker injects malicious instructions into tool names or descriptions, or malicious payloads into tool implementations.</li>
+<li><strong>V4 Direct prompt injection</strong> [User-level]: attacker controls parts of otherwise benign inputs and appends malicious instructions to user inputs. Jailbreak templates are one instantiation.</li>
+<li><strong>V5 Model poisoning</strong> [Internal]: attacker injects a backdoor into the LLM that activates during inference.</li>
+<li><strong>V6 Memory poisoning</strong> [Internal]: attacker manipulates the agent’s memory to inject malicious instructions or false knowledge, or leaks sensitive data from the memory.</li>
+</ul>
+<h3 id="security-risks-(by-category)" tabindex="-1">Security risks (by category)</h3>
+<p>The three groups are:</p>
+<ul>
+<li>Attack surface: the entry points through which attacker-controlled data reaches the agent.</li>
+<li>Model risks: weaknesses in how the model handles instructions and data.</li>
+<li>Consequence risks: the resulting harm to the user, the agent, or external systems.</li>
+</ul>
+<blockquote>
+<p>[!IMPORTANT]<br>
+According to the SoK paper, “an expanded attack surface (R1) increases entry points for attacker-controlled data, allowing malicious inputs to reach and exploit model risks (R2, R3, R4) … Model risks then amplify consequence risks (R5, R6, R7).”</p>
+</blockquote>
+<p>The seven security risks are:</p>
+<ul>
+<li><strong>R1 Heterogeneous untrusted interfaces</strong> [Attack surface]: the system exposes multiple heterogeneous untrusted interfaces (external data sources, persistent memory, third-party tools) that serve as attack entry points.</li>
+<li><strong>R2 Wrong instruction following</strong> [Model risk]: agent follows attacker-injected prompts instead of the intended instructions of benign users or developers.</li>
+<li><strong>R3 Unconstrained/unsafe data flow</strong> [Model risk]: data flows freely from untrusted inputs to any output, unlike traditional systems with regulated data propagation.</li>
+<li><strong>R4 Hallucinations and model mistakes</strong> [Model risk]: the model hallucinates or errs, and the agent acts on that content with real-world consequences.</li>
+<li><strong>R5 Private data leakage</strong> [Consequence risk]: sensitive data across conversations, memory, credentials, and environment resources is exposed to unauthorized parties.</li>
+<li><strong>R6 Unintended/unauthorized actions and data corruption</strong> [Consequence risk]: the agent makes irreversible state changes or modifies stored resources without authorization.</li>
+<li><strong>R7 Resource drain and denial-of-service</strong> [Consequence risk]: attackers exploit agent autonomy to trigger costly calls, infinite loops, or excessive memory use, making the agent or external systems unusable.</li>
+</ul>
+<h2 id="coverage-table" tabindex="-1">Coverage Table</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Covered Attack Vectors</th>
+<th>Covered Security Risks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../agentdojo/README.md">AgentDojo</a></td>
+<td>V1 Indirect prompt injection (payloads in emails, calendar, drive files, messages)</td>
+<td>R1 Untrusted interfaces (four suites with distinct injection surfaces), R2 Wrong instruction following (measures targeted ASR for attacker goal completion), R3 Unconstrained data flow (injected data flows into safety-critical tool calls), R5 Private data leakage (exfiltrates subscriptions, IBANs, security codes), R6 Unauthorized actions (deletes files, modifies payments, sends funds to attacker), R7 Denial-of-service (DoS attacks halt task completion via refusal triggers)</td>
+</tr>
+<tr>
+<td>InjecAgent</td>
+<td>V1 Indirect prompt injection (attacker instructions embedded in retrieved external content such as notes, reviews, product descriptions, and email, across 17 user tools that return attacker-modifiable content)</td>
+<td>R2 Wrong instruction following (measures ASR for instruction compliance), R3 Unconstrained data flow (extraction-to-transmission data stealing chain), R5 Private data leakage (two-stage pipeline extracts and transmits private data), R6 Unauthorized actions (unauthorized state-changing tool executions, such as an unauthorized $500 BankManagerPayBill payment and smart home device manipulation)</td>
+</tr>
+<tr>
+<td>AgentPoison</td>
+<td>V6 Memory poisoning (adversarial pairs injected into RAG knowledge base)</td>
+<td>R2 Wrong instruction following (poisoned demonstrations cause adversarial target actions), R3 Unconstrained data flow (poisoned retrievals flow directly into LLM reasoning), R6 Unauthorized actions (emergency stops, patient record deletion, wrong answers)</td>
+</tr>
+<tr>
+<td><a href="../agentharm/README.md">AgentHarm</a></td>
+<td>V4 Direct prompt injection (malicious user queries with optional jailbreak wrapper)</td>
+<td>R2 Wrong instruction following (measures compliance rate and jailbreak effectiveness), R5 Private data leakage (tools extract credit cards, passwords, login data), R6 Unauthorized actions (ransomware, fraud, phishing, malware via multi-step tool calls)</td>
+</tr>
+<tr>
+<td><a href="../asb/README.md">ASB</a></td>
+<td>V1 Indirect prompt injection (injection text appended to tool observation outputs), V4 Direct prompt injection (malicious instructions appended to user query), V6 Memory poisoning (malicious plans injected into ChromaDB store)</td>
+<td>R1 Untrusted interfaces (four injection surfaces across user, tool, memory, prompt), R2 Wrong instruction following (measures ASR across 13 LLMs and four attack types), R3 Unconstrained data flow (injection in one component propagates to tool invocations), R5 Private data leakage (attacker tools exfiltrate financial and patient data), R6 Unauthorized actions (400 tools test transaction duplication, privilege escalation, tampering)</td>
+</tr>
+<tr>
+<td>EIA</td>
+<td>V1 Indirect prompt injection (malicious forms and instructions injected into webpages)</td>
+<td>R2 Wrong instruction following (persuasive instructions mislead agent to attacker-controlled fields), R3 Unconstrained data flow (PII flows from task input through injected forms to attacker server), R5 Private data leakage (leaks the user’s specific PII at up to 70% ASR, or the full user request at 16% ASR, by auto-submitting typed values to an attacker-controlled site)</td>
+</tr>
+<tr>
+<td>RedCode</td>
+<td>V4 Direct prompt injection (jailbreak prefixes and code-as-docstring bypass alignment)</td>
+<td>R2 Wrong instruction following (low rejection rate and high ASR across code agents), R5 Private data leakage (reads /etc/passwd and sensitive system files), R6 Unauthorized actions (deletes system files, terminates processes, modifies shell config), R7 Denial-of-service (memory-leak scenario: executed code creates a large number of unfreed objects tracked via tracemalloc, ASR 71.7%)</td>
+</tr>
+<tr>
+<td>ToolSword</td>
+<td>V2 Malicious data injection (harmful texts and error-riddled payloads injected into the feedback of 18 constructed tools), V3 Tool poisoning (interchanged tool names and risky tool descriptions), V4 Direct prompt injection (malicious queries with three jailbreak methods)</td>
+<td>R1 Untrusted interfaces (three distinct interfaces exercised: user input, tool metadata, tool return values), R2 Wrong instruction following (tool availability disrupts alignment and ASR reaches 100%), R3 Unconstrained data flow (harmful tool feedback flows unchecked to user responses), R4 Hallucinations and model mistakes (over-reliance on erroneous output and misselection from name noise), R6 Unauthorized actions (wrong tool selection causes irreversible harm in real-world systems)</td>
+</tr>
+<tr>
+<td>OS-Harm</td>
+<td>V1 Indirect prompt injection (injections in websites, documents, code files, emails, notifications), V4 Direct prompt injection (deliberate misuse instructions with optional jailbreak)</td>
+<td>R1 Untrusted interfaces (six heterogeneous injection interfaces: websites, emails, email drafts, docx files, code comments, desktop notifications), R2 Wrong instruction following (agents comply with injected goals in 20% of cases), R3 Unconstrained data flow (credentials and files flow to attacker-controlled destinations), R4 Hallucinations and model mistakes (open-ended tasks trigger hallucinated and over-helpful behavior), R5 Private data leakage (exfiltrates passwords, SSH keys, files, task instructions), R6 Unauthorized actions (executes scripts, sets CRON persistence, deletes system files), R7 Denial-of-service (the Stop Task injection goal makes the agent abort and falsely report completion)</td>
+</tr>
+<tr>
+<td>SafeArena</td>
+<td>V4 Direct prompt injection (malicious user requests harmful web actions)</td>
+<td>R2 Wrong instruction following (agents complete 27 to 35% of harmful requests), R6 Unauthorized actions (misinformation posts, illicit item listings, and harassment actions that change state on self-hosted WebArena-style replica websites)</td>
+</tr>
+<tr>
+<td>MobileSafetyBench</td>
+<td>V1 Indirect prompt injection (injected prompts in UI text and images via messages and posts), V4 Direct prompt injection (100 high-risk daily-scenario tasks feature a misusing user issuing harmful instructions, with refusal rates measured)</td>
+<td>R2 Wrong instruction following (agents follow injected instructions as new user instructions, and defenses ranged from 3/50 to 15/50), R3 Unconstrained data flow (untrusted message and post content flows from screen observations into actions in banking, trading, and settings apps), R5 Private data leakage (mishandles authentication codes and credit card data), R6 Unauthorized actions (injected prompts cause unauthorized stock sales, banking access, and device password change attempts)</td>
+</tr>
+<tr>
+<td>BrowserART</td>
+<td>V4 Direct prompt injection (harmful instructions with four jailbreak techniques)</td>
+<td>R2 Wrong instruction following (ASR rises from 12% in chat to 74% in browser agent), R6 Unauthorized actions (100 harmful behaviors across interaction and content generation)</td>
+</tr>
+<tr>
+<td>VPI-Bench</td>
+<td>V1 Indirect prompt injection (visual attack prompts in rendered web pages and popups)</td>
+<td>R2 Wrong instruction following (measures attempted rate for visually embedded malicious tasks), R5 Private data leakage (75.5% of samples involve data exfiltration, monitored in the execution environment), R6 Unauthorized actions (79.4% of samples involve unauthorized actions such as file modification and command execution)</td>
+</tr>
+<tr>
+<td>HAICOSYSTEM</td>
+<td>V4 Direct prompt injection (simulated malicious users with multi-turn adversarial prompts)</td>
+<td>R2 Wrong instruction following (agents follow malicious simulated users, and multi-turn interaction surfaces up to 3 times more safety risks than single-turn benchmarks), R4 Hallucinations and model mistakes (benign users with vague instructions trigger risks without any adversary, such as sending money to the wrong person), R5 Private data leakage (evaluation scores unauthorized privacy violations), R6 Unauthorized actions (scores intrusion, system impairment, unauthorized actions, fraud)</td>
+</tr>
+<tr>
+<td>RiOSWorld</td>
+<td>V1 Indirect prompt injection (induced text, pop-ups, phishing emails, file-embedded instructions), V2 Malicious data injection (attacker-supplied harmful files delivered through phishing links and email attachments, and the risk evaluator checks whether harmful files are downloaded), V4 Direct prompt injection (user instructs harmful posts and high-risk commands)</td>
+<td>R1 Untrusted interfaces (tests across browser, email, desktop, file system, terminal), R2 Wrong instruction following (89.8% unsafe rate, as agents trust screen content unconditionally), R3 Unconstrained data flow (file-embedded commands propagate to system execution), R4 Hallucinations and model mistakes (imprecise clicks hit unintended pop-ups despite risk awareness), R5 Private data leakage (agents upload private API keys to public repositories), R6 Unauthorized actions (system sabotage, system crippling, financial fraud, illegal acts)</td>
+</tr>
+<tr>
+<td>RedCodeAgent</td>
+<td>V4 Direct prompt injection (adversarial prompts with jailbreak methods and code substitution)</td>
+<td>R2 Wrong instruction following (measures ASR and rejection rate for risky instructions), R5 Private data leakage (scenarios test reading, copying, and listing files in sensitive directories), R6 Unauthorized actions (file deletion, reverse shells, eight malware families)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="coverage-gaps" tabindex="-1">Coverage Gaps</h2>
+<p>The vectors and risks below are covered by few or no tools, so a curriculum built from these tools alone would leave them untaught.</p>
+<h3 id="attack-vectors-with-weak-coverage" tabindex="-1">Attack vectors with weak coverage</h3>
+<ul>
+<li><strong>V2 Malicious data injection: 2 tools.</strong> ToolSword injects harmful and error-riddled payloads into tool feedback. RiOSWorld delivers attacker-supplied harmful files through phishing links and attachments. Poisoned software packages that trigger supply-chain compromise receive no coverage from any tool.</li>
+<li><strong>V3 Tool poisoning and manipulation: 1 tool.</strong> Only ToolSword covers this, through tool name interchange and risky functional descriptions. Attacks that inject malicious payloads into actual tool implementations are not tested by any tool.</li>
+<li><strong>V5 Model poisoning: 0 tools.</strong> No tool tests genuine model weight backdoors. ASB’s Plan-of-Thought Backdoor Attack manipulates the system prompt with trigger-activated examples, but it does not modify the model itself.</li>
+<li><strong>V6 Memory poisoning: 2 tools.</strong> AgentPoison and ASB cover this through RAG knowledge base poisoning and ChromaDB workflow injection. Coverage is limited to retrieval-augmented generation stores. Attacks that leak sensitive data from agent memory (the second half of the V6 definition) are not directly tested.</li>
+</ul>
+<h3 id="security-risks-with-weak-coverage" tabindex="-1">Security risks with weak coverage</h3>
+<ul>
+<li><strong>R1 Heterogeneous untrusted interfaces: 5 tools.</strong> AgentDojo, ASB, ToolSword, OS-Harm, and RiOSWorld exercise multiple distinct untrusted interfaces.</li>
+<li><strong>R4 Hallucinations and model mistakes: 4 tools.</strong> ToolSword, OS-Harm, HAICOSYSTEM, and RiOSWorld test this through fabricated tool inputs, erroneous tool selection, over-helpful behavior, vague-instruction failures, and imprecise agent actions. Package hallucination attacks, where attackers register packages with names that LLMs frequently hallucinate, receive no coverage from any tool.</li>
+<li><strong>R7 Resource drain and denial-of-service: 3 tools.</strong> AgentDojo tests refusal-triggering DoS injections. RedCode tests a memory-leak execution scenario. OS-Harm tests a Stop Task injection goal that aborts the task with a false completion report. Agent-level resource exhaustion through costly API call loops or infinite execution chains remains largely untested.</li>
+</ul>
+<h2 id="references" tabindex="-1">References</h2>
+<ul>
+<li>Taxonomy: <a href="https://arxiv.org/abs/2603.11088">The Attack and Defense Landscape of Agentic AI: A Comprehensive Survey</a></li>
+<li>Scoring scheme that uses these codes as descriptive labels: <a href="criteria.html"><code>criteria.{md|html}</code></a></li>
+</ul>
+
+    </main>
+    <!--highlight-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.8.0/dist/highlightjs-line-numbers.min.js"></script>
+    <!--mermaid-->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!--sequence-->
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/webfont.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/snap.svg-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/underscore-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/sequence-diagram-min.js"></script>
+    <!--flowchart-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+    <script src="https://flowchart.js.org/flowchart-latest.js"></script>
+    <!--Graphviz powered by viz.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/viz.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/full.render.js"></script>
+    <!--Vega-Lite-->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <!--Abc-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/abcjs/6.1.9/abcjs-basic-min.min.js"></script>
+    <script>
+        mermaid.init({ noteMargin: 10 }, document.querySelectorAll(".language-mermaid"));
+        mermaid.initialize({ startOnLoad: true });
+        document.querySelectorAll(".language-sequence")?.forEach((dom, i) => {
+            dom.id = `sequence-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            Diagram.parse(content).drawSVG(dom.id, { theme: 'simple' });
+        });
+        document.querySelectorAll(".language-flow")?.forEach((dom, i) => {
+            dom.id = `flow-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            flowchart.parse(content).drawSVG(dom.id);
+        });
+
+        var viz = new Viz();
+        document.querySelectorAll(".language-graphviz")?.forEach((dom, i) => {
+            dom.id = `graphviz-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            viz.renderSVGElement(content)
+                .then(function (element) {
+                    dom.appendChild(element);
+                })
+                .catch(error => {
+                    // Create a new Viz instance (@see Caveats page for more info)
+                    viz = new Viz();
+
+                    // Possibly display the error
+                    console.error(error);
+                });
+        });
+
+        document.querySelectorAll(".language-abc")?.forEach((dom, i) => {
+            dom.id = `abc-${i}`;
+            let content = dom.textContent;
+            ABCJS.renderAbc(dom.id, content);
+        });
+
+        document.querySelectorAll(".language-vega")?.forEach((dom, i) => {
+            dom.id = `vega-${i}`;
+            let content = dom.textContent;
+            let spec = {};
+            try {
+                spec = JSON.parse(content);
+            } catch (e) {
+                spec = {};
+            }
+            dom.textContent = "";
+            vegaEmbed(`#${dom.id}`, spec);
+        });
+
+        // https://github.com/highlightjs/highlight.js/
+        // modified from: https://github.com/wcoder/highlightjs-line-numbers.js/
+        let lastLine = 0;
+        const BREAK_LINE_REGEXP = /\r\n|\r|\n/g;
+        function getLinesCount(text) {
+            return (text.trim().match(BREAK_LINE_REGEXP) || []).length;
+        }
+        document.querySelectorAll('code')?.forEach((dom) => {
+            let lang = dom.className.match(/language\-([^=]*)?(=?)(\+?[0-9]*)$/);
+            if (lang === null) return;
+            if (lang[1] === '!') {
+                dom.classList.add("break");
+                return;
+            } else {
+                hljs.highlightElement(dom);
+            }
+
+            if (lang[2]) {
+                let line;
+                if (lang[3] === '') {
+                    line = 1;
+                } else if (lang[3] === '+') {
+                    line = lastLine + 1;
+                } else {
+                    line = Number(lang[3]);
+                }
+                lastLine = line + getLinesCount(dom.innerText);
+                hljs.lineNumbersBlock(dom, {
+                    startFrom: line
+                });
+            }
+        });
+
+        // automatically set title
+        const h1 = document.querySelector("h1");
+        if (!document.title && h1 && h1.textContent) {
+            document.title = h1.textContent;
+        }
+    </script>
+</body>
+
+</html>

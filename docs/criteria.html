@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta property="og:type" content="article">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);
+        html[lang^=ja] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, Hiragino Kaku Gothic Pro, ヒラギノ角ゴ Pro W3, Osaka, Meiryo, メイリオ, MS Gothic, ＭＳ ゴシック, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        html[lang=zh-tw] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, PingFang TC, Microsoft JhengHei, 微軟正黑, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        html[lang=zh-cn] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, PingFang SC, Microsoft YaHei, 微软雅黑, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        :root {
+            --body-background: #f0f0f0;
+            --hr-color: #e7e7e7;
+        }
+
+        body {
+            background-color: var(--body-background);
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 10px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.42857143;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 2rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.3rem 0;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        h5 {
+            font-size: 1.1rem;
+            margin: 1.1rem 0;
+        }
+
+        h6 {
+            font-size: 1rem;
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol,
+        li,
+        section,
+        summary,
+        p {
+            font-size: 1rem;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+        }
+
+        li.task-list-item{
+            list-style-type: none;
+        }
+
+        input.task-list-item-checkbox{
+            float: left;
+            margin: .31em 0 .2em -1.3em !important;
+            vertical-align: middle;   
+        }
+
+        main {
+            background-color: #fff;
+            box-sizing: border-box;
+            border-radius: 20px;
+            margin: 0px auto;
+            max-width: 900px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        a {
+            color: #337ab7;
+            text-decoration: none;
+        }
+
+        a:focus,
+        a:hover {
+            color: #23527c;
+            text-decoration: underline;
+        }
+
+        a:focus {
+            outline: 5px auto -webkit-focus-ring-color;
+            outline-offset: -2px;
+        }
+
+        .success {
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+            color: #3c763d;
+        }
+
+        .info {
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+            color: #31708f;
+        }
+
+        .warning {
+            background-color: #fcf8e3;
+            border-color: #faebcc;
+            color: #8a6d3b;
+        }
+
+        .danger {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+            color: #a94442;
+        }
+
+        .success,
+        .info,
+        .warning,
+        .danger {
+            border: 1px solid transparent;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        hr{
+            margin: 24px 0px;
+            height: .25rem;
+            background-color: var(--hr-color);
+            border: 0px;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        blockquote {
+            border-left: 0.25rem solid #ddd;
+            color: #777;
+            font-size: 1rem;
+            margin: 0px;
+            padding: 0 1rem;
+        }
+
+        span.blockquoteX{
+            display: block;
+            font-size: 80%;
+        }
+
+        span.blockquoteX::before{
+            content: '\2014 \00A0';
+        }
+
+        span.material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 48;
+            font-size: 1rem;
+            margin: 3px 5px;
+            vertical-align: bottom;
+        }
+
+        span.material-symbols-outlined-fill{
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 48;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            display: block;
+            margin-top: 0;
+            margin-bottom: 16px;
+            overflow: auto;
+            width: 100%;
+            word-break: keep-all;
+        }
+
+        table tr {
+            border-top: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table th {
+            border: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table td {
+            border: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table tr:nth-child(2n) {
+            background-color: var(--body-background);
+        }
+
+        pre {
+            /* padding: 16px; */
+            overflow: auto;
+            line-height: 1.45;
+        }
+
+        code{
+            padding: .2em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            background-color: var(--body-background);
+            font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+        }
+
+        dl dt{
+            padding: 0;
+            margin-top: 16px;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /*block code*/
+        pre code {
+            display: block;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        code table tr:nth-child(2n) {
+            background-color: transparent;
+        }
+
+        code.break {
+            white-space: break-spaces;
+            word-break: break-all;
+        }
+
+        code.language-mermaid,
+        code.language-sequence,
+        code.language-graphviz,
+        code.language-vega,
+        code.language-abc,
+        code.language-flow {
+            background-color: transparent;
+            text-align: center;
+        }
+
+        mark {
+            padding: 0.2rem;
+            background-color: #fff1a7;
+        }
+
+        /*---embed---*/
+        embed{
+            overflow: auto; 
+            width: 100%; 
+            height: 400px;
+        }
+
+        iframe{
+            margin: 10px auto;
+            width: 100%; 
+            height: 480px;
+        }
+        
+        .gist table tr{
+            border: 0px;
+        }
+
+        .gist table td{
+            border: 0px;
+        }
+
+        /*---hljs---*/
+        .hljs-comment {
+            color: #708090;
+        }
+
+        .hljs-punctuation,
+        .hljs-tag {
+            color: #444a
+        }
+
+        .hljs-tag .hljs-attr,
+        .hljs-tag .hljs-name {
+            color: #444
+        }
+
+        .hljs-attribute,
+        .hljs-doctag,
+        .hljs-keyword,
+        .hljs-meta .hljs-keyword,
+        .hljs-name,
+        .hljs-selector-tag {
+            color: #07a;
+        }
+
+        .hljs-deletion,
+        .hljs-number,
+        .hljs-quote,
+        .hljs-selector-class,
+        .hljs-selector-id,
+        .hljs-template-tag,
+        .hljs-type {
+            color: #690
+        }
+
+        .hljs-section,
+        .hljs-title {
+            color: #dd4a68;
+        }
+
+        .hljs-link,
+        .hljs-operator,
+        .hljs-regexp,
+        .hljs-selector-attr,
+        .hljs-selector-pseudo,
+        .hljs-symbol,
+        .hljs-template-variable,
+        .hljs-variable {
+            color: #bc6060
+        }
+
+        .hljs-literal {
+            color: #78a960
+        }
+
+        .hljs-addition,
+        .hljs-built_in,
+        .hljs-bullet,
+        .hljs-code {
+            color: #397300
+        }
+
+        .hljs-meta {
+            color: #1f7199
+        }
+
+        .hljs-meta,
+        .hljs-string {
+            color: #690
+        }
+
+        .hljs-emphasis {
+            font-style: italic
+        }
+
+        .hljs-strong {
+            font-weight: 700
+        }
+
+        table.hljs-ln,
+        .hljs-ln td,
+        .hljs-ln tr {
+            /*override table style*/
+            border: 0px;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .hljs-ln-numbers {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            color: #afafaf !important;
+            border-right: 3px solid #6ce26c !important;
+        }
+
+        .hljs-ln-n {
+            box-sizing: content-box;
+            vertical-align: top;
+            padding: 0px 8px 0px 0px;
+            min-width: 20px;
+            text-align: right;
+        }
+
+        .hljs-ln-code {
+            padding: 0px 0px 0px 16px !important;
+        }
+
+        /*---fretboard---*/
+        .fretTitle {
+            color: #555;
+            text-align: center;
+            font-family: "Helvetica Neue", sans-serif;
+            line-height: 1.4;
+            font-size: 1.6em;
+            margin: 10px 0 10px 0;
+            font-weight: 900;
+            padding: 5px;
+        }
+
+        .fretContainer section {
+            padding: 20px;
+        }
+
+        .fretContainer .content {
+            max-width: 960px;
+            margin: auto;
+        }
+
+        .fretContainer,
+        .fretContainer_h {
+            outline: solid 1px #eeee;
+            margin: 0 auto;
+            padding: 15px 0;
+        }
+
+        .fretContainer {
+            width: 320px;
+        }
+
+        .fretContainer_h {
+            max-width: 400px;
+        }
+
+        .svg_wrapper {
+            background-color: #fff;
+            position: relative;
+            height: 0;
+        }
+
+        .svg_wrapper svg.fretboard_bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .svg_wrapper .cells {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .svg_wrapper.v4 {
+            padding-top: 91.6666666667%;
+        }
+
+        .svg_wrapper.v5 {
+            padding-top: 106.9444444444%;
+        }
+
+        .svg_wrapper.v7 {
+            padding-top: 137.5%;
+        }
+
+        .svg_wrapper.v9 {
+            padding-top: 168.0555555556%;
+        }
+
+        .svg_wrapper.v12 {
+            padding-top: 213.8888888889%;
+        }
+
+        .svg_wrapper.v15 {
+            padding-top: 259.7222222222%;
+        }
+
+        .svg_wrapper.v .cell svg {
+            width: 12.5%;
+            float: left;
+            display: block;
+        }
+
+        .svg_wrapper.v4 .cell svg {
+            height: 16.6666666667%;
+        }
+
+        .svg_wrapper.v5 .cell svg {
+            height: 14.2857142857%;
+        }
+
+        .svg_wrapper.v7 .cell svg {
+            height: 11.1111111111%;
+        }
+
+        .svg_wrapper.v9 .cell svg {
+            height: 9.0909090909%;
+        }
+
+        .svg_wrapper.v12 .cell svg {
+            height: 7.1428571429%;
+        }
+
+        .svg_wrapper.v15 .cell svg {
+            height: 5.8823529412%;
+        }
+
+        .svg_wrapper.h5 {
+            padding-top: 85.7142857143%;
+        }
+
+        .svg_wrapper.h6 {
+            padding-top: 75%;
+        }
+
+        .svg_wrapper.h7 {
+            padding-top: 72.7272727273%;
+        }
+
+        .svg_wrapper.h .cell svg {
+            height: 12.5%;
+            float: left;
+            display: block;
+            z-index: 2;
+        }
+
+        .svg_wrapper.h5 .cell svg {
+            width: 14.2857142857%;
+        }
+
+        .svg_wrapper.h6 .cell svg {
+            width: 12.5%;
+        }
+
+        .svg_wrapper.h7 .cell svg {
+            width: 12.1212121212%;
+        }
+
+        /* Fretboard Element Styles */
+
+        .cell.dot .fretb_dot {
+            fill: #27a9e1;
+        }
+
+        .cell.dot.root .fretb_dot {
+            fill: #f05a28;
+        }
+
+        .cell.dot.faded .fretb_dot {
+            opacity: .25;
+        }
+
+        .fretboard_bg .fret_bg rect {
+            fill: #fff;
+        }
+
+        .fretboard_bg .frets rect {
+            fill: #ddd;
+        }
+
+        .fretboard_bg .nut rect {
+            fill: #6e6e6e;
+        }
+
+        .fretboard_bg .strings rect {
+            fill: #6e6e6e;
+        }
+
+        .svg_wrapper.noNut .fretboard_bg .nut rect {
+            fill: none;
+        }
+
+        @media all and (max-width: 400px) {
+            .fretContainer_h {
+                max-width: 288px;
+            }
+        }
+
+        @media all and (max-width: 420px) {
+            .fretContainer {
+                max-width: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1 id="evaluation-rubric" tabindex="-1">Evaluation Rubric</h1>
+<p>This document defines how we score an agentic-security tool. It adopts the assessment framework of BetterBench (<a href="https://arxiv.org/abs/2411.12990">paper</a>, <a href="https://betterbench.stanford.edu/methodology.html">methodology</a>) for the four lifecycle stages that BetterBench scores, and adds a fifth stage, <em>Education</em>, for the concerns of (1) an instructor who lets students run the tool and build defenses against it and (2) building a security educational platform on agentic LLMs.</p>
+<h2 id="table-of-contents" tabindex="-1">Table of Contents</h2>
+<ul>
+<li><a href="#scale-and-aggregation">Scale and aggregation</a></li>
+<li><a href="#betterbench-stages-design-implementation-documentation-and-maintenance">BetterBench stages: Design, Implementation, Documentation, and Maintenance</a>
+<ul>
+<li><a href="#design-14-criteria">Design (14 criteria)</a></li>
+<li><a href="#implementation-10-criteria">Implementation (10 criteria)</a></li>
+<li><a href="#documentation-20-criteria">Documentation (20 criteria)</a></li>
+<li><a href="#maintenance-3-criteria">Maintenance (3 criteria)</a></li>
+</ul>
+</li>
+<li><a href="#our-stage-education">Our stage: Education</a>
+<ul>
+<li><a href="#education-8-criteria">Education (8 criteria)</a></li>
+</ul>
+</li>
+<li><a href="#references">References</a></li>
+</ul>
+<h2 id="scale-and-aggregation" tabindex="-1">Scale and aggregation</h2>
+<p>Every criterion is scored on BetterBench’s discrete levels, with BetterBench’s meanings:</p>
+<ul>
+<li>0: neither acknowledged nor addressed</li>
+<li>5: acknowledged but not addressed (the developers state the need or the gap without meeting it)</li>
+<li>10: partially addressed</li>
+<li>15: fully addressed</li>
+<li>n/a: not relevant to this benchmark (excluded from every average)</li>
+</ul>
+<p>Source of judgements:</p>
+<ul>
+<li>For <em>Design</em>, <em>Implementation</em>, <em>Documentation</em>, and <em>Maintenance</em>, the evidence is material published by the tool’s developers (paper, website, repository), as BetterBench prescribes. Each criterion row cites the section, heading, or path that supports the score.</li>
+<li>For the <em>Education</em> stage, the evidence is our own run of the tool (measured times, result files, trajectories) in addition to published material.</li>
+</ul>
+<p>Our aggregational scoring follows BetterBench:</p>
+<ul>
+<li>A <em>stage score</em> is the mean of all criteria in that stage, excluding any criteria scored as “n/a”.</li>
+<li>The <em>usability score</em> is the <strong>criterion-count-weighted</strong> mean of the <em>Implementation</em>, <em>Documentation</em>, and <em>Maintenance</em> stage scores, which equals the plain mean over all applicable criteria in those three stages. <em>Design</em> is reported separately.</li>
+<li>The <em>Education</em> stage is reported as its own score and is not folded into usability, so the four BetterBench stage scores of a tool stay comparable with the scores that BetterBench publishes for other benchmarks.</li>
+</ul>
+<h2 id="betterbench-stages%3A-design%2C-implementation%2C-documentation%2C-and-maintenance" tabindex="-1">BetterBench stages: Design, Implementation, Documentation, and Maintenance</h2>
+<p>The criteria below are copied verbatim from the BetterBench methodology page.</p>
+<blockquote>
+<p>[!NOTE]<br>
+Criteria that will usually be n/a for agent-security benchmarks with generated data are D10 (human performance level), Do6 (normative properties), and Do18 (data annotation process).</p>
+</blockquote>
+<h3 id="design-(14-criteria)" tabindex="-1">Design (14 criteria)</h3>
+<h4 id="d1.-definition-of-tested-capability-or-characteristic" tabindex="-1">D1. Definition of tested capability or characteristic</h4>
+<p>Explanation: The benchmark developers mention and define what underlying capability or characteristic of a model is supposed to be tested with the benchmark.</p>
+<p>Justification: Defining the objective of the benchmark is necessary for clarity in its design. It also helps users determine if the benchmark aligns with their specific application needs and ensures that users and developers have a shared understanding of the concept being evaluated, facilitating consistent interpretation of results.</p>
+<p>Points:</p>
+<ul>
+<li>0: Tested concept, capability, or characteristic not explicitly mentioned.</li>
+<li>5: Tested concept explicitly mentioned and need for definition acknowledged, but definition not provided.</li>
+<li>10: Tested concept, capability, or characteristic explicitly mentioned but not defined.</li>
+<li>15: Tested concept, capability, or characteristic explicitly mentioned and defined.</li>
+</ul>
+<h4 id="d2.-description-of-how-tested-capability-or-concept-translates-to-benchmark-task" tabindex="-1">D2. Description of how tested capability or concept translates to benchmark task</h4>
+<p>Explanation: The benchmark developers describe how the tested capability or characteristic translates to the task implemented in the benchmark/the task the model is tested on in the benchmark.</p>
+<p>Justification: Clearly explaining this translation ensures that the benchmark tasks accurately reflect the intended tested capabilities and concepts, providing valid assessment results.</p>
+<p>Points:</p>
+<ul>
+<li>0: No description of how the tested capability or concept translates to the benchmark task.</li>
+<li>5: Acknowledgement that not describing how the tested capability or concept translates to the benchmark task is an issue, but no description provided.</li>
+<li>10: Description of how tested capability or concept translates to benchmark tasks provided for some but not all tasks.</li>
+<li>15: Description of how tested capability or concept translates to benchmark tasks provided for all tasks.</li>
+</ul>
+<h4 id="d3.-description-of-how-knowing-about-the-tested-concept-is-helpful-in-the-real-world" tabindex="-1">D3. Description of how knowing about the tested concept is helpful in the real world</h4>
+<p>Explanation: The developers describe why it is useful to know about the tested capability in the real world.</p>
+<p>Justification: This description helps users understand the practical value of the benchmark, demonstrating how the tested capability impacts real-world applications and use cases.</p>
+<p>Points:</p>
+<ul>
+<li>0: No description of how knowing about the tested concept is helpful in the real world.</li>
+<li>5: Acknowledgement that not describing how knowing about the tested concept is helpful in the real world is an issue, but no description provided.</li>
+<li>10: Limited description of how knowing about the tested concept is helpful in the real world.</li>
+<li>15: Full description of how knowing about the tested concept is helpful in the real world.</li>
+</ul>
+<h4 id="d4.-description-of-use-cases-and-user-personas-for-the-benchmark" tabindex="-1">D4. Description of use cases and user personas for the benchmark</h4>
+<p>Explanation: A use case for an AI benchmark involves specifying a scenario in which the AI system will be evaluated. This scenario should include the cultural and geographic context and the type of interactions between humans and models, if applicable. Additionally, user personas should be defined to represent the different types of users that might interact with the AI system, if applicable.</p>
+<p>Justification: Use cases set the context and scope of the benchmark. User personas outline an understanding of the different types of interactions the benchmark developers anticipate the tested AI system to be used in, e.g., ranging from typical users to those with specific challenges or malicious intent. This approach ensures that the design of the benchmark is closely related to real-world applications and that it’s effective across diverse scenarios.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not include any description of use cases or user personas.</li>
+<li>5: The benchmark acknowledges the importance of use cases or user personas but does not explicitly formulate or describe them.</li>
+<li>10: The benchmark provides a partial description of use cases or user personas.</li>
+<li>15: The benchmark fully describes use cases and user personas, specifying the cultural and geographic context, types of human-model interactions (if applicable), and representing different user types that might interact with the AI system (if applicable).</li>
+</ul>
+<h4 id="d5.-involvement-of-domain-experts" tabindex="-1">D5. Involvement of domain experts</h4>
+<p>Explanation: Domain expert(s) who have a professional background or research experience in the concept to be tested are either co-authors of the paper, or were involved in the benchmark design process, i.e., the paper makes clear how they obtained the expertise and how that informed the benchmark design.</p>
+<p>Justification: Involving domain experts ensures that the benchmark design is informed by deep, specialized knowledge, increasing its validity and relevance. This expertise helps to create tasks that accurately assess the targeted capabilities and align with real-world scenarios.</p>
+<p>Points:</p>
+<ul>
+<li>0: None of the authors has a background in the benchmark domain and no external experts were consulted during the design process.</li>
+<li>5: The benchmark mentions domain experts but doesn’t specify any further details.</li>
+<li>10: The benchmark mentions that domain experts were consulted but not how their insights influenced the benchmark design.</li>
+<li>15: At least one of the co-authors has a professional or academic background in the benchmark domain or the benchmark specified how external experts were consulted and how that influenced the design process.</li>
+</ul>
+<h4 id="d6.-integration-of-domain-literature" tabindex="-1">D6. Integration of domain literature</h4>
+<p>Explanation: The developers cite domain literature in the background section and describe how insights from this literature informed the design of their benchmark or cite relevant domain literature in the benchmark design process.</p>
+<p>Justification: By consulting domain-specific literature, benchmark developers can ensure that the tasks and evaluation criteria they include are representative and aligned with the current state of knowledge in the field. This literature often contains valuable insights into best practices, established methodologies, and proven approaches for evaluating the tested concept, which can be incorporated into the benchmark design to enhance its reliability.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not reference domain-specific literature.</li>
+<li>5: The benchmark mentions the need to integrate domain literature but did not address it in the background section or design process.</li>
+<li>10: The benchmark references domain literature in the background or related work section but does not describe how that domain literature informed the benchmark design process.</li>
+<li>15: The benchmark references domain literature throughout the paper and describes how that domain literature informed the benchmark design process.</li>
+</ul>
+<h4 id="d7.-description-of-how-benchmark-score-should-or-shouldn%E2%80%99t-be-interpreted%2Fused" tabindex="-1">D7. Description of how benchmark score should or shouldn’t be interpreted/used</h4>
+<p>Explanation: The benchmark developers provide information about what benchmark users can and cannot take away from the benchmark score.</p>
+<p>Justification: Clarifying the interpretation of benchmark scores prevents misuse and misinterpretation, ensuring that users draw accurate conclusions about a model’s performance. This guidance helps users apply the scores appropriately within their specific contexts, and understand if the benchmark can be used to assess a model for their desired application context.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not comment on how the benchmark scores should or shouldn’t be interpreted.</li>
+<li>5: The benchmark acknowledges that the benchmark scores need to be interpreted but gives no guidance with respect to how or how not to do that.</li>
+<li>10: The benchmark describes how scores should or shouldn’t be interpreted or used, but not both.</li>
+<li>15: The benchmark describes how scores should and shouldn’t be interpreted or used.</li>
+</ul>
+<h4 id="d8.-informed-choice-of-performance-metric(s)" tabindex="-1">D8. Informed choice of performance metric(s)</h4>
+<p>Explanation: The developers describe how the performance metric for the defined benchmark task should be interpretable, meaningful, and standard for the task that’s being evaluated. If a non-standard metric is selected, they describe their rationale for choosing a non-standard metric.</p>
+<p>Justification: The metric should be easily understood by the reader to build their own opinion about the model’s capabilities, given the benchmark score. If a non-standard metric is used, an explanation is necessary to clarify its relevance and ensure that users can accurately interpret the results.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not mention an evaluation metric or does not explain the choice of metric.</li>
+<li>5: The benchmark acknowledges the need for an informed metric choice but does not justify their metric choice.</li>
+<li>10: The benchmark provides an explanation for the choice of some but not all of their metrics.</li>
+<li>15: The benchmark provides an explanation for the choice of all of their metrics.</li>
+</ul>
+<h4 id="d9.-includes-floors-and-ceilings-for-metric" tabindex="-1">D9. Includes floors and ceilings for metric</h4>
+<p>Explanation: The benchmark provides clear floors and ceilings for the metric(s) it uses.</p>
+<p>Justification: Establishing clear floors and ceilings for metrics ensures that users have a reference point for understanding model performance. It helps users understand if a benchmark is already saturated or if progress can be made on the task. This also allows benchmark developers to decide when a benchmark should be retired.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark doesn’t provide any floors or ceilings.</li>
+<li>5: Floors and ceilings are shown in the results figure but not explicitly mentioned in the text.</li>
+<li>10: The benchmark provides floors and ceilings for some but not all evaluation metrics.</li>
+<li>15: The benchmark provides floors and ceilings for all evaluation metrics.</li>
+</ul>
+<h4 id="d10.-includes-human-performance-level" tabindex="-1">D10. Includes human performance level</h4>
+<p>Explanation: The benchmark explicitly states human performance measured on the benchmark task. It also explains how human performance was measured and if this was the performance of an average or expert group of humans. The benchmark notes if measuring human performance is not possible on the benchmark task and why.</p>
+<p>Justification: Including human performance on a benchmark allows the reader to put the model’s performance into perspective and allows for a better interpretability of the benchmarking score.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not state human performance and does not explain why this isn’t applicable here.</li>
+<li>5: The benchmark mentions human performance in passing but does not provide a measurement or explanation.</li>
+<li>10: The benchmark states human performance but does not explain how it was obtained.</li>
+<li>15: The benchmark states human performance and explains how it was obtained.</li>
+</ul>
+<h4 id="d11.-includes-random-performance-level" tabindex="-1">D11. Includes random performance level</h4>
+<p>Explanation: The developers explicitly states the random performance measured on the benchmark.</p>
+<p>Justification: By establishing a baseline performance level achieved through random guessing, generation, or selection, benchmark users can better understand the extent to which a model’s performance stems from its inherent capabilities, rather than mere chance or the benchmark’s design and especially metric choices. This random performance level serves as a reference point, allowing for a clearer assessment of the model’s true effectiveness in tackling the specific task at hand.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not state random performance and does not explain why this isn’t applicable here.</li>
+<li>5: The benchmark mentions random performance but does not provide quantitative random performance on the benchmark task(s).</li>
+<li>10: The benchmark states random performance for some but not all tasks.</li>
+<li>15: The benchmark states random performance for all tasks.</li>
+</ul>
+<h4 id="d12.-addresses-input-sensitivity" tabindex="-1">D12. Addresses input sensitivity</h4>
+<p>Explanation: The benchmark contains multiple input variations with the same semantic meaning/intended to elicit the same response or output by the tested model. The developers describe all relevant details such as how many different variations were tested per prompt, and how the variations were designed. For language models, this would mean including a variety of semantically (but not syntactically) equivalent prompts to combat prompt sensitivity. For computer vision models, this could mean inputting a normal, a blurred, and a cropped version of the same image, etc.), while for reinforcement learning, this could mean measuring the sensitivity of learned policies to input features.</p>
+<p>Justification: Addressing input sensitivity in a benchmark ensures that the model’s performance is consistent across semantically equivalent inputs, thus validating its robustness. Including multiple variations per input and detailing their design allows for inspection and replicable evaluation of the model’s capabilities. This serves the goal of approximating intrinsic model capabilities or harms better rather than just measuring “an artifact” of your input.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not mention or address input sensitivity.</li>
+<li>5: The benchmark mentions the issue of input sensitivity but does not describe experiments to test for it.</li>
+<li>10: The benchmark includes some input variations with the same semantic meaning but lacks thorough descriptions or details on the number of variations and their design.</li>
+<li>15: The benchmark contains multiple input variations with the same semantic meaning, providing detailed descriptions of all relevant details such as the number of variations per prompt and how they were designed.</li>
+</ul>
+<h4 id="d13.-validated-automatic-evaluation-available" tabindex="-1">D13. Validated automatic evaluation available</h4>
+<p>Explanation: Evaluating a model against a benchmark does not require human evaluation in the process and the quality of the automated evaluation is validated (if applicable, e.g., in the case of FM-based evaluations).</p>
+<p>Justification: Requiring human feedback to evaluate performance on a benchmark will significantly limit the scalability of the benchmark and potentially introduce biases from the human evaluators themselves. In addition, this may require an IRB for researchers, and will be more costly than an automatic evaluation, creating “major barriers to entry”.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not provide any form of automatic evaluation and relies entirely on human evaluation.</li>
+<li>5: The benchmark mentions the benefits of automatic evaluation but provides no none or limited automatic valuation.</li>
+<li>10: The benchmark includes an automatic evaluation method but does not offer any validation.</li>
+<li>15: The benchmark includes an automatic evaluation method and describes how it was validated as well as the results of the validation.</li>
+</ul>
+<h4 id="d14.-explanation-of-differences-to-related-benchmarks" tabindex="-1">D14. Explanation of differences to related benchmarks</h4>
+<p>Explanation: The benchmark developers explain how their benchmark fills a gap compared to existing benchmarks or how it expands on existing benchmarks or their tested concepts.</p>
+<p>Justification: Benchmark developers demonstrate the added value and relevance of the new benchmark, justifying its necessity by addressing specific gaps in existing benchmarks or by expanding on saturated benchmarks. This allows users to better understand the differences between related benchmarks and determine which one to use for their specific evaluation context.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmarks do not explain any differences or relevance to existing benchmarks.</li>
+<li>5: The benchmark briefly mentions existing benchmarks but provides no explanations of differences or added value.</li>
+<li>10: The benchmark provides an explanation of how it fills a gap or expands on existing benchmarks for some but not all mentioned related benchmarks.</li>
+<li>15: The benchmark provides an explanation of how it fills a gap or expands on existing benchmarks for all mentioned related benchmarks.</li>
+</ul>
+<h3 id="implementation-(10-criteria)" tabindex="-1">Implementation (10 criteria)</h3>
+<h4 id="i1.-availability-of-evaluation-code" tabindex="-1">I1. Availability of evaluation code</h4>
+<p>Explanation: The benchmark developers make the code available for others to evaluate their own models against the benchmark, e.g., as part of a GitHub repository.</p>
+<p>Justification: Without access to the benchmarking procedure itself, the benchmark cannot be scrutinized by external parties to verify its reliability and adequacy, nor can it be utilized for independent evaluations and comparisons by benchmark users. In addition, if benchmark users have to write their evaluation code from scratch, it’s more likely that seemingly minor implementation details affect the measured performance, hindering a fair comparison.</p>
+<p>Points:</p>
+<ul>
+<li>0: The evaluation code is not publicly available.</li>
+<li>5: The benchmark mentions the availability of evaluation code but does not provide access to it.</li>
+<li>10: The evaluation code is publicly available for some metrics described by the benchmark.</li>
+<li>15: The evaluation code is publicly available for all metrics described by the benchmark.</li>
+</ul>
+<h4 id="i2.-script-to-replicate-results-is-explicitly-included" tabindex="-1">I2. Script to replicate results is explicitly included</h4>
+<p>Explanation: The benchmark developers give access to the input, output, and evaluation code, as well as all other necessary information (e.g., hyperparameters or random seed set) that they used to create the initial benchmarking results presented in the paper.</p>
+<p>Justification: Providing access to the input, output, and code allows for transparency and reproducibility of the reported results, fostering trust into the benchmark, and contributing to overcome the current reproducibility crisis in AI/ML research.</p>
+<p>Points:</p>
+<ul>
+<li>0: [No description provided] (the BetterBench page gives no text for this level, so by the scale definition 0 means the criterion is neither acknowledged nor addressed)</li>
+<li>5: The issue of result replicability is mentioned in the benchmark paper but not addressed.</li>
+<li>10: A script to reproduce some results in the benchmark paper is available.</li>
+<li>15: A script to reproduce all results in the benchmark paper is available.</li>
+</ul>
+<h4 id="i3.-accessibility-of-evaluation-data%2C-prompts%2C-or-dynamic-environment" tabindex="-1">I3. Accessibility of evaluation data, prompts, or dynamic environment</h4>
+<p>Explanation: The benchmark developers make the evaluation data, prompts, or the data/environment generation mechanism accessible. These do not have to be made public in order to earn full points (if contamination is a concern, for example), but some access to it for evaluation purposes, e.g., by hosting it privately on Hugging Face, needs to be possible.</p>
+<p>Justification: Without any accessibility of the evaluation data, prompts, or environment generation mechanism, a benchmark cannot be used.</p>
+<p>Points:</p>
+<ul>
+<li>0: No access to evaluation data, prompts, or data/environment generation mechanism is provided.</li>
+<li>5: The existence of evaluation data, prompts, or data/environment generation mechanism is mentioned, but no concrete access is provided.</li>
+<li>10: Partial access to evaluation data, prompts, or data/environment generation mechanism is provided, allowing for limited evaluation.</li>
+<li>15: Full access to evaluation data, prompts, or data/environment generation mechanism is provided, enabling comprehensive evaluation.</li>
+</ul>
+<h4 id="i4.-supports-evaluation-of-models-via-api-calls" tabindex="-1">I4. Supports evaluation of models via API calls</h4>
+<p>Explanation: The benchmark developers allow the benchmark evaluation of models via API access, if applicable.</p>
+<p>Justification: This criteria is dependent on the subfield. In NLP, for example, closed-source models such as GPT-4 are oftentimes only accessible via API. Without support for API evaluation, they cannot be evaluated, which is especially problematic if such models are the state-of-the-art models in the field.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not support evaluation of models via API calls.</li>
+<li>5: The benchmark mentions the possibility of API evaluation but does not provide concrete implementation details.</li>
+<li>10: The benchmark supports evaluation of models via one API.</li>
+<li>15: The benchmark supports evaluation of models via two or more APIs to different models.</li>
+</ul>
+<h4 id="i5.-supports-evaluation-of-local-models" tabindex="-1">I5. Supports evaluation of local models</h4>
+<p>Explanation: The benchmark developers implement code to support the evaluation of local models without API access.</p>
+<p>Justification: Some model developers only host their models locally. A benchmark should support the evaluation of those to allow for a wide variety of models to be evaluated against the benchmark.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark requires users to write their own code to evaluate a local model.</li>
+<li>5: The benchmark mentions that local evaluation should be possible but doesn’t provide corresponding code.</li>
+<li>10: The benchmark provides minimal support for local model evaluation, requiring significant user effort.</li>
+<li>15: The benchmark provides full support for local model evaluation with user-friendly code.</li>
+</ul>
+<h4 id="i6.-inclusion-of-a-globally-unique-identifier-or-encryption-of-evaluation-instances" tabindex="-1">I6. Inclusion of a globally unique identifier or encryption of evaluation instances</h4>
+<p>Explanation: Benchmark developers include a globally unique identifier (GUID) or canary string in the main public evaluation code and all public evaluation prompt or data files. Alternatively, they encrypt the test data files and make the key public.</p>
+<p>Justification: Including a GUID in relevant (sub-)repositories, public code and data repositories can support the identification of data contamination in models, either by allowing model developers to filter out the evaluation data out of large amounts of web-scraped data or by allowing benchmark developers to identify which model developers trained on their data and hence have created models that potentially perform better than they should on the benchmark. Encrypted test data files prevent non-adversarial crawling of such data; however, some advise against “using standard obfuscation or compression methods that are not key-protected, since some crawling systems include pipelines of automatic decompression or deobfuscation.”</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not include a GUID or encryption of evaluation instances.</li>
+<li>5: The benchmark acknowledges the risk of contamination but does not address it.</li>
+<li>10: The benchmark partially implements a GUID or encryption, but not consistently across all relevant files.</li>
+<li>15: The benchmark consistently includes a GUID or encryption across all relevant files and repositories.</li>
+</ul>
+<h4 id="i7.-inclusion-of-%E2%80%98training_on_test_set%E2%80%99-task" tabindex="-1">I7. Inclusion of ‘training_on_test_set’ task</h4>
+<p>Explanation: The benchmark includes a task to identify if the model was trained on the benchmark data.</p>
+<p>Justification: Public benchmarks face the challenges that their evaluation data may be web-scraped and used to train a model. A ‘training_on_test_set’ task can serve as a “post-hoc diagnosis of whether […benchmark] data was used in model training.”</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not include a ‘training_on_test_set’ task.</li>
+<li>5: The benchmark mentions the possibility that models were trained on its data but does not provide a way to check it.</li>
+<li>10: The benchmark includes a partial or limited implementation of a ‘training_on_test_set’ task that only tests for part of the data used.</li>
+<li>15: The benchmark includes a comprehensive ‘training_on_test_set’ task.</li>
+</ul>
+<h4 id="i8.-assess-need-for-warnings-for-sensitive%2Fharmful-content" tabindex="-1">I8. Assess need for warnings for sensitive/harmful content</h4>
+<p>Explanation: Benchmark developers explicitly mention in the paper if the evaluation tasks or the expected output may contain sensitive or harmful content. If they do not anticipate sensitive/harmful content in either case, they should explicitly state that.</p>
+<p>Justification: By explicitly stating the presence of sensitive or harmful content and issuing appropriate warnings, developers help users make informed decisions and take necessary precautions. Even if developers do not expect sensitive or harmful content, if they state that, they showcase to the benchmark users that they actually thought about the possibility. Otherwise, users couldn’t be sure if the input or output doesn’t contain problematic content or if the developers just forgot to include a warning.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not mention that they checked for the presence or absence of sensitive/harmful content in the evaluation tasks or expected output.</li>
+<li>5: The benchmark mentions the general possibility of sensitive/harmful content but does not provide clear statements or warnings.</li>
+<li>10: The benchmark explicitly states the presence or absence of sensitive/harmful content for either the evaluation tasks or the expected output.</li>
+<li>15: The benchmark explicitly states the presence or absence of sensitive/harmful content for both the evaluation tasks and the expected output.</li>
+</ul>
+<h4 id="i9.-release-requirements-specified" tabindex="-1">I9. Release requirements specified</h4>
+<p>Explanation: Benchmark developers specify rules for benchmark users to “ensure the integrity of test results”. While not all benchmark developers will be able to enforce the release requirements, they should at least specify them. One example is: “1. Publishers do not train directly on or against the benchmark dataset and retract any reported results if and when benchmark data is found to have been in training data. 2. Techniques that are likely to increase the test performance without a commensurate increase in safety factor are discouraged and may result in benchmark exclusion. […]”</p>
+<p>Justification: Written terms of use can help to set expectations and have a foundation to address subsequent contamination or intentional gamification attempts of the benchmark. Potential options they could mention in case of release requirement breaches are, e.g., “publishing public statements correcting the public record” or “resulting in the [model] being permanently banned from the benchmark”; however, we will not assess the enforcement ability or potential listed sanctions as part of this criteria, just the statement of release requirements.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not specify any release requirements for benchmark users.</li>
+<li>5: The benchmark briefly mentions the issue of potential gameability or misuse by benchmark users but does not provide specific details.</li>
+<li>10: The benchmark states dos and don’ts how to use the benchmark but does not specify these as requirements for use.</li>
+<li>15: The benchmark provides a set of release requirements for benchmark users.</li>
+</ul>
+<h4 id="i10.-includes-build-status-or-equivalent" tabindex="-1">I10. Includes build status or equivalent</h4>
+<p>Explanation: A build status is a feature, typically implemented as a GitHub Action, that indicates whether the most recent build of the benchmark was successful. It should be implemented for the benchmark’s evaluation code. It verifies that the code is running correctly after the latest commit.</p>
+<p>Justification: A passing build status signifies that the main evaluation code was usable at the latest commit. Including a build status or equivalent can help to ensure the reliability and usability of the evaluation code. It allows benchmark users to quickly determine if the code is functioning as intended, saving time and effort in identifying potential issues.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark neither references nor implements any form of build status or equivalent.</li>
+<li>5: The benchmark mentions the need for working evaluation code but does not implement it in any meaningful way.</li>
+<li>10: The benchmark partially implements a build status or equivalent by providing the information in a less accessible manner.</li>
+<li>15: The benchmark fully implements a build status or equivalent, clearly displaying the status of the most recent build and providing easy access to the information.</li>
+</ul>
+<h3 id="documentation-(20-criteria)" tabindex="-1">Documentation (20 criteria)</h3>
+<h4 id="do1.-requirements-file-available" tabindex="-1">Do1. Requirements file available</h4>
+<p>Explanation: A requirements or environment file, or equivalent is available.</p>
+<p>Justification: Ease of use is a key criteria for benchmark adoption. Providing a requirements file allows for the quick installation of relevant packages at the correct versions, e.g., within a virtual environment, to use the evaluation code.</p>
+<p>Points:</p>
+<ul>
+<li>0: No requirements file or equivalent is provided.</li>
+<li>5: A requirements file is mentioned but not provided.</li>
+<li>10: A requirements file is provided but may be missing some dependencies or versions.</li>
+<li>15: A complete and accurate requirements file specifying all necessary dependencies and versions is provided.</li>
+</ul>
+<h4 id="do2.-quick-start-guide-or-demo-code-available" tabindex="-1">Do2. Quick-start guide or demo code available</h4>
+<p>Explanation: The benchmark developers make a quick start guide or demo available that walks step-by-step through how the benchmark can be used.</p>
+<p>Justification: Similar to the criteria above, ease of use is a key criteria for benchmark adoption. Providing a quick-start guide takes away any guesswork on the user side and allows them to directly set up and use the benchmark without spending extra time on setup issues.</p>
+<p>Points:</p>
+<ul>
+<li>0: No quick-start guide or demo code is provided.</li>
+<li>5: A quick-start guide or demo code is mentioned but not provided.</li>
+<li>10: A quick-start guide or demo code is provided but may be missing some steps or details.</li>
+<li>15: A comprehensive, step-by-step quick-start guide or demo code is provided.</li>
+</ul>
+<h4 id="do3.-includes-informative-in-line-code-comments" tabindex="-1">Do3. Includes informative In-line code comments</h4>
+<p>Explanation: In-line code comments state the purpose, inputs, outputs, and functionality of each code segment in all files relevant for the benchmark evaluation.</p>
+<p>Justification: In-line documentation of code enhances clarity, understanding, and reproducibility. It facilitates collaboration, maintainability, and makes debugging easier for benchmark developers and users, should that be necessary.</p>
+<p>Points:</p>
+<ul>
+<li>0: No in-line code comments are provided.</li>
+<li>5: In-line code comments are sparse and do not adequately explain the purpose, inputs, outputs, or functionality of the code.</li>
+<li>10: Informative in-line code comments are present for most of the code but may be lacking in detail or clarity for some code segments.</li>
+<li>15: Comprehensive and informative in-line code comments are provided for all relevant code segments, clearly explaining their purpose, inputs, outputs, and functionality.</li>
+</ul>
+<h4 id="do4.-code-documentation-available" tabindex="-1">Do4. Code documentation available</h4>
+<p>Explanation: A full documentation of the repository and code it entails is publicly available. This includes, for example, an overview of the folder structure, the files in the repo, an explanation of functions in the repo.</p>
+<p>Justification: Detailed documentation of code enhances clarity, understanding, and reproducibility. It facilitates collaboration, maintainability, and makes debugging easier for benchmark developers and users, should that be necessary.</p>
+<p>Points:</p>
+<ul>
+<li>0: No code documentation is provided.</li>
+<li>5: Code documentation is mentioned but not provided.</li>
+<li>10: Code documentation is minimal or incomplete, lacking important details about the repository structure and functions.</li>
+<li>15: Comprehensive code documentation is provided, including a clear overview of the folder structure, files in the repo, and detailed explanations of all relevant functions.</li>
+</ul>
+<h4 id="do5.-documentation-of-test-task-categories-%26-rationale" tabindex="-1">Do5. Documentation of test task categories &amp; rationale</h4>
+<p>Explanation: The benchmark developers define the tasks or task categories a model is tested on and describe the rationale for choosing the tasks or task categories. The rationale should explain how these tasks are relevant to the benchmark’s objectives, what they aim to measure, and why they are important for evaluating the concept or capability to be tested.</p>
+<p>Justification: Documenting test tasks is essential for transparency and for allowing public scrutiny of the benchmark. The rationale provides insight into the selection process, demonstrating that the tasks are not arbitrary but are carefully chosen to reflect real-world applications and user needs. Both help users decide if the benchmark is adequate for their evaluation contexts.</p>
+<p>Points:</p>
+<ul>
+<li>0: No documentation of test task categories or rationale is provided.</li>
+<li>5: Test task categories are mentioned but they are neither defined in detail and a rationale for their selection is missing or inadequate.</li>
+<li>10: Test task categories are defined, but the rationale for their selection is not provided.</li>
+<li>15: Test task categories are clearly defined, and a comprehensive rationale is provided, explaining their relevance to the benchmark’s objectives, what they measure, and their importance for evaluating the targeted concept or capability.</li>
+</ul>
+<h4 id="do6.-documentation-of-assumptions-about-normative-properties" tabindex="-1">Do6. Documentation of assumptions about normative properties</h4>
+<p>Explanation: If the benchmark measures properties that vary across cultural contexts (e.g., politeness), then normative assumptions are explicitly stated. The benchmark developers clearly define the cultural context and values that the benchmark adheres to, explaining how the measured properties are conceptualized and operationalized within the benchmark.</p>
+<p>Justification: By explicitly stating normative assumptions, the authors provide transparency about the cultural framework and values that guide the benchmark’s design and evaluation criteria, which can subsequently ensure cultural sensitivity and mitigate potential biases. It also facilitates informed decision-making for users of benchmarks, specifically for culture-dependent use cases they’re interested in, such as measuring toxicity or bias, for example.</p>
+<p>Points:</p>
+<ul>
+<li>0: No documentation of normative assumptions is provided, even though the benchmark measures culturally-dependent properties.</li>
+<li>5: The potential influence and importance of cultural context on the benchmark is acknowledged but normative assumptions aren’t stated.</li>
+<li>10: Normative assumptions are stated, but the explanation of how they are conceptualized and operationalized within the benchmark is incomplete or lacks clarity.</li>
+<li>15: Normative assumptions are explicitly and clearly stated, defining the cultural context and values that the benchmark adheres to, and explaining how the measured properties are conceptualized and operationalized within the benchmark.</li>
+</ul>
+<h4 id="do7.-documentation-of-limitations" tabindex="-1">Do7. Documentation of limitations</h4>
+<p>Explanation: Benchmark developers outline the limitations of the benchmark, including but not limited to the tasks, contexts, and scenarios that are not covered by the evaluation are acknowledged. It’s stated which use cases are out-of-scope.</p>
+<p>Justification: Documenting a benchmark’s limitations is necessary for users to assess its suitability for their specific evaluation needs. By understanding what the benchmark does not cover, users can make informed decisions about whether the benchmark aligns with their goals and whether additional evaluations (either in the form of other benchmarks or private evaluations) may be required to complement the benchmark’s results.</p>
+<p>Points:</p>
+<ul>
+<li>0: No documentation of the benchmark’s limitations is provided.</li>
+<li>5: Limitations of AI evaluations more broadly are briefly mentioned but without any detail and not applied to the specific benchmark.</li>
+<li>10: Either limitations regarding the applicability and use of the benchmark or limitations of the benchmark design are discussed, but not both.</li>
+<li>15: Both limitations regarding the applicability and use of the benchmark and limitations of the benchmark design are comprehensively discussed.</li>
+</ul>
+<h4 id="do8.-documentation-of-benchmark-construction-process" tabindex="-1">Do8. Documentation of benchmark construction process</h4>
+<p>Explanation: Benchmark developers give a detailed account of the design process, including the specific decisions made at each life-cycle stage, the rationale behind them, and any trade-offs or compromises (e.g., balancing complexity vs. practicality) considered.</p>
+<p>Justification: Documenting the benchmark design process is essential for transparency, as it allows users to understand how the benchmark was created and what factors influenced its development. It allows users to assess the thoroughness and rigor of the benchmark’s construction. This information further enables users to critically evaluate whether the benchmark is suitable for their specific use case.</p>
+<p>Points:</p>
+<ul>
+<li>0: No documentation of the benchmark construction process is provided.</li>
+<li>5: The benchmark construction process is briefly mentioned but lacks sufficient detail about the decisions made, rationale, and trade-offs considered.</li>
+<li>10: The benchmark construction process is documented, including some decisions made and their rationale, but the description lacks depth or fails to address important aspects such as trade-offs or compromises.</li>
+<li>15: The benchmark construction process is comprehensively documented, providing a detailed account of the specific decisions made at each stage, the rationale behind them, and any trade-offs or compromises considered.</li>
+</ul>
+<h4 id="do9.-documentation-of-data-collection-or-environment%2Fprompt-design-process" tabindex="-1">Do9. Documentation of data collection or environment/prompt design process</h4>
+<p>Explanation: A detailed description of the data collection process, including the sources of the data, the criteria for selection, and any preprocessing steps is provided. For benchmarks involving prompts, a description of how the prompts were created, how they were validated, and why they were used to elicit the desired responses was included. For benchmarks involving dynamic environments or test data, the design specifics and templates for the dynamic process were explicitly described.</p>
+<p>Justification: Documenting the data collection or prompt design process is important for ensuring the transparency, reproducibility, and validity of the benchmark. By providing a clear and detailed account of how the data was collected or how the prompts were designed, users can assess the quality and representativeness of the benchmark’s data, identify potential biases or limitations, and determine whether the data or prompts are suitable for their specific use case.</p>
+<p>Points:</p>
+<ul>
+<li>0: No documentation of the data collection or environment/prompt design process is provided.</li>
+<li>5: The data collection or environment/prompt design process is briefly mentioned but no information about the sources, selection criteria, preprocessing steps, or prompt validation is provided.</li>
+<li>10: The data collection or environment/prompt design process is documented, including some information about the sources, selection criteria, preprocessing steps, or prompt validation, but the description lacks depth or fails to address important aspects.</li>
+<li>15: The data collection or environment/prompt design process is comprehensively documented, providing a detailed account of the sources of the data, the criteria for selection, any preprocessing steps, and, if applicable, how the prompts were created, validated, and why they were used to elicit the desired responses.</li>
+</ul>
+<h4 id="do10.-documentation-of-evaluation-metric(s)" tabindex="-1">Do10. Documentation of evaluation metric(s)</h4>
+<p>Explanation: The evaluation metrics used are clearly specified and defined, both for standard and custom metrics tailored to the specific task or domain. The exact formulas or processes used to calculate these metrics, along with any parameters or thresholds employed, are made transparent.</p>
+<p>Justification: Documenting the evaluation metrics and scoring process is essential for enabling users to understand how the benchmark quantifies model performance and determines rankings or comparisons. By providing clear and detailed information about the metrics and scoring methods, users can assess whether the chosen metrics are appropriate for the task at hand, align with their own evaluation criteria, and provide a fair and meaningful basis for comparing different models or approaches.</p>
+<p>Points:</p>
+<ul>
+<li>0: No documentation of the evaluation metrics is provided.</li>
+<li>5: The evaluation metrics are mentioned but not clearly defined, and the exact formulas or processes used to calculate them are not provided.</li>
+<li>10: The evaluation metrics are defined, but the documentation lacks some important details, such as any parameters or thresholds employed.</li>
+<li>15: The evaluation metrics are clearly specified. The exact formulas or processes used to calculate these metrics, along with any parameters or thresholds employed, are comprehensively documented.</li>
+</ul>
+<h4 id="do11.-report-statistical-significance-of-benchmark-results-for-at-least-one-model" tabindex="-1">Do11. Report statistical significance of benchmark results for at least one model</h4>
+<p>Explanation: Benchmark developers run statistical significance tests on the benchmark results. They report results for, e.g., more than one random seed, and provide variance bounds. In cases where the benchmark is perfectly deterministic, this should be explicitly stated.</p>
+<p>Justification: Not doing statistical significance testing can significantly reduce the validity, utility and confidence in results. Especially for benchmarks, we want to understand how much of the results are due to noise and how much is caused by true differences between the models tested.</p>
+<p>Points:</p>
+<ul>
+<li>0: No statistical significance testing or variance reporting is provided for the benchmark results.</li>
+<li>5: The need for valid benchmarks and/or statistical significance or uncertainty estimation is mentioned but not addressed.</li>
+<li>10: Benchmark developers “bound the expected variation across model training runs”.</li>
+<li>15: Benchmark developers run statistical significance tests on the benchmark results for at least one model and provide variance bounds or other uncertainty estimations. In cases where the benchmark is perfectly deterministic, this is explicitly stated.</li>
+</ul>
+<h4 id="do12.-accepted-at-peer-reviewed-venue" tabindex="-1">Do12. Accepted at peer-reviewed venue</h4>
+<p>Explanation: The benchmark/its associated paper was accepted to a peer-reviewed journal, conference, or similar venue.</p>
+<p>Justification: Acceptance at a peer-reviewed venue signifies that the benchmark has undergone an evaluation by an external party, ensuring its validity, reliability, and scientific merit. This peer review process contributes to the credibility and assurance to users that the benchmark meets established standards of quality and relevance.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark/its associated paper has not been accepted at a peer-reviewed venue.</li>
+<li>5: The benchmark/its associated paper has been submitted to a peer-reviewed venue but is still under review or awaiting acceptance.</li>
+<li>10: The benchmark/its associated paper has been accepted at a peer-reviewed workshop or symposium.</li>
+<li>15: The benchmark/its associated paper has been accepted at a peer-reviewed journal, conference, or similar high-profile venue.</li>
+</ul>
+<h4 id="do13.-specifies-applicable-license" tabindex="-1">Do13. Specifies applicable license</h4>
+<p>Explanation: The benchmark developers clearly specify the applicable license for the benchmark in the code repository or paper. This includes providing information about the conditions under which the benchmark can be used, modified, and distributed.</p>
+<p>Justification: Specifying the applicable license ensures legal clarity and compliance for benchmark users and enables wider adoption, as commercial users might not be able to use the benchmark if no license is specified.</p>
+<p>Points:</p>
+<ul>
+<li>0: No license is specified for the benchmark.</li>
+<li>5: A license is mentioned but not clearly specified or linked to in the code repository or paper.</li>
+<li>10: A license is specified but lacks some important details about the conditions under which the benchmark can be used, modified, or distributed.</li>
+<li>15: The applicable license for the benchmark is clearly specified in the code repository or paper, providing comprehensive information about the conditions under which the benchmark can be used, modified, and distributed.</li>
+</ul>
+<h4 id="do14.-provision-of-a-globally-unique%2C-persistent-identifier-for-a-dataset-and-its-metadata" tabindex="-1">Do14. Provision of a globally unique, persistent identifier for a dataset and its metadata</h4>
+<p>Explanation: The benchmark dataset and its associated metadata are assigned a globally unique and persistent identifier, such as a Digital Object Identifier (DOI), to ensure long-term accessibility and citability of the resource (FAIR Principles, 2024).</p>
+<p>Justification: A persistent identifier supports the findability and accessibility of the benchmark and its dataset. It allows for unambiguous referencing of the data, facilitates proper attribution, and ensures that the dataset can be located and accessed over time, even if its physical location changes. This practice aligns with the FAIR (Findable, Accessible, Interoperable, Reusable) principles, enhancing the benchmark’s scientific value and reusability.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark paper, dataset, and metadata are not assigned any persistent identifier.</li>
+<li>5: The benchmark assigns persistent identifiers to the paper, the dataset, or the metadata.</li>
+<li>10: The benchmark assigns a persistent identifier to two out of three (paper, dataset, metadata).</li>
+<li>15: The benchmark assigns a globally unique, persistent identifier to the dataset, its metadata, and the paper.</li>
+</ul>
+<h4 id="do15.-inclusion-of-standardized-metadata-(e.g.%2C-following-the-croissant-standard)" tabindex="-1">Do15. Inclusion of standardized metadata (e.g., following the Croissant standard)</h4>
+<p>Explanation: The benchmark includes comprehensive, standardized metadata that describes the dataset, its structure, and relevant information about its creation and usage. This metadata adheres to established standards such as the Croissant standard, which is designed specifically for machine learning datasets.</p>
+<p>Justification: Standardized metadata is crucial for ensuring interoperability and reusability of the benchmark dataset. It provides consistent and machine-readable information about the dataset’s contents, structure, and provenance. This standardization facilitates easier discovery, understanding, and integration of the dataset into various research workflows. By following established standards like Croissant, the benchmark enhances its utility across different platforms and tools in the machine learning ecosystem.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not include any structured metadata.</li>
+<li>5: The benchmark includes some basic metadata, but it is not standardized or comprehensive.</li>
+<li>10: The benchmark includes comprehensive metadata that covers most aspects of the dataset, but it does not fully adhere to a recognized standard like Croissant.</li>
+<li>15: The benchmark includes complete, standardized metadata (e.g., following the Croissant standard) that thoroughly describes all aspects of the dataset, ensuring maximum interoperability and reusability.</li>
+</ul>
+<h4 id="do16.-documentation-of-data-sources-and-how-the-data-was-collected-(if-applicable)" tabindex="-1">Do16. Documentation of data sources and how the data was collected (if applicable)</h4>
+<p>Explanation: The benchmark provides comprehensive documentation detailing the origins of the data, the methods used for data collection, and, where applicable, discusses issues of data provenance and informed consent. They also list the license types for all data used and how they ensured compliance with that license.</p>
+<p>Justification: Thorough documentation of data sources and collection methods is necessary for ensuring transparency, reproducibility, and ethical design of the benchmark. It allows users to understand the context and limitations of the data, assess its appropriateness for their specific use cases, and make informed decisions about its application. Furthermore, discussing data provenance and informed consent addresses ethical considerations, particularly when dealing with sensitive or personal data, and helps ensure compliance with data protection regulations.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark provides no information about data sources or collection methods.</li>
+<li>5: The benchmark mentions data sources but provides minimal details about collection methods or ethical considerations.</li>
+<li>10: The benchmark includes a detailed description of data sources and collection methods, but lacks a discussion of data provenance, compliance with licensing, or informed consent, where applicable.</li>
+<li>15: The benchmark provides extensive documentation of data sources, collection methods, and a thorough discussion of data provenance, compliance with licensing, and informed consent, addressing relevant ethical and legal considerations.</li>
+</ul>
+<h4 id="do17.-documentation-of-the-data-preprocessing-steps-taken" tabindex="-1">Do17. Documentation of the data preprocessing steps taken</h4>
+<p>Explanation: The benchmark provides a detailed account of all preprocessing steps applied to the raw data before its inclusion in the final dataset. This documentation includes information on data cleaning, normalization, feature engineering, handling of missing values, and any other transformations or manipulations performed on the original data. If no data preprocessing was done, the authors state this explicitly.</p>
+<p>Justification: Thorough documentation of preprocessing steps is necessary for ensuring reproducibility and transparency of the benchmark. It allows users to understand exactly how the final dataset was created, which is key for interpreting results, replicating experiments, and assessing the benchmark’s applicability to different use cases. Additionally, this information helps identify potential biases or artifacts introduced during preprocessing that could affect model performance or generalization.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark provides no information about data preprocessing steps.</li>
+<li>5: The benchmark mentions that preprocessing was done but offers minimal details about the specific steps taken.</li>
+<li>10: The benchmark includes a general description of preprocessing steps, but lacks comprehensive details or fails to cover all aspects of the data preparation process.</li>
+<li>15: The benchmark provides an exhaustive, step-by-step documentation of all preprocessing procedures, including rationales for choices made and potential impacts on the data.</li>
+</ul>
+<h4 id="do18.-documentation-of-the-data-annotation-process-(if-applicable)" tabindex="-1">Do18. Documentation of the data annotation process (if applicable)</h4>
+<p>Explanation: The benchmark provides documentation of the data annotation process, including the annotation guidelines, the qualifications and training of annotators, the annotation tools used, quality control measures, and inter-annotator agreement metrics. This documentation covers the entire workflow from raw data to the final annotated dataset.</p>
+<p>Justification: Comprehensive documentation of the annotation process is necessary for understanding the quality, reliability, and potential biases in the labeled data. It allows users to assess the suitability of the dataset for their specific tasks and to interpret results accurately. Transparent annotation documentation also enables reproducibility of the labeling process, facilitates improvements in future iterations of the benchmark, and helps in identifying and mitigating potential sources of bias or error in the annotations.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark provides no information about the data annotation process.</li>
+<li>5: The benchmark mentions that data was annotated but offers minimal details about the process or guidelines used.</li>
+<li>10: The benchmark includes a general description of the annotation process, including guidelines and tools used, but lacks comprehensive details on quality control measures or inter-annotator agreement.</li>
+<li>15: The benchmark provides exhaustive documentation of the entire annotation process, including detailed guidelines, annotator information, quality control measures, inter-annotator agreement metrics, and discussions of potential biases or limitations in the annotation approach.</li>
+</ul>
+<h4 id="do19.-documentation-of-the-representativeness-of-the-data-(if-applicable)" tabindex="-1">Do19. Documentation of the representativeness of the data (if applicable)</h4>
+<p>Explanation: The benchmark provides analysis and documentation of how representative the dataset or environment is of the target population or domain. This includes an explanation of the sampling procedure used, any potential biases in the data collection process, and how well the dataset captures the diversity and distribution of the intended population or phenomenon being studied.</p>
+<p>Justification: Understanding the representativeness of the data is necessary for assessing the generalizability and validity of any conclusions drawn from models trained or evaluated on the benchmark. It helps users identify potential limitations or biases in the dataset that could affect model performance in real-world applications. Proper documentation of representativeness also aids in interpreting benchmark results within the context of the population it represents and highlights areas where the dataset may need expansion or improvement to better cover underrepresented groups or scenarios.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark provides no information about the representativeness of the data or the sampling procedure used.</li>
+<li>5: The benchmark mentions the importance of data representativeness but offers minimal analysis or explanation of how representative the dataset actually is.</li>
+<li>10: The benchmark includes a general discussion of data representativeness and the sampling procedure, but lacks comprehensive analysis or fails to address potential biases or limitations in representativeness.</li>
+<li>15: The benchmark provides an in-depth analysis of data representativeness, including detailed explanation of the sampling procedure, quantitative measures of population coverage, discussion of potential biases, and acknowledgment of any limitations in representativeness.</li>
+</ul>
+<h4 id="do20.-standardized-documentation" tabindex="-1">Do20. Standardized documentation</h4>
+<p>Explanation: The benchmark utilizes a standardized documentation format, such as data cards, to present the information about the dataset that is underlying to the benchmark. This standardized approach ensures that all key aspects of the dataset are systematically covered, including its composition, collection methodology, intended uses, ethical considerations, and potential biases.</p>
+<p>Justification: Adopting a standardized documentation scheme like data cards enhances the usability and transparency of the benchmark. It provides a consistent, structured format that makes it easier for users to quickly understand the dataset’s characteristics, limitations, and appropriate use cases. Standardized documentation facilitates easier comparison between datasets and benchmarks, promotes best practices in data reporting, and helps identify potential issues or gaps in the dataset’s coverage.</p>
+<p>Points:</p>
+<ul>
+<li>0: The benchmark does not use any standardized documentation scheme.</li>
+<li>5: The benchmark includes some elements of standardized documentation, but does not fully adhere to an established scheme like data cards.</li>
+<li>10: The benchmark uses a standardized documentation scheme, but some sections are incomplete or lack detail.</li>
+<li>15: The benchmark fully implements a comprehensive standardized documentation scheme (e.g., data cards), providing thorough and structured information on all relevant aspects of the dataset.</li>
+</ul>
+<h3 id="maintenance-(3-criteria)" tabindex="-1">Maintenance (3 criteria)</h3>
+<h4 id="m1.-code-usability-checked-within-the-last-year" tabindex="-1">M1. Code usability checked within the last year</h4>
+<p>Explanation: The main files of the public code were updated within the last year, or the developers checked that the benchmark code is still usable and explicitly state this check in the README file, including the date of the check.</p>
+<p>Justification: Over time, packages that the benchmark depends on may be updated and become incompatible with the original evaluation/benchmark code. To ensure ongoing usability, benchmark developers must check if their code can still be used at least once a year. This practice ensures that users can use the benchmark without encountering and having to fix issues due to outdated dependencies.</p>
+<p>Points:</p>
+<ul>
+<li>0: No updates to the main files of the public code within the last year, and no explicit statement of a usability check in the README file.</li>
+<li>5: Updates to minor files in the repo were made (e.g., README file) but an explicit statement of a usability check in the README file is not reported.</li>
+<li>10: Updates to the main files of the public code were made within the last year, but the build status check failed and wasn’t fixed.</li>
+<li>15: Updates to the main files of the public code within the last year, accompanied by a successful build status check, or an explicit statement of a usability check in the README file, including the date of the check was provided.</li>
+</ul>
+<h4 id="m2.-maintained-feedback-channel-for-users" tabindex="-1">M2. Maintained feedback channel for users</h4>
+<p>Explanation: GitHub issues are acknowledged or addressed within three months. If there are no open issues, benchmark developers would get full points.</p>
+<p>Justification: Over time, users may find issues with the benchmark tasks or implementation. To ensure continued usability, benchmark developers should address these concerns in a reasonable amount of time. Promptly responding to user feedback helps maintain the reliability and relevance of the benchmark.</p>
+<p>Points:</p>
+<ul>
+<li>0: No acknowledgment or response to GitHub issues that are older than three months.</li>
+<li>5: GitHub issues are mentioned as a way to provide feedback but there are GitHub issues that were not responded to and that are older than three months.</li>
+<li>10: All GitHub issues are acknowledged within three months, but not all are addressed or resolved or were closed because the issue/feature request won’t be attended to.</li>
+<li>15: All GitHub issues are acknowledged and addressed within three months, or it is clearly stated if an issue cannot be fixed or if a feature request won’t be fulfilled. Alternatively, there are no open issues.</li>
+</ul>
+<h4 id="m3.-provide-contact-details-of-person-responsible-for-benchmark" tabindex="-1">M3. Provide contact details of person responsible for benchmark</h4>
+<p>Explanation: The benchmark should include contact details of the person responsible, such as a corresponding author in the associated paper, a contact person listed on GitHub or the website, or an available online feedback form.</p>
+<p>Justification: Providing contact details ensures that users have a communication channel for inquiries, feedback, or reporting issues related to the benchmark. This transparency supports effective collaboration and resolution of problems, enhancing the benchmark’s usability.</p>
+<p>Points:</p>
+<ul>
+<li>0: It is not disclosed who developed the benchmark.</li>
+<li>5: The benchmark developers are disclosed but no explicit contact details are provided.</li>
+<li>10: Contact details are provided but are incomplete or difficult to find, e.g., only as part of terms of service on a website.</li>
+<li>15: Contact details of the person responsible for the benchmark are easily accessible, such as a corresponding author in the associated paper, a contact person listed on GitHub or the website, or an available online feedback form.</li>
+</ul>
+<h2 id="our-stage%3A-education" tabindex="-1">Our stage: Education</h2>
+<p>BetterBench derived its stages from the objectives of five stakeholder groups (policymakers, model developers, benchmark developers, model users, and AI researchers).<br>
+However, an instructor who lets students run a benchmark and build defenses against it is a sixth stakeholder whose objectives none of the 47 criteria cover: safety of execution, a plug-in point for student agents, extension of the task set, per-run traceability, class-session run time, local compute, content suitable for a classroom, etc.</p>
+<h3 id="education-(8-criteria)" tabindex="-1">Education (8 criteria)</h3>
+<h4 id="e1.-tool-execution-isolation" tabindex="-1">E1. Tool execution isolation</h4>
+<p>Explanation: The benchmark’s tools do not act on real systems when the agent calls them.</p>
+<p>Justification: Students run attacks that instruct an agent to delete data, transfer money, or exfiltrate credentials. The exercise is only safe if those tool calls cannot reach a real system.</p>
+<p>Points:</p>
+<ul>
+<li>0: Tools act on real systems (network, files, accounts) and the benchmark does not mention the risk.</li>
+<li>5: The benchmark acknowledges the risk of real side effects, but tools still act on real systems.</li>
+<li>10: Tools run in a sandbox or container, but some real-system access remains (for example, live web requests).</li>
+<li>15: All tools are simulated, mocked, or in-memory, so the agent cannot cause a real side effect.</li>
+</ul>
+<h4 id="e2.-support-for-user-built-agents-or-defenses" tabindex="-1">E2. Support for user-built agents or defenses</h4>
+<p>Explanation: A user can plug their own agent pipeline or defense logic into the benchmark and run it, rather than only swapping the model.</p>
+<p>Justification: The teaching goal is to build and evaluate secure agent systems, not only to compare bare model refusal rates. A benchmark that only swaps the model cannot measure a student’s defense.</p>
+<p>Points:</p>
+<ul>
+<li>0: Only the model can be swapped, and custom pipelines are not discussed.</li>
+<li>5: Custom pipelines are mentioned as possible or as future work, but there is no code path for them.</li>
+<li>10: A custom pipeline can be run after adapting harness code, without a documented interface.</li>
+<li>15: A documented interface exists for plugging in a user’s agent or defense and running the full benchmark against it.</li>
+</ul>
+<h4 id="e3.-extension-points-for-tasks%2C-attacks%2C-and-tools" tabindex="-1">E3. Extension points for tasks, attacks, and tools</h4>
+<p>Explanation: New benchmark content (tasks, attacks, tools, scoring functions) can be added without modifying core code.</p>
+<p>Justification: Course material needs new vulnerable-agent tasks and new attacks each term. Extension through configuration or subclassing keeps that work small and keeps the upstream code intact.</p>
+<p>Points:</p>
+<ul>
+<li>0: Extension requires core code changes, and extension is not discussed.</li>
+<li>5: Extension is mentioned, but no mechanism is provided.</li>
+<li>10: Some extension types are data-driven or subclassable, while others need core changes.</li>
+<li>15: Every extension type goes through configuration, subclassing, or decorators, and the extension points are documented.</li>
+</ul>
+<h4 id="e4.-run-trace-inspection" tabindex="-1">E4. Run trace inspection</h4>
+<p>Explanation: A user can see the full sequence of a run (prompt, model messages, tool calls, tool results) and why it scored as it did.</p>
+<p>Justification: A student learns from a benchmark by tracing how an injected instruction reached a tool call. Aggregate scores alone do not teach that.</p>
+<p>Points:</p>
+<ul>
+<li>0: Only aggregate scores are available.</li>
+<li>5: The value of per-run traces is acknowledged, but traces are not stored.</li>
+<li>10: Raw per-run logs or files contain the full message sequence, and the user reads them without tooling.</li>
+<li>15: A structured trajectory browser shows message-level detail and a per-task explanation of the score.</li>
+</ul>
+<h4 id="e5.-assignment-sized-evaluation" tabindex="-1">E5. Assignment-sized evaluation</h4>
+<p>Explanation: A meaningful evaluation fits in a class session or an assignment.</p>
+<p>Justification: An evaluation that takes days per model cannot be assigned. Either the full run is short, or the tool documents a subset that is.</p>
+<p>Points:</p>
+<ul>
+<li>0: A full evaluation takes over 24 hours per model, no subset exists, and run time is not discussed.</li>
+<li>5: Long run time is acknowledged, but no subset or sampling option is provided.</li>
+<li>10: A full evaluation takes 2 to 24 hours per model, or a subset exists but is undocumented.</li>
+<li>15: A full evaluation takes under 2 hours per model, or a documented subset runs within a class session.</li>
+</ul>
+<p>Measurement: times are measured on the shared ollama server with the three reference models (<code>qwen3:14b</code>, <code>qwen3-coder:30b</code>, <code>gpt-oss:120b</code>), and the tool’s README states the numbers.</p>
+<h4 id="e6.-fully-local-evaluation" tabindex="-1">E6. Fully local evaluation</h4>
+<p>Explanation: The benchmark runs end to end without paid API access, including the judge and any auxiliary component such as embeddings.</p>
+<p>Justification: A course cannot issue paid API keys to every student. Every component that calls a paid API, including judges and embedding models, blocks local use.</p>
+<p>Points:</p>
+<ul>
+<li>0: A paid API is required for the model, the judge, or an auxiliary component, and local evaluation is not discussed.</li>
+<li>5: Local evaluation is mentioned, but the shipped code needs changes to run locally.</li>
+<li>10: Local evaluation works after documented fixes to the shipped code.</li>
+<li>15: Local evaluation works as shipped, with zero API cost.</li>
+</ul>
+<h4 id="e7.-hardware-requirement" tabindex="-1">E7. Hardware requirement</h4>
+<p>Explanation: The hardware needed to run the benchmark with the reference models is within reach of a course.</p>
+<p>Justification: Students and course servers have one GPU, not a cluster. The benchmark’s own overhead (vector stores, local judges, perplexity detectors) must not raise the requirement beyond what the models need.</p>
+<p>Points:</p>
+<ul>
+<li>0: Requires specialized hardware beyond a GPU server, and requirements are not stated.</li>
+<li>5: Requirements are stated but exceed a GPU server (for example, a cluster).</li>
+<li>10: Runs on a multi-GPU server, or on a single GPU with extra configuration.</li>
+<li>15: Runs on a single GPU server or CPU-only hardware without extra configuration.</li>
+</ul>
+<p>Measurement: judged with the reference models. The largest one (<code>gpt-oss:120b</code>) needs the 4-GPU server, so a tool scores 15 only if the smaller reference models run on one GPU without special setup.</p>
+<h4 id="e8.-low-sensitivity-subset-for-classroom-use" tabindex="-1">E8. Low-sensitivity subset for classroom use</h4>
+<p>Explanation: An instructor can run the benchmark without exposing students to the most harmful content.</p>
+<p>Justification: Harmful prompts are the point of a security benchmark, but an introductory session needs a way to exercise the pipeline on less offensive material.</p>
+<p>Points:</p>
+<ul>
+<li>0: Harmful content is present, no subset exists, and the issue is not discussed.</li>
+<li>5: Content sensitivity is acknowledged, but no subset or filter is provided.</li>
+<li>10: A lower-sensitivity subset can be obtained by filtering on a documented field.</li>
+<li>15: A benign or non-aggressive split is shipped and documented.</li>
+</ul>
+<!--
+## Descriptive labels (not scored)
+
+These properties inform course placement but are not qualities, so they carry no score. They appear in the comparison table beside the stage scores.
++ Content level: formulaic, concrete, or graphic, with the categories present (for example, Hate, Sexual, Harassment).
++ Score granularity: binary, discrete, or continuous.
++ Attack vectors and security risks covered, from [`attack-risk-coverage.md`](attack-risk-coverage.md).
+-->
+<!--
+## Mapping from our previous factors
+
+The previous scheme had 7 criteria with 1/2/3 factors. Every factor has a home in the new scheme:
+
+| Previous criterion and factor | New home |
+|---|---|
+| Deployability: hardware requirements | E7 |
+| Deployability: API credits | E6 |
+| Deployability: software dependencies | Do1 (requirements file), M1 (code usability checked) |
+| Deployability: gated dataset access | I3 (accessibility of evaluation data) |
+| Deployability: time to complete full eval | E5 |
+| Extensibility (all three factors) | E3, plus Do4 (code documentation) |
+| Maintenance & Support (all three factors) | M1 to M3 (BetterBench's dated rules replace the previous ones) |
+| Execution isolation | E1 |
+| Content sensitivity: harmful content presence | Content level label, plus I8 (warnings for harmful content) and E8 (subset) |
+| Observability: full message sequence, trajectory viewer | E4 |
+| Observability: scoring breakdown | Do10 (documentation of evaluation metrics), D13 (validated automatic evaluation) |
+| Observability: score granularity | Score granularity label |
+| Experimentability (all three factors) | E2 |
+-->
+<h2 id="references" tabindex="-1">References</h2>
+<ul>
+<li>BetterBench paper: <a href="https://arxiv.org/abs/2411.12990">BetterBench: Assessing AI Benchmarks, Uncovering Issues, and Establishing Best Practices</a> (NeurIPS 2024 Datasets and Benchmarks)</li>
+<li>BetterBench methodology and rubrics: <a href="https://betterbench.stanford.edu/methodology.html">betterbench.stanford.edu/methodology.html</a></li>
+</ul>
+
+    </main>
+    <!--highlight-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.8.0/dist/highlightjs-line-numbers.min.js"></script>
+    <!--mermaid-->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!--sequence-->
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/webfont.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/snap.svg-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/underscore-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/sequence-diagram-min.js"></script>
+    <!--flowchart-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+    <script src="https://flowchart.js.org/flowchart-latest.js"></script>
+    <!--Graphviz powered by viz.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/viz.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/full.render.js"></script>
+    <!--Vega-Lite-->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <!--Abc-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/abcjs/6.1.9/abcjs-basic-min.min.js"></script>
+    <script>
+        mermaid.init({ noteMargin: 10 }, document.querySelectorAll(".language-mermaid"));
+        mermaid.initialize({ startOnLoad: true });
+        document.querySelectorAll(".language-sequence")?.forEach((dom, i) => {
+            dom.id = `sequence-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            Diagram.parse(content).drawSVG(dom.id, { theme: 'simple' });
+        });
+        document.querySelectorAll(".language-flow")?.forEach((dom, i) => {
+            dom.id = `flow-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            flowchart.parse(content).drawSVG(dom.id);
+        });
+
+        var viz = new Viz();
+        document.querySelectorAll(".language-graphviz")?.forEach((dom, i) => {
+            dom.id = `graphviz-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            viz.renderSVGElement(content)
+                .then(function (element) {
+                    dom.appendChild(element);
+                })
+                .catch(error => {
+                    // Create a new Viz instance (@see Caveats page for more info)
+                    viz = new Viz();
+
+                    // Possibly display the error
+                    console.error(error);
+                });
+        });
+
+        document.querySelectorAll(".language-abc")?.forEach((dom, i) => {
+            dom.id = `abc-${i}`;
+            let content = dom.textContent;
+            ABCJS.renderAbc(dom.id, content);
+        });
+
+        document.querySelectorAll(".language-vega")?.forEach((dom, i) => {
+            dom.id = `vega-${i}`;
+            let content = dom.textContent;
+            let spec = {};
+            try {
+                spec = JSON.parse(content);
+            } catch (e) {
+                spec = {};
+            }
+            dom.textContent = "";
+            vegaEmbed(`#${dom.id}`, spec);
+        });
+
+        // https://github.com/highlightjs/highlight.js/
+        // modified from: https://github.com/wcoder/highlightjs-line-numbers.js/
+        let lastLine = 0;
+        const BREAK_LINE_REGEXP = /\r\n|\r|\n/g;
+        function getLinesCount(text) {
+            return (text.trim().match(BREAK_LINE_REGEXP) || []).length;
+        }
+        document.querySelectorAll('code')?.forEach((dom) => {
+            let lang = dom.className.match(/language\-([^=]*)?(=?)(\+?[0-9]*)$/);
+            if (lang === null) return;
+            if (lang[1] === '!') {
+                dom.classList.add("break");
+                return;
+            } else {
+                hljs.highlightElement(dom);
+            }
+
+            if (lang[2]) {
+                let line;
+                if (lang[3] === '') {
+                    line = 1;
+                } else if (lang[3] === '+') {
+                    line = lastLine + 1;
+                } else {
+                    line = Number(lang[3]);
+                }
+                lastLine = line + getLinesCount(dom.innerText);
+                hljs.lineNumbersBlock(dom, {
+                    startFrom: line
+                });
+            }
+        });
+
+        // automatically set title
+        const h1 = document.querySelector("h1");
+        if (!document.title && h1 && h1.textContent) {
+            document.title = h1.textContent;
+        }
+    </script>
+</body>
+
+</html>

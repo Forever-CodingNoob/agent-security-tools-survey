@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta property="og:type" content="article">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);
+        html[lang^=ja] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, Hiragino Kaku Gothic Pro, ヒラギノ角ゴ Pro W3, Osaka, Meiryo, メイリオ, MS Gothic, ＭＳ ゴシック, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        html[lang=zh-tw] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, PingFang TC, Microsoft JhengHei, 微軟正黑, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        html[lang=zh-cn] main {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Helvetica, Roboto, Arial, PingFang SC, Microsoft YaHei, 微软雅黑, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol
+        }
+
+        :root {
+            --body-background: #f0f0f0;
+            --hr-color: #e7e7e7;
+        }
+
+        body {
+            background-color: var(--body-background);
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 10px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.42857143;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 2rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.3rem 0;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        h5 {
+            font-size: 1.1rem;
+            margin: 1.1rem 0;
+        }
+
+        h6 {
+            font-size: 1rem;
+            margin: 1rem 0;
+        }
+
+        ul,
+        ol,
+        li,
+        section,
+        summary,
+        p {
+            font-size: 1rem;
+        }
+
+        ul,
+        ol {
+            padding-left: 2rem;
+        }
+
+        li.task-list-item{
+            list-style-type: none;
+        }
+
+        input.task-list-item-checkbox{
+            float: left;
+            margin: .31em 0 .2em -1.3em !important;
+            vertical-align: middle;   
+        }
+
+        main {
+            background-color: #fff;
+            box-sizing: border-box;
+            border-radius: 20px;
+            margin: 0px auto;
+            max-width: 900px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        a {
+            color: #337ab7;
+            text-decoration: none;
+        }
+
+        a:focus,
+        a:hover {
+            color: #23527c;
+            text-decoration: underline;
+        }
+
+        a:focus {
+            outline: 5px auto -webkit-focus-ring-color;
+            outline-offset: -2px;
+        }
+
+        .success {
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+            color: #3c763d;
+        }
+
+        .info {
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+            color: #31708f;
+        }
+
+        .warning {
+            background-color: #fcf8e3;
+            border-color: #faebcc;
+            color: #8a6d3b;
+        }
+
+        .danger {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+            color: #a94442;
+        }
+
+        .success,
+        .info,
+        .warning,
+        .danger {
+            border: 1px solid transparent;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        hr{
+            margin: 24px 0px;
+            height: .25rem;
+            background-color: var(--hr-color);
+            border: 0px;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        blockquote {
+            border-left: 0.25rem solid #ddd;
+            color: #777;
+            font-size: 1rem;
+            margin: 0px;
+            padding: 0 1rem;
+        }
+
+        span.blockquoteX{
+            display: block;
+            font-size: 80%;
+        }
+
+        span.blockquoteX::before{
+            content: '\2014 \00A0';
+        }
+
+        span.material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 48;
+            font-size: 1rem;
+            margin: 3px 5px;
+            vertical-align: bottom;
+        }
+
+        span.material-symbols-outlined-fill{
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 48;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            display: block;
+            margin-top: 0;
+            margin-bottom: 16px;
+            overflow: auto;
+            width: 100%;
+            word-break: keep-all;
+        }
+
+        table tr {
+            border-top: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table th {
+            border: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table td {
+            border: 1px solid #ddd;
+            padding: 6px 13px;
+        }
+
+        table tr:nth-child(2n) {
+            background-color: var(--body-background);
+        }
+
+        pre {
+            /* padding: 16px; */
+            overflow: auto;
+            line-height: 1.45;
+        }
+
+        code{
+            padding: .2em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            background-color: var(--body-background);
+            font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+        }
+
+        dl dt{
+            padding: 0;
+            margin-top: 16px;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /*block code*/
+        pre code {
+            display: block;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        code table tr:nth-child(2n) {
+            background-color: transparent;
+        }
+
+        code.break {
+            white-space: break-spaces;
+            word-break: break-all;
+        }
+
+        code.language-mermaid,
+        code.language-sequence,
+        code.language-graphviz,
+        code.language-vega,
+        code.language-abc,
+        code.language-flow {
+            background-color: transparent;
+            text-align: center;
+        }
+
+        mark {
+            padding: 0.2rem;
+            background-color: #fff1a7;
+        }
+
+        /*---embed---*/
+        embed{
+            overflow: auto; 
+            width: 100%; 
+            height: 400px;
+        }
+
+        iframe{
+            margin: 10px auto;
+            width: 100%; 
+            height: 480px;
+        }
+        
+        .gist table tr{
+            border: 0px;
+        }
+
+        .gist table td{
+            border: 0px;
+        }
+
+        /*---hljs---*/
+        .hljs-comment {
+            color: #708090;
+        }
+
+        .hljs-punctuation,
+        .hljs-tag {
+            color: #444a
+        }
+
+        .hljs-tag .hljs-attr,
+        .hljs-tag .hljs-name {
+            color: #444
+        }
+
+        .hljs-attribute,
+        .hljs-doctag,
+        .hljs-keyword,
+        .hljs-meta .hljs-keyword,
+        .hljs-name,
+        .hljs-selector-tag {
+            color: #07a;
+        }
+
+        .hljs-deletion,
+        .hljs-number,
+        .hljs-quote,
+        .hljs-selector-class,
+        .hljs-selector-id,
+        .hljs-template-tag,
+        .hljs-type {
+            color: #690
+        }
+
+        .hljs-section,
+        .hljs-title {
+            color: #dd4a68;
+        }
+
+        .hljs-link,
+        .hljs-operator,
+        .hljs-regexp,
+        .hljs-selector-attr,
+        .hljs-selector-pseudo,
+        .hljs-symbol,
+        .hljs-template-variable,
+        .hljs-variable {
+            color: #bc6060
+        }
+
+        .hljs-literal {
+            color: #78a960
+        }
+
+        .hljs-addition,
+        .hljs-built_in,
+        .hljs-bullet,
+        .hljs-code {
+            color: #397300
+        }
+
+        .hljs-meta {
+            color: #1f7199
+        }
+
+        .hljs-meta,
+        .hljs-string {
+            color: #690
+        }
+
+        .hljs-emphasis {
+            font-style: italic
+        }
+
+        .hljs-strong {
+            font-weight: 700
+        }
+
+        table.hljs-ln,
+        .hljs-ln td,
+        .hljs-ln tr {
+            /*override table style*/
+            border: 0px;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .hljs-ln-numbers {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            color: #afafaf !important;
+            border-right: 3px solid #6ce26c !important;
+        }
+
+        .hljs-ln-n {
+            box-sizing: content-box;
+            vertical-align: top;
+            padding: 0px 8px 0px 0px;
+            min-width: 20px;
+            text-align: right;
+        }
+
+        .hljs-ln-code {
+            padding: 0px 0px 0px 16px !important;
+        }
+
+        /*---fretboard---*/
+        .fretTitle {
+            color: #555;
+            text-align: center;
+            font-family: "Helvetica Neue", sans-serif;
+            line-height: 1.4;
+            font-size: 1.6em;
+            margin: 10px 0 10px 0;
+            font-weight: 900;
+            padding: 5px;
+        }
+
+        .fretContainer section {
+            padding: 20px;
+        }
+
+        .fretContainer .content {
+            max-width: 960px;
+            margin: auto;
+        }
+
+        .fretContainer,
+        .fretContainer_h {
+            outline: solid 1px #eeee;
+            margin: 0 auto;
+            padding: 15px 0;
+        }
+
+        .fretContainer {
+            width: 320px;
+        }
+
+        .fretContainer_h {
+            max-width: 400px;
+        }
+
+        .svg_wrapper {
+            background-color: #fff;
+            position: relative;
+            height: 0;
+        }
+
+        .svg_wrapper svg.fretboard_bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .svg_wrapper .cells {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .svg_wrapper.v4 {
+            padding-top: 91.6666666667%;
+        }
+
+        .svg_wrapper.v5 {
+            padding-top: 106.9444444444%;
+        }
+
+        .svg_wrapper.v7 {
+            padding-top: 137.5%;
+        }
+
+        .svg_wrapper.v9 {
+            padding-top: 168.0555555556%;
+        }
+
+        .svg_wrapper.v12 {
+            padding-top: 213.8888888889%;
+        }
+
+        .svg_wrapper.v15 {
+            padding-top: 259.7222222222%;
+        }
+
+        .svg_wrapper.v .cell svg {
+            width: 12.5%;
+            float: left;
+            display: block;
+        }
+
+        .svg_wrapper.v4 .cell svg {
+            height: 16.6666666667%;
+        }
+
+        .svg_wrapper.v5 .cell svg {
+            height: 14.2857142857%;
+        }
+
+        .svg_wrapper.v7 .cell svg {
+            height: 11.1111111111%;
+        }
+
+        .svg_wrapper.v9 .cell svg {
+            height: 9.0909090909%;
+        }
+
+        .svg_wrapper.v12 .cell svg {
+            height: 7.1428571429%;
+        }
+
+        .svg_wrapper.v15 .cell svg {
+            height: 5.8823529412%;
+        }
+
+        .svg_wrapper.h5 {
+            padding-top: 85.7142857143%;
+        }
+
+        .svg_wrapper.h6 {
+            padding-top: 75%;
+        }
+
+        .svg_wrapper.h7 {
+            padding-top: 72.7272727273%;
+        }
+
+        .svg_wrapper.h .cell svg {
+            height: 12.5%;
+            float: left;
+            display: block;
+            z-index: 2;
+        }
+
+        .svg_wrapper.h5 .cell svg {
+            width: 14.2857142857%;
+        }
+
+        .svg_wrapper.h6 .cell svg {
+            width: 12.5%;
+        }
+
+        .svg_wrapper.h7 .cell svg {
+            width: 12.1212121212%;
+        }
+
+        /* Fretboard Element Styles */
+
+        .cell.dot .fretb_dot {
+            fill: #27a9e1;
+        }
+
+        .cell.dot.root .fretb_dot {
+            fill: #f05a28;
+        }
+
+        .cell.dot.faded .fretb_dot {
+            opacity: .25;
+        }
+
+        .fretboard_bg .fret_bg rect {
+            fill: #fff;
+        }
+
+        .fretboard_bg .frets rect {
+            fill: #ddd;
+        }
+
+        .fretboard_bg .nut rect {
+            fill: #6e6e6e;
+        }
+
+        .fretboard_bg .strings rect {
+            fill: #6e6e6e;
+        }
+
+        .svg_wrapper.noNut .fretboard_bg .nut rect {
+            fill: none;
+        }
+
+        @media all and (max-width: 400px) {
+            .fretContainer_h {
+                max-width: 288px;
+            }
+        }
+
+        @media all and (max-width: 420px) {
+            .fretContainer {
+                max-width: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1 id="summary-report" tabindex="-1">Summary Report</h1>
+<blockquote>
+<p>Each tool also has a detailed report in <code>&lt;tool&gt;/README.md</code>.</p>
+</blockquote>
+<h2 id="table-of-contents" tabindex="-1">Table of Contents</h2>
+<ul>
+<li><a href="#comparison-table">Comparison Table</a></li>
+<li><a href="#evaluation-criteria">Evaluation Criteria</a>
+<ul>
+<li><a href="#scores-by-criterion">Scores by criterion</a>
+<ul>
+<li><a href="#design">Design</a></li>
+<li><a href="#implementation">Implementation</a></li>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#maintenance">Maintenance</a></li>
+<li><a href="#education">Education</a></li>
+<li><a href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#appendix">Appendix</a>
+<ul>
+<li><a href="#model-benchmarks-vs-agent-security-testing">Model benchmarks vs Agent security testing</a></li>
+<li><a href="#tool-calling-and-output-parsing">Tool calling and output parsing</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="comparison-table" tabindex="-1">Comparison Table</h2>
+<p>Stage scores and usability follow <a href="docs/criteria.html"><code>criteria.{md|html}</code></a> (0 to 15). Content level and score granularity are descriptive labels, not scores.</p>
+<p>The columns are:</p>
+<ul>
+<li>Design, Implementation, Documentation, Maintenance, Education: the five stage scores, each the mean of the applicable criteria in that stage.</li>
+<li>Usability: the mean over all applicable Implementation, Documentation, and Maintenance criteria, as BetterBench defines it.</li>
+<li>Content level: how explicit the harmful content in the dataset is (formulaic, concrete, or graphic).</li>
+<li>Score granularity: whether a task score is binary, discrete, or continuous.</li>
+<li>Attack Vectors and Security Risks: the V and R codes the tool exercises, taken from <a href="docs/attack-risk-coverage.html"><code>attack-risk-coverage.{md|html}</code></a>.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Design</th>
+<th>Implementation</th>
+<th>Documentation</th>
+<th>Maintenance</th>
+<th>Education</th>
+<th>Usability</th>
+<th>Content level</th>
+<th>Score granularity</th>
+<th>Attack Vectors</th>
+<th>Security Risks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="agentdojo/README.md">AgentDojo</a></td>
+<td>12.3</td>
+<td>10.5</td>
+<td>13.3</td>
+<td>11.7</td>
+<td>13.1</td>
+<td>12.3</td>
+<td>formulaic</td>
+<td>binary</td>
+<td>V1 (Indirect prompt injection)</td>
+<td>R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions), R7 (Denial-of-service)</td>
+</tr>
+<tr>
+<td><a href="asb/README.md">ASB</a></td>
+<td>10.4</td>
+<td>7.0</td>
+<td>6.9</td>
+<td>11.7</td>
+<td>10.6</td>
+<td>7.4</td>
+<td>concrete (crypto mining, credential theft, privilege escalation)</td>
+<td>binary</td>
+<td>V1 (Indirect prompt injection), V4 (Direct prompt injection), V6 (Memory poisoning)</td>
+<td>R1 (Heterogeneous untrusted interfaces), R2 (Wrong instruction following), R3 (Unconstrained/unsafe data flow), R5 (Private data leakage), R6 (Unintended/unauthorized actions)</td>
+</tr>
+<tr>
+<td><a href="agentharm/README.md">AgentHarm</a></td>
+<td>13.1</td>
+<td>12.5</td>
+<td>10.8</td>
+<td>15.0</td>
+<td>14.4</td>
+<td>11.8</td>
+<td>graphic (8 categories, including Hate, Sexual, Harassment)</td>
+<td>continuous</td>
+<td>V4 (Direct prompt injection)</td>
+<td>R2 (Wrong instruction following), R5 (Private data leakage), R6 (Unintended/unauthorized actions)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="evaluation-criteria" tabindex="-1">Evaluation Criteria</h2>
+<p>The scoring scheme, including a detailed rubric, is defined in <a href="docs/criteria.html"><code>criteria.{md|html}</code></a>.</p>
+<h3 id="scores-by-criterion" tabindex="-1">Scores by criterion</h3>
+<p>Each table below covers one stage and lists the score of every criterion per tool. The last row of each table is the stage score, and the <a href="#summary">Summary</a> table collects the stage scores and usability per tool. The justification for each score is in the Criteria section of the tool’s README.</p>
+<h4 id="design" tabindex="-1">Design</h4>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>AgentDojo</th>
+<th>ASB</th>
+<th>AgentHarm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(D1) Definition of tested capability or characteristic</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(D2) Description of how tested capability translates to benchmark task</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(D3) Description of how knowing about the tested concept is helpful in the real world</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(D4) Description of use cases and user personas</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(D5) Involvement of domain experts</td>
+<td>15</td>
+<td>0</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(D6) Integration of domain literature</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(D7) Description of how the score should or shouldn’t be interpreted</td>
+<td>15</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(D8) Informed choice of performance metric(s)</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(D9) Includes floors and ceilings for metric</td>
+<td>5</td>
+<td>0</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(D10) Includes human performance level</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>(D11) Includes random performance level</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>(D12) Addresses input sensitivity</td>
+<td>10</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(D13) Validated automatic evaluation available</td>
+<td>15</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(D14) Explanation of differences to related benchmarks</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td><strong>Design score</strong></td>
+<td><strong>12.3</strong></td>
+<td><strong>10.4</strong></td>
+<td><strong>13.1</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="implementation" tabindex="-1">Implementation</h4>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>AgentDojo</th>
+<th>ASB</th>
+<th>AgentHarm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(I1) Availability of evaluation code</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(I2) Script to replicate results is explicitly included</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(I3) Accessibility of evaluation data, prompts, or dynamic environment</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(I4) Supports evaluation of models via API calls</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(I5) Supports evaluation of local models</td>
+<td>15</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(I6) Inclusion of a globally unique identifier or encryption of evaluation instances</td>
+<td>0</td>
+<td>0</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(I7) Inclusion of ‘training_on_test_set’ task</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr>
+<td>(I8) Assess need for warnings for sensitive/harmful content</td>
+<td>10</td>
+<td>5</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(I9) Release requirements specified</td>
+<td>10</td>
+<td>0</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(I10) Includes build status or equivalent</td>
+<td>15</td>
+<td>0</td>
+<td>10</td>
+</tr>
+<tr>
+<td><strong>Implementation score</strong></td>
+<td><strong>10.5</strong></td>
+<td><strong>7.0</strong></td>
+<td><strong>12.5</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="documentation" tabindex="-1">Documentation</h4>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>AgentDojo</th>
+<th>ASB</th>
+<th>AgentHarm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(Do1) Requirements file available</td>
+<td>15</td>
+<td>10</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(Do2) Quick-start guide or demo code available</td>
+<td>15</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(Do3) Includes informative in-line code comments</td>
+<td>10</td>
+<td>5</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(Do4) Code documentation available</td>
+<td>15</td>
+<td>5</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(Do5) Documentation of test task categories &amp; rationale</td>
+<td>15</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(Do6) Documentation of assumptions about normative properties</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>(Do7) Documentation of limitations</td>
+<td>15</td>
+<td>0</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(Do8) Documentation of benchmark construction process</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(Do9) Documentation of data collection or environment/prompt design process</td>
+<td>15</td>
+<td>10</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(Do10) Documentation of evaluation metric(s)</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(Do11) Report statistical significance of benchmark results</td>
+<td>15</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>(Do12) Accepted at peer-reviewed venue</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(Do13) Specifies applicable license</td>
+<td>15</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(Do14) Provision of a globally unique, persistent identifier</td>
+<td>15</td>
+<td>5</td>
+<td>5</td>
+</tr>
+<tr>
+<td>(Do15) Inclusion of standardized metadata (Croissant)</td>
+<td>5</td>
+<td>0</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(Do16) Documentation of data sources and how the data was collected</td>
+<td>15</td>
+<td>10</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(Do17) Documentation of the data preprocessing steps taken</td>
+<td>10</td>
+<td>5</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(Do18) Documentation of the data annotation process</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>(Do19) Documentation of the representativeness of the data</td>
+<td>5</td>
+<td>0</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(Do20) Standardized documentation</td>
+<td>15</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr>
+<td><strong>Documentation score</strong></td>
+<td><strong>13.3</strong></td>
+<td><strong>6.9</strong></td>
+<td><strong>10.8</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="maintenance" tabindex="-1">Maintenance</h4>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>AgentDojo</th>
+<th>ASB</th>
+<th>AgentHarm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(M1) Code usability checked within the last year</td>
+<td>15</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(M2) Maintained feedback channel for users</td>
+<td>5</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(M3) Provide contact details of person responsible</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td><strong>Maintenance score</strong></td>
+<td><strong>11.7</strong></td>
+<td><strong>11.7</strong></td>
+<td><strong>15.0</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="education" tabindex="-1">Education</h4>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>AgentDojo</th>
+<th>ASB</th>
+<th>AgentHarm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(E1) Tool execution isolation</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(E2) Support for user-built agents or defenses</td>
+<td>15</td>
+<td>0</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(E3) Extension points for tasks, attacks, and tools</td>
+<td>15</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(E4) Run trace inspection</td>
+<td>10</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(E5) Assignment-sized evaluation</td>
+<td>10</td>
+<td>10</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(E6) Fully local evaluation</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+</tr>
+<tr>
+<td>(E7) Hardware requirement</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>(E8) Low-sensitivity subset for classroom use</td>
+<td>15</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td><strong>Education score</strong></td>
+<td><strong>13.1</strong></td>
+<td><strong>10.6</strong></td>
+<td><strong>14.4</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="summary" tabindex="-1">Summary</h4>
+<table>
+<thead>
+<tr>
+<th>Score</th>
+<th>AgentDojo</th>
+<th>ASB</th>
+<th>AgentHarm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Design</td>
+<td>12.3</td>
+<td>10.4</td>
+<td>13.1</td>
+</tr>
+<tr>
+<td>Implementation</td>
+<td>10.5</td>
+<td>7.0</td>
+<td>12.5</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>13.3</td>
+<td>6.9</td>
+<td>10.8</td>
+</tr>
+<tr>
+<td>Maintenance</td>
+<td>11.7</td>
+<td>11.7</td>
+<td>15.0</td>
+</tr>
+<tr>
+<td>Education</td>
+<td>13.1</td>
+<td>10.6</td>
+<td>14.4</td>
+</tr>
+<tr>
+<td>Usability</td>
+<td>12.3</td>
+<td>7.4</td>
+<td>11.8</td>
+</tr>
+</tbody>
+</table>
+<h2 id="appendix" tabindex="-1">Appendix</h2>
+<h3 id="model-benchmarks-vs-agent-security-testing" tabindex="-1">Model benchmarks vs Agent security testing</h3>
+<p>Most tools in this survey (i.e., those listed in <a href="docs/attack-risk-coverage.html"><code>attack-risk-coverage.{md|html}</code></a>) test model capability, not agent security. The typical design instantiates a fixed agent harness (a ReAct loop or function-calling wrapper), swaps in a model, and measures how that model behaves under attack. The orchestration logic, guardrails, and tool-access controls belong to the benchmark rather than the user. Thus, what the result answers is “how safe is this LLM when given tools?” rather than “how secure is my agent system?”.</p>
+<p>On the other hand, a production agent’s security depends on its full stack, including input sanitization, output guardrails, memory isolation, tool-access controls, and orchestration logic. <strong>A model that scores well on a benchmark can still be exploited inside a poorly defended agent</strong>, and a weaker model can be adequately protected by strong system-level controls.</p>
+<p>The tools fall into three tiers on this axis:</p>
+<ol>
+<li><strong>Supports custom agent pipelines</strong>:
+<ul>
+<li>These tools can evaluate a <strong>user-built</strong> agent, not only a model.</li>
+<li>Examples: <strong>AgentDojo</strong>, <strong>AgentHarm</strong>.</li>
+</ul>
+</li>
+<li><strong>Tests existing agent systems as targets</strong>:
+<ul>
+<li>These tools send adversarial prompts to diverse code-agent systems in the wild and grade by execution results. A user could substitute their own agent if it speaks the same interface, but the benchmarks were not designed for plug-and-play agent swapping.</li>
+<li>Examples: RedCodeAgent, OS-Harm, RiOSWorld, SafeArena, BrowserART.</li>
+</ul>
+</li>
+<li><strong>Model benchmarks in agent clothing</strong>:
+<ul>
+<li>These tools measure the model’s inherent safety by instantiating their own agent framework and only allows swapping the model. They do not measure the security of an <strong>arbitrary</strong> agent system.</li>
+<li>Examples: InjecAgent, ToolEmu, <strong>ASB</strong>, ToolSword, AgentPoison, EIA, AgentDAM, HAICOSYSTEM, MobileSafetyBench, VPI-Bench, RedCode, SafeArena.</li>
+</ul>
+</li>
+</ol>
+<h3 id="tool-calling-and-output-parsing" tabindex="-1">Tool calling and output parsing</h3>
+<p>The three tools use the same ollama server, but they differ in who parses the model’s tool calls. This is why plan-format failures appear only in ASB (see the <a href="asb/README.md#full-run-naive-dpi-all-400-attacker-tools-all-3-models">full-run callout</a> in the ASB README).</p>
+<ul>
+<li><strong>AgentDojo and AgentHarm</strong> pass the tool schemas in the <code>tools</code> field of the request. ollama renders them through the model’s chat template and parses the model’s native tool-call tokens into structured <code>message.tool_calls</code> objects, so the harness never parses free text. A malformed call surfaces as an HTTP 500 (see <a href="agentdojo/README.md#affected-tasks">Affected tasks</a>) or as a tool error message.</li>
+<li><strong>ASB</strong> never sends <code>tools</code>. It describes the expected JSON format in the prompt text and receives only <code>message.content</code>, a plain string. Its own <code>parse_json_format</code> (<code>aios/llm_core/llm_classes/base_llm.py</code>) searches the string for JSON and returns <code>'[]'</code> when it finds none, which counts as a failed plan and, after 10 retries, as an empty trajectory that the judge tends to label as a refusal.</li>
+</ul>
+<p>As a result, ASB’s ASR and RR for a model with many plan failures measure <strong>format compliance</strong> first and resistance second.</p>
+
+    </main>
+    <!--highlight-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.8.0/dist/highlightjs-line-numbers.min.js"></script>
+    <!--mermaid-->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!--sequence-->
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/webfont.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/snap.svg-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/underscore-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/sequence-diagram-min.js"></script>
+    <!--flowchart-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+    <script src="https://flowchart.js.org/flowchart-latest.js"></script>
+    <!--Graphviz powered by viz.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/viz.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/full.render.js"></script>
+    <!--Vega-Lite-->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <!--Abc-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/abcjs/6.1.9/abcjs-basic-min.min.js"></script>
+    <script>
+        mermaid.init({ noteMargin: 10 }, document.querySelectorAll(".language-mermaid"));
+        mermaid.initialize({ startOnLoad: true });
+        document.querySelectorAll(".language-sequence")?.forEach((dom, i) => {
+            dom.id = `sequence-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            Diagram.parse(content).drawSVG(dom.id, { theme: 'simple' });
+        });
+        document.querySelectorAll(".language-flow")?.forEach((dom, i) => {
+            dom.id = `flow-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            flowchart.parse(content).drawSVG(dom.id);
+        });
+
+        var viz = new Viz();
+        document.querySelectorAll(".language-graphviz")?.forEach((dom, i) => {
+            dom.id = `graphviz-${i}`;
+            let content = dom.textContent;
+            dom.textContent = "";
+            viz.renderSVGElement(content)
+                .then(function (element) {
+                    dom.appendChild(element);
+                })
+                .catch(error => {
+                    // Create a new Viz instance (@see Caveats page for more info)
+                    viz = new Viz();
+
+                    // Possibly display the error
+                    console.error(error);
+                });
+        });
+
+        document.querySelectorAll(".language-abc")?.forEach((dom, i) => {
+            dom.id = `abc-${i}`;
+            let content = dom.textContent;
+            ABCJS.renderAbc(dom.id, content);
+        });
+
+        document.querySelectorAll(".language-vega")?.forEach((dom, i) => {
+            dom.id = `vega-${i}`;
+            let content = dom.textContent;
+            let spec = {};
+            try {
+                spec = JSON.parse(content);
+            } catch (e) {
+                spec = {};
+            }
+            dom.textContent = "";
+            vegaEmbed(`#${dom.id}`, spec);
+        });
+
+        // https://github.com/highlightjs/highlight.js/
+        // modified from: https://github.com/wcoder/highlightjs-line-numbers.js/
+        let lastLine = 0;
+        const BREAK_LINE_REGEXP = /\r\n|\r|\n/g;
+        function getLinesCount(text) {
+            return (text.trim().match(BREAK_LINE_REGEXP) || []).length;
+        }
+        document.querySelectorAll('code')?.forEach((dom) => {
+            let lang = dom.className.match(/language\-([^=]*)?(=?)(\+?[0-9]*)$/);
+            if (lang === null) return;
+            if (lang[1] === '!') {
+                dom.classList.add("break");
+                return;
+            } else {
+                hljs.highlightElement(dom);
+            }
+
+            if (lang[2]) {
+                let line;
+                if (lang[3] === '') {
+                    line = 1;
+                } else if (lang[3] === '+') {
+                    line = lastLine + 1;
+                } else {
+                    line = Number(lang[3]);
+                }
+                lastLine = line + getLinesCount(dom.innerText);
+                hljs.lineNumbersBlock(dom, {
+                    startFrom: line
+                });
+            }
+        });
+
+        // automatically set title
+        const h1 = document.querySelector("h1");
+        if (!document.title && h1 && h1.textContent) {
+            document.title = h1.textContent;
+        }
+    </script>
+</body>
+
+</html>
