@@ -520,7 +520,7 @@ One limit for defense exercises: the default evaluation sends harmful requests d
 
 ## Attack vectors and security risks
 
-> Taxonomy is adapted from Xie et al., "The Attack and Defense Landscape of Agentic AI"
+> Taxonomy is adapted from Kim et al., "The Attack and Defense Landscape of Agentic AI"
 
 In a nutshell, the benchmark focuses on whether a model complies with a **directly stated harmful request**, not on injection through **external data sources**.
 

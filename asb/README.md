@@ -671,7 +671,7 @@ stage avg score: 10.6
 
 ## Attack vectors and security risks
 
-> Taxonomy is adapted from Xie et al., "The Attack and Defense Landscape of Agentic AI"
+> Taxonomy is adapted from Kim et al., "The Attack and Defense Landscape of Agentic AI"
 
 ### Covered attack vectors
 
