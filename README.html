@@ -630,7 +630,7 @@
 <p>This artifact contains the following:</p>
 <ul>
 <li><a href="README.html"><code>README.{md|html}</code></a>: this documentation</li>
-<li><a href="report.html"><code>report.{md|html}</code></a>: the summary report that compares all evaluated tools, with per-criterion scores and crmd|htmloss-tool notes</li>
+<li><a href="report.html"><code>report.{md|html}</code></a>: the summary report that compares all evaluated tools, with per-criterion scores and cross-tool notes</li>
 <li><a href="docs/"><code>docs/</code></a>: supporting documents
 <ul>
 <li><a href="docs/requirements.html"><code>requirements.{md|html}</code></a>: hardware and software requirements for the Ollama server and the client</li>
@@ -638,9 +638,15 @@
 <li><a href="docs/criteria.html"><code>criteria.{md|html}</code></a>: the scoring scheme, which adopts the BetterBench criteria and adds our Education stage</li>
 <li><a href="docs/attack-risk-coverage.html"><code>attack-risk-coverage.{md|html}</code></a>: the attack-vector and security-risk taxonomy and the coverage of 16 tools</li>
 <li><a href="docs/faq.html"><code>faq.{md|html}</code></a>: answers to questions about our choices</li>
+<li><a href="docs/figures/"><code>figures/</code></a>: the per-stage bar charts embedded in the summary report</li>
 </ul>
 </li>
-<li><a href="scripts/ollama.sbatch"><code>scripts/ollama.sbatch</code></a>: the Slurm script that starts the Ollama server with the settings we used</li>
+<li><a href="scripts/"><code>scripts/</code></a>: helper scripts
+<ul>
+<li><a href="scripts/ollama.sbatch"><code>ollama.sbatch</code></a>: the Slurm script that starts the Ollama server with the settings we used</li>
+<li><a href="scripts/plot_stage_scores.py"><code>plot_stage_scores.py</code></a>: draws the per-stage bar charts in <code>docs/figures/</code> from the Summary table of the summary report</li>
+</ul>
+</li>
 <li><a href="agentdojo/"><code>agentdojo/</code></a>, <a href="agentharm/"><code>agentharm/</code></a>, <a href="asb/"><code>asb/</code></a>: one directory per evaluated tool, each containing
 <ul>
 <li><code>README.md</code>: the detailed report for the tool</li>
